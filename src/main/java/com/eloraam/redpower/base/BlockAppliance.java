@@ -52,7 +52,7 @@ public class BlockAppliance extends BlockExtended {
 	IIcon topBufferIcon;
 	IIcon bottomBufferIcon;
 	IIcon sideBufferIcon;
-	
+
 	public BlockAppliance() {
 		super(Material.rock);
 		this.setHardness(2.0F);
@@ -100,7 +100,7 @@ public class BlockAppliance extends BlockExtended {
 		this.topBufferIcon = reg.registerIcon("rpmachine:blockBufferTop");
 		this.bottomBufferIcon = reg.registerIcon("rpmachine:blockBufferBottom");
 		this.sideBufferIcon = reg.registerIcon("rpmachine:blockBufferSide");
-		
+
         this.blockIcon = reg.registerIcon(this.getTextureName());
     }
 	

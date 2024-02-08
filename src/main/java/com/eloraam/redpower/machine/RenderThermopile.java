@@ -10,8 +10,10 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class RenderThermopile extends RenderCustomBlock {
 	
@@ -30,17 +32,8 @@ public class RenderThermopile extends RenderCustomBlock {
 	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int i, int j, int k, int md) {
 		TileThermopile tb = (TileThermopile) CoreLib.getTileEntity(iba, i, j, k, TileThermopile.class);
 		if (tb != null) {
-			this.context.setDefaults();
-			this.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-			this.context.setPos(i, j, k);
-			this.context.readGlobalLights(iba, i, j, k);
-			this.context.setIcon(super.block.getIcon(140, md), super.block.getIcon(140, md), super.block.getIcon(138, md), super.block.getIcon(138, md), super.block.getIcon(139, md), super.block.getIcon(139, md));
-			this.context.setSize(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-			this.context.setupBox();
-			this.context.transform();
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-			this.context.renderGlobFaces(63);
-			//RenderLib.unbindTexture();
+			renderblocks.renderStandardBlock(block, i, j, k);
+			renderblocks.setRenderBoundsFromBlock(block);
 		}
 	}
 	
@@ -50,13 +43,15 @@ public class RenderThermopile extends RenderCustomBlock {
 		this.context.setDefaults();
 		this.context.setPos(-0.5D, -0.5D, -0.5D);
 		this.context.useNormal = true;
-		//RenderLib.bindTexture("/eloraam/machine/machine1.png");
 		Tessellator tessellator = Tessellator.instance;
+		IIcon topIcon = getIcon(ForgeDirection.UP.ordinal(), md);
+		IIcon bottomIcon = getIcon(ForgeDirection.DOWN.ordinal(), md);
+		IIcon sideIcon = getIcon(ForgeDirection.UNKNOWN.ordinal(), md);
+		IIcon frontIcon = getIcon(ForgeDirection.NORTH.ordinal(), md);
 		tessellator.startDrawingQuads();
-		this.context.setIcon(super.block.getIcon(140, md), super.block.getIcon(140, md), super.block.getIcon(138, md), super.block.getIcon(138, md), super.block.getIcon(139, md), super.block.getIcon(139, md));
+		this.context.setIcon(bottomIcon, topIcon, getIcon(11, md), sideIcon, sideIcon, frontIcon);
 		this.context.renderBox(63, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
 		tessellator.draw();
-		//RenderLib.unbindTexture();
 		this.context.useNormal = false;
 	}
 }

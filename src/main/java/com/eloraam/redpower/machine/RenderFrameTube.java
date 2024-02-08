@@ -82,7 +82,7 @@ public class RenderFrameTube extends RenderTube {
 			//RenderLib.unbindTexture();
 			super.context.setBrightness(super.block.getMixedBrightnessForBlock( iba, i, j, k));
 			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-			
+			this.renderCenterBlock(var14, BlockMachine.baseTubeSideIcon, BlockMachine.baseTubeFaceIcon);
 			this.renderCenterBlock(conn, getIcon(64, md), getIcon(65, md));
 			if (tc.paintColor > 0) {
 				int pcolor = super.paintColors[tc.paintColor - 1];

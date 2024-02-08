@@ -1,8 +1,6 @@
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.core.RenderCustomBlock;
+import com.eloraam.redpower.core.*;
 import com.eloraam.redpower.machine.TileMachine;
 
 import java.util.Random;
@@ -10,13 +8,15 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class RenderMachine extends RenderCustomBlock {
-	
+
 	protected RenderContext context = new RenderContext();
-	
+
 	public RenderMachine(Block bl) {
 		super(bl);
 	}
@@ -73,7 +73,7 @@ public class RenderMachine extends RenderCustomBlock {
 					this.context.setIcon(getIcon(58, md), getIcon(89, md), getIcon(93 + tex, md), getIcon(93 + tex, md), getIcon(90, md), getIcon(90, md));
 				} else {
 					tex = 59 + (tb.Active ? 1 : 0) + (md == 3 ? 2 : 0);
-					this.context.setIcon(getIcon(58, md), getIcon(57, md), getIcon(tex, md), getIcon(tex, md), getIcon(tex, md), getIcon(tex, md));
+					this.context.setIcon(BlockMachine.bottomFilterIcon, BlockMachine.topFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon);
 				}
 			}
 			
@@ -81,12 +81,10 @@ public class RenderMachine extends RenderCustomBlock {
 			this.context.setupBox();
 			this.context.transform();
 			this.context.orientTextures(tb.Rotation);
-			
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
+
 			tess.startDrawingQuads();
 			this.context.renderGlobFaces(63);
 			tess.draw();
-			//RenderLib.unbindTexture();
 			
 			this.context.bindBlockTexture();
 			tess.startDrawingQuads();
@@ -99,13 +97,14 @@ public class RenderMachine extends RenderCustomBlock {
 		this.context.setDefaults();
 		this.context.setPos(-0.5D, -0.5D, -0.5D);
 		this.context.useNormal = true;
-		//RenderLib.bindTexture("/eloraam/machine/machine1.png");
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
 		if (md == 0) {
 			this.context.setIcon(getIcon(48, md), getIcon(53, md), getIcon(56, md), getIcon(56, md), getIcon(55, md), getIcon(55, md));
 		} else if (md == 2) {
 			this.context.setIcon(getIcon(58, md), getIcon(57, md), getIcon(59, md), getIcon(59, md), getIcon(59, md), getIcon(59, md));
+		} else if (md == 3) {
+			this.context.setIcon(BlockMachine.bottomFilterIcon, BlockMachine.topFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon);
 		} else if (md == 4) {
 			this.context.setIcon(getIcon(102, md), getIcon(103, md), getIcon(98, md), getIcon(98, md), getIcon(96, md), getIcon(96, md));
 		} else if (md == 5) {
@@ -128,7 +127,7 @@ public class RenderMachine extends RenderCustomBlock {
 		
 		this.context.renderBox(63, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
 		tessellator.draw();
-		//RenderLib.unbindTexture();
+		RenderLib.unbindTexture();
 		this.context.useNormal = false;
 	}
 }

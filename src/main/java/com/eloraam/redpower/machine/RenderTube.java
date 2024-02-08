@@ -83,7 +83,7 @@ public class RenderTube extends RenderCovers {
 		tessellator.startDrawingQuads();
 		super.context.useNormal = true;
 		if (md >> 8 == 10) {
-			super.context.setIcon(BlockMachine.baseTubeFaceIcon, BlockMachine.baseTubeFaceIcon, BlockMachine.restrictTubeSideIcon, BlockMachine.restrictTubeSideIcon, BlockMachine.restrictTubeSideIcon, BlockMachine.restrictTubeSideIcon);
+			super.context.setIcon(BlockMachine.restrictTubeFaceIcon, BlockMachine.restrictTubeFaceIcon, BlockMachine.restrictTubeSideIcon, BlockMachine.restrictTubeSideIcon, BlockMachine.restrictTubeSideIcon, BlockMachine.restrictTubeSideIcon);
 		} else if (md >> 8 == 11) {
 			this.renderMagFins(3, md);
 			super.context.setIcon(BlockMachine.magTubeFaceNRIcon, BlockMachine.magTubeFaceNRIcon, BlockMachine.magTubeSideNRIcon, BlockMachine.magTubeSideNRIcon, BlockMachine.magTubeSideNRIcon, BlockMachine.magTubeSideNRIcon);

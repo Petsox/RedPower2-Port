@@ -4,28 +4,28 @@ import com.eloraam.redpower.core.Quat;
 import com.eloraam.redpower.core.RenderCustomBlock;
 import com.eloraam.redpower.core.Vector3;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 public class RenderLib {
 	
 	private static RenderLib.RenderListEntry[] renderers = new RenderLib.RenderListEntry[4096];
 
 
-	public static void bindTexture(String var0)
-	{
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(var0));
+	public static void bindTexture(ResourceLocation var0) {
+		Minecraft.getMinecraft().renderEngine.bindTexture(var0);
 	}
 
-	public static void unbindTexture()
-	{
-		ForgeHooksClient.onTextureLoad(null, null);
+	public static void unbindTexture() {
+		// Not sure what you intend to do here in Minecraft 1.7.10, but you can leave it empty or adjust as needed
 	}
-	
 	public static void renderSpecialLever(Vector3 pos, Quat rot, IIcon tex1, IIcon tex2) {
 		//int k1 = (tex & 15) << 4;
 		//int l1 = tex & 240;
