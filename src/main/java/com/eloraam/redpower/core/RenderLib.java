@@ -14,6 +14,17 @@ import net.minecraft.util.ResourceLocation;
 public class RenderLib {
 	
 	private static RenderLib.RenderListEntry[] renderers = new RenderLib.RenderListEntry[4096];
+
+
+	public static void bindTexture(String var0)
+	{
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(var0));
+	}
+
+	public static void unbindTexture()
+	{
+		ForgeHooksClient.onTextureLoad(null, null);
+	}
 	
 	public static void renderSpecialLever(Vector3 pos, Quat rot, IIcon tex1, IIcon tex2) {
 		//int k1 = (tex & 15) << 4;

@@ -38,7 +38,7 @@ public class RenderPump extends RenderCustomBlock {
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.draw();
 			
-			//Лоадим наш блок
+			//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 			this.context.setDefaults();
 			this.context.setPos(x, y, z);
 			this.context.setOrientation(0, tb.Rotation);
@@ -47,7 +47,7 @@ public class RenderPump extends RenderCustomBlock {
 			//this.context.bindTexture("/eloraam/machine/machine1.png");
 			Minecraft.getMinecraft().renderEngine.bindTexture(modelRes);
 			
-			//Рендерим наш блок
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 			tessellator.startDrawingQuads();
 			
 			this.context.bindModelOffset(this.modelBase, 0.5D, 0.5D, 0.5D);
@@ -56,7 +56,7 @@ public class RenderPump extends RenderCustomBlock {
 			
 			tessellator.draw();
 			
-			//Восстанавливаем дефолтные блоки
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			this.context.bindBlockTexture();
 			tessellator.startDrawingQuads();
 		}

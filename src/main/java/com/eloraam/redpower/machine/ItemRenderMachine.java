@@ -2,12 +2,13 @@ package com.eloraam.redpower.machine;
 
 import com.eloraam.redpower.RedPowerMachine;
 import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.machine.ItemRenderMachine;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
 public class ItemRenderMachine implements IItemRenderer {
@@ -35,7 +36,7 @@ public class ItemRenderMachine implements IItemRenderer {
 			this.context.setDefaults();
 			this.context.setPos(-0.5D, -0.5D, -0.5D);
 			this.context.useNormal = true;
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
+			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("/eloraam/machine/machine1.png"));
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.startDrawingQuads();
 			short bat = 0;
@@ -43,11 +44,10 @@ public class ItemRenderMachine implements IItemRenderer {
 				bat = item.stackTagCompound.getShort("batLevel");
 			}
 			Item parent = item.getItem();
-			IIcon tx = parent.getIconFromDamage(129 + bat * 8 / 6000); //TODO: Жирный костыль
+			IIcon tx = parent.getIconFromDamage(129 + bat * 8 / 6000); //TODO: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			this.context.setIcon(parent.getIconFromDamage(84), parent.getIconFromDamage(128), tx, tx, tx, tx);
 			this.context.renderBox(63, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
 			tessellator.draw();
-			//RenderLib.unbindTexture();
 			this.context.useNormal = false;
 		}
 		
