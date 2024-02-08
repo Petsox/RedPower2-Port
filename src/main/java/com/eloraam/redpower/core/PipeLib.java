@@ -81,7 +81,7 @@ public class PipeLib {
 						if ((itc.getPipeFlangeSides() & 1 << (i ^ 1)) > 0) {
 							tr |= 1 << i;
 						}
-					} //TODO: Чет костыльненько...
+					} //TODO: пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ...
 					
 					if (te instanceof IFluidHandler) {
 						IFluidHandler itc = (IFluidHandler) te;
@@ -232,7 +232,7 @@ public class PipeLib {
 						IFluidHandler fluidHandler = (IFluidHandler) te;
 						for(FluidTankInfo info : fluidHandler.getTankInfo(ForgeDirection.getOrientation(i ^ 1))) {
 							int capacity = info.capacity;
-							p2 = info.fluid.amount >= capacity ? 100 : -100; //TODO: Доработать
+							p2 = info.fluid.amount >= capacity ? 100 : -100; //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 							int srcPressure = src.getPipePressure(i);
 							FluidBuffer buff = src.getPipeBuffer(i);
 							if(buff != null) {
@@ -243,7 +243,7 @@ public class PipeLib {
 								if(fStack != null && fStack.amount > 0) {
 									if(fStack.getFluid() != null) {
 										l2 = fStack.amount;
-										if(buff.Type != 0 && buff.Type != fStack.fluidID) {
+										if(buff.Type != 0 && buff.Type != fStack.getFluidID()) {
 											break; //TODO: Don't understand, but may work
 											//continue;
 										}
@@ -261,7 +261,7 @@ public class PipeLib {
 									if (qty > 0) {
 										FluidStack drStack = fluidHandler.drain(ForgeDirection.getOrientation(i), new FluidStack(fStack.getFluid(), qty), true);
 										//LiquidStack ls2 = var19.drain(qty, true);
-										buff.addLevel(drStack.fluidID, drStack.amount);
+										buff.addLevel(drStack.getFluidID(), drStack.amount);
 									}
 								} else if (srcPressure > p2 && buff.Type != 0 && level > 0) {
 									qty = Math.max(25, (level - l2) / 2);
