@@ -16,17 +16,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 
 public abstract class TileExtended extends TileEntity implements INetworkDataProvider {
 	
 	protected long timeSched = -1L;
 	protected int updateRange = 16;
 	protected int updateDelay = 1 * 20;
+
+	public int Rotation = 0;
 	
 	public void onBlockNeighborChange(Block block) {
 	}
 	
 	public void onBlockPlaced(ItemStack ist, int side, EntityLivingBase ent) {
+		this.Rotation = MathHelper.floor_double((double)(ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 		this.sendPacket();
 		this.markDirty();
 	}
