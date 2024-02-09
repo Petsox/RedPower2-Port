@@ -14,6 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TileFilter extends TileTranspose implements IInventory, ISidedInventory {
 	
 	protected ItemStack[] contents = new ItemStack[9];
@@ -32,7 +35,7 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 			}
 			
 			return this.filterMap.size() == 0 ? super.tubeItemEnter(side,
-					state, ti) : (!this.filterMap.containsKey(ti.item) ? false : super.tubeItemEnter(side, state, ti));
+					state, ti) : (this.filterMap.containsKey(ti.item) && super.tubeItemEnter(side, state, ti));
 		} else {
 			return super.tubeItemEnter(side, state, ti);
 		}
@@ -46,7 +49,7 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 			}
 			
 			return this.filterMap.size() == 0 ? super.tubeItemCanEnter(side,
-					state, ti) : (!this.filterMap.containsKey(ti.item) ? false : super
+					state, ti) : (this.filterMap.containsKey(ti.item) && super
 					.tubeItemCanEnter(side, state, ti));
 		} else {
 			return super.tubeItemCanEnter(side, state, ti);
@@ -54,13 +57,14 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 	}
 	
 	@Override
-	protected void addToBuffer(ItemStack ist) {
-		super.buffer.addNewColor(ist, this.color);
-	}
-	
-	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		return side != super.Rotation && side != (super.Rotation ^ 1) ? new int[]{0,1,2,3,4,5,6,7,8} : new int[]{};
+
+			List<Integer> list = new ArrayList<Integer>();
+			for(int i = (side ^ 1) == super.Rotation ? 0 : 4 * ((5 + (side ^ 1) - super.Rotation) % 6); i < ((side ^ 1) == super.Rotation ? 20 : 4); i ++) {
+				list.add(i);
+			}
+			return CoreLib.toIntArray(list);
+
 	}
 	public int getFacing(EntityLivingBase ent) {
 		int yawrx = (int) Math.floor(ent.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
@@ -80,6 +84,7 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 	public void onBlockPlaced(ItemStack ist, int side, EntityLivingBase ent) {
 		super.Rotation = this.getFacing(ent);
 	}
+
 	@Override
 	public boolean onBlockActivated(EntityPlayer player) {
 		if (player.isSneaking()) {
@@ -143,7 +148,7 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 			this.regenFilterMap();
 		}
 		
-		return this.filterMap.size() == 0 ? true : this.filterMap
+		return this.filterMap.size() == 0 || this.filterMap
 				.containsKey(ist);
 	}
 	
@@ -214,7 +219,7 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return super.worldObj.getTileEntity(super.xCoord, super.yCoord,
-				super.zCoord) != this ? false : player.getDistanceSq(
+				super.zCoord) == this && player.getDistanceSq(
 				super.xCoord + 0.5D, super.yCoord + 0.5D, super.zCoord + 0.5D) <= 64.0D;
 	}
 	
@@ -269,12 +274,22 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 
 	@Override
 	public boolean canInsertItem(int slotID, ItemStack itemStack, int side) {
-		return side != super.Rotation && side != (super.Rotation ^ 1);
+		for(int i : this.getAccessibleSlotsFromSide(side)) {
+			if(i == slotID) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public boolean canExtractItem(int slotID, ItemStack itemStack, int side) {
-		return side != super.Rotation && side != (super.Rotation ^ 1);
+		for(int i : this.getAccessibleSlotsFromSide(side)) {
+			if(i == slotID) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
