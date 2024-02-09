@@ -126,7 +126,7 @@ public class BlockMachine extends BlockExtended {
                 case 3: { //FILTER
                     if(tile instanceof TileFilter) {
                         TileFilter filter = (TileFilter) tile;
-                        int facing = CoreLib.getFacing(tile.Rotation);
+                        int facing = CoreLib.getFacing(filter.Rotation);
                         switch(ForgeDirection.getOrientation(side)) {
                             default:
                                 return side == facing ? topFilterIcon : (side == ForgeDirection.getOrientation(facing).getOpposite().ordinal()? bottomFilterIcon : filter.Active ? sideFilterOnIcon : sideFilterIcon);

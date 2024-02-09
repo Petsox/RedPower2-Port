@@ -6,6 +6,7 @@ import com.eloraam.redpower.core.MachineLib;
 import com.eloraam.redpower.core.TubeItem;
 import com.eloraam.redpower.machine.TileTranspose;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -61,7 +62,24 @@ public class TileFilter extends TileTranspose implements IInventory, ISidedInven
 	public int[] getAccessibleSlotsFromSide(int side) {
 		return side != super.Rotation && side != (super.Rotation ^ 1) ? new int[]{0,1,2,3,4,5,6,7,8} : new int[]{};
 	}
-	
+	public int getFacing(EntityLivingBase ent) {
+		int yawrx = (int) Math.floor(ent.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+		if (Math.abs(ent.posX - super.xCoord) < 2.0D && Math.abs(ent.posZ - super.zCoord) < 2.0D) {
+			double p = ent.posY + 1.82D - ent.yOffset - super.yCoord;
+			if (p > 2.0D) {
+				return 4;
+			}
+
+			if (p < 0.0D) {
+				return 5;
+			}
+		}
+		return yawrx;
+	}
+	@Override
+	public void onBlockPlaced(ItemStack ist, int side, EntityLivingBase ent) {
+		super.Rotation = this.getFacing(ent);
+	}
 	@Override
 	public boolean onBlockActivated(EntityPlayer player) {
 		if (player.isSneaking()) {
