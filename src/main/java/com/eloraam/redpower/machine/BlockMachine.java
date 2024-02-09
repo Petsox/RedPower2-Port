@@ -124,20 +124,12 @@ public class BlockMachine extends BlockExtended {
         if (tile != null) {
             switch (meta) {
                 case 3: { //FILTER
-                    if (tile instanceof TileFilter) {
+                    if(tile instanceof TileFilter) {
                         TileFilter filter = (TileFilter) tile;
-                        switch (ForgeDirection.getOrientation(side)) {
-                            case UP:
-                                return this.topFilterIcon;
-                            case DOWN:
-                                return this.bottomFilterIcon;
+                        int facing = CoreLib.getFacing(filter.Rotation);
+                        switch(ForgeDirection.getOrientation(side)) {
                             default:
-                                if (filter.Active) {
-                                    return this.sideFilterOnIcon;
-
-                                } else {
-                                    return this.sideFilterIcon;
-                                }
+                                return side == facing ? bottomFilterIcon : (side == ForgeDirection.getOrientation(facing).getOpposite().ordinal()? topFilterIcon : filter.Active ? sideFilterOnIcon : sideFilterIcon);
                         }
                     }
                 }
@@ -178,7 +170,16 @@ public class BlockMachine extends BlockExtended {
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int meta) {
         switch (meta) {
-
+            case 3: { //FILTER
+                switch (ForgeDirection.getOrientation(side)) {
+                    case UP:
+                        return this.topFilterIcon;
+                    case DOWN:
+                        return this.bottomFilterIcon;
+                    default:
+                            return this.sideFilterIcon;
+                }
+            }
             case 6: { //BATBOX
                 switch (ForgeDirection.getOrientation(side)) {
                     case UP:

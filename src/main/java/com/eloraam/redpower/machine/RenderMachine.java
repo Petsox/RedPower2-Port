@@ -73,7 +73,7 @@ public class RenderMachine extends RenderCustomBlock {
 					this.context.setIcon(getIcon(58, md), getIcon(89, md), getIcon(93 + tex, md), getIcon(93 + tex, md), getIcon(90, md), getIcon(90, md));
 				} else {
 					tex = 59 + (tb.Active ? 1 : 0) + (md == 3 ? 2 : 0);
-					this.context.setIcon(BlockMachine.bottomFilterIcon, BlockMachine.topFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon);
+					this.context.setIcon(getIcon(3,md), BlockMachine.topFilterIcon, BlockMachine.topFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon, BlockMachine.sideFilterIcon);
 				}
 			}
 			

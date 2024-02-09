@@ -53,7 +53,7 @@ public class MachineProxyClient extends MachineProxy {
 		RenderLib.setRenderer(RedPowerMachine.blockMachine, 0, RenderMachine.class);
 		RenderLib.setRenderer(RedPowerMachine.blockMachine, 1, RenderBreaker.class);
 		RenderLib.setRenderer(RedPowerMachine.blockMachine, 2, RenderMachine.class);
-		RenderLib.setRenderer(RedPowerMachine.blockMachine, 3, RenderMachine.class);
+		RenderLib.setRenderer(RedPowerMachine.blockMachine, 3, RenderFilter.class);
 		RenderLib.setRenderer(RedPowerMachine.blockMachine, 4, RenderMachine.class);
 		RenderLib.setRenderer(RedPowerMachine.blockMachine, 5, RenderMachine.class);
 		RenderLib.setRenderer(RedPowerMachine.blockMachine, 6, RenderBatteryBox.class);
