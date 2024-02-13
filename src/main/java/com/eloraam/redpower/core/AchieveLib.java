@@ -27,7 +27,6 @@ public class AchieveLib
             acreq = AchieveLib.achievelist.get(require);
         }
         final Achievement ac = new Achievement(name, name, x, y, icon, acreq);
-        ac.registerStat();
         if (special) {
             ac.setSpecial();
         }

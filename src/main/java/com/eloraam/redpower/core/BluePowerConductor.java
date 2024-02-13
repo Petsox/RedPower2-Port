@@ -191,7 +191,6 @@ public abstract class BluePowerConductor
         final NBTTagList clist = new NBTTagList();
         for (int i = 0; i < l; ++i) {
             final NBTTagDouble val = new NBTTagDouble(this.currents[i]);
-            clist.appendTag((NBTBase)val);
         }
         tag.setTag("bpil", (NBTBase)clist);
         tag.setDouble("vcap", this.Vcap);
