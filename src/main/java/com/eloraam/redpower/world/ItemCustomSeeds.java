@@ -1,72 +1,62 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.RedPowerWorld;
+import net.minecraft.creativetab.*;
+import net.minecraft.item.*;
+import net.minecraft.entity.player.*;
+import net.minecraftforge.common.util.*;
+import net.minecraft.world.*;
+import com.eloraam.redpower.*;
+import net.minecraft.block.*;
+import java.util.*;
+import cpw.mods.fml.relauncher.*;
+import net.minecraftforge.common.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.EnumPlantType;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.util.ForgeDirection;
-
-public class ItemCustomSeeds extends Item implements IPlantable {
-	
-	public ItemCustomSeeds() {
-		this.setMaxDamage(0);
-		this.setHasSubtypes(true);
-		this.setCreativeTab(CreativeTabs.tabMaterials);
-		this.setUnlocalizedName("seedFlax");
-		this.setTextureName("rpworld:itemSeedsFlax");
-	}
-	
-	@Override
-	public boolean onItemUse(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l, float xp, float yp, float zp) {
-		if (l != 1) {
-			return false;
-		} else {
-			Block soil = world.getBlock(i, j, k);
-			if (soil == null) {
-				return false;
-			} else if (soil.canSustainPlant(world, i, j, k, ForgeDirection.UP, this) && world.getBlockMetadata(i, j, k) >= 1 && world.isAirBlock(i, j + 1, k)) {
-				world.setBlock(i, j + 1, k, RedPowerWorld.blockCrops, 0, 3);
-				--ist.stackSize;
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
-		for (int i = 0; i <= 0; ++i) {
-			list.add(new ItemStack(this, 1, i));
-		}
-	}
-	
-	@Override
-	public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z) {
-		return EnumPlantType.Crop;
-	}
-	
-	@Override
-	public Block getPlant(IBlockAccess world, int x, int y, int z) {
-		return RedPowerWorld.blockCrops;
-	}
-	
-	@Override
-	public int getPlantMetadata(IBlockAccess world, int x, int y, int z) {
-		return 0;
-	}
+public class ItemCustomSeeds extends Item implements IPlantable
+{
+    public ItemCustomSeeds() {
+        this.setMaxDamage(0);
+        this.setHasSubtypes(true);
+        this.setCreativeTab(CreativeTabs.tabMaterials);
+        this.setUnlocalizedName("seedFlax");
+        this.setTextureName("rpworld:seedsFlax");
+    }
+    
+    public boolean onItemUse(final ItemStack ist, final EntityPlayer player, final World world, final int i, final int j, final int k, final int l, final float xp, final float yp, final float zp) {
+        if (l != 1) {
+            return false;
+        }
+        final Block soil = world.getBlock(i, j, k);
+        if (soil == null) {
+            return false;
+        }
+        if (soil.canSustainPlant((IBlockAccess)world, i, j, k, ForgeDirection.UP, (IPlantable)this) && world.getBlockMetadata(i, j, k) >= 1 && world.isAirBlock(i, j + 1, k)) {
+            world.setBlock(i, j + 1, k, (Block)RedPowerWorld.blockCrops, 0, 3);
+            --ist.stackSize;
+            return true;
+        }
+        return false;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(final Item item, final CreativeTabs tab, final List list) {
+        for (int i = 0; i <= 0; ++i) {
+            list.add(new ItemStack((Item)this, 1, i));
+        }
+    }
+    
+    public EnumPlantType getPlantType(final IBlockAccess world, final int x, final int y, final int z) {
+        return EnumPlantType.Crop;
+    }
+    
+    public Block getPlant(final IBlockAccess world, final int x, final int y, final int z) {
+        return (Block)RedPowerWorld.blockCrops;
+    }
+    
+    public int getPlantMetadata(final IBlockAccess world, final int x, final int y, final int z) {
+        return 0;
+    }
 }

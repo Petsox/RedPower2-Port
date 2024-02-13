@@ -1,214 +1,180 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.base;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.core.CoreLib;
+import net.minecraft.util.*;
+import net.minecraft.creativetab.*;
+import net.minecraft.item.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.inventory.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.world.*;
+import com.eloraam.redpower.*;
+import net.minecraft.nbt.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
-
-public class ItemBag extends Item {
-	
-	private IIcon[] icons = new IIcon[16];
-	
-	public ItemBag() {
-		this.setMaxStackSize(1);
-		this.setHasSubtypes(true);
-		this.setUnlocalizedName("rpBag");
-		this.setTextureName("rpbase:itemBag");
-		this.setCreativeTab(CreativeTabs.tabMisc);
-	}
-	
-	public static IInventory getBagInventory(ItemStack ist, EntityPlayer player) {
-		return !(ist.getItem() instanceof ItemBag) ? null : new ItemBag.InventoryBag(ist, player);
-	}
-	
-	@SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister registerer) {
-		for(int i = 0; i < 16; i++) {
-			this.icons[i] = registerer.registerIcon(this.getIconString() + i);
-		}
+public class ItemBag extends Item
+{
+    private IIcon[] icons;
+    
+    public ItemBag() {
+        this.icons = new IIcon[16];
+        this.setMaxStackSize(1);
+        this.setHasSubtypes(true);
+        this.setUnlocalizedName("rpBag");
+        this.setCreativeTab(CreativeTabs.tabMisc);
     }
-	
-	@Override
-	public int getMaxItemUseDuration(ItemStack par1ItemStack) {
-		return 1;
-	}
-	
-	@Override
-	public IIcon getIconFromDamage(int i) {
-		if(i >= icons.length) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
-		return this.icons[i];
-	}
-	
-	@Override
-	public ItemStack onItemRightClick(ItemStack ist, World world, EntityPlayer player) {
-		if (CoreLib.isClient(world)) {
-			return ist;
-		} else if (player.isSneaking()) {
-			return ist;
-		} else {
-			player.openGui(RedPowerBase.instance, 4, world, 0, 0, 0);
-			return ist;
-		}
-	}
-	
-	public static class InventoryBag implements IInventory {
-		ItemStack bagitem;
-		ItemStack[] items;
-		EntityPlayer player;
-		
-		InventoryBag(ItemStack ist, EntityPlayer host) {
-			this.bagitem = ist;
-			this.player = host;
-			this.unpackInventory();
-		}
-		
-		void unpackInventory() {
-			this.items = new ItemStack[27];
-			if (this.bagitem.stackTagCompound != null) {
-				NBTTagList list = this.bagitem.stackTagCompound.getTagList("contents", 0); //TODO: Unknown number for me
-				
-				for (int i = 0; i < list.tagCount(); ++i) {
-					NBTTagCompound item = (NBTTagCompound) list.getCompoundTagAt(i);
-					byte slt = item.getByte("Slot");
-					if (slt < 27) {
-						this.items[slt] = ItemStack.loadItemStackFromNBT(item);
-					}
-				}
-				
-			}
-		}
-		
-		void packInventory() {
-			if (this.bagitem.stackTagCompound == null) {
-				this.bagitem.setTagCompound(new NBTTagCompound());
-			}
-			
-			NBTTagList contents = new NBTTagList();
-			for (int i = 0; i < 27; ++i) {
-				if (this.items[i] != null) {
-					NBTTagCompound cpd = new NBTTagCompound();
-					this.items[i].writeToNBT(cpd);
-					cpd.setByte("Slot", (byte) i);
-					contents.appendTag(cpd);
-				}
-			}
-			this.bagitem.stackTagCompound.setTag("contents", contents);
-		}
-		
-		@Override
-		public int getSizeInventory() {
-			return 27;
-		}
-		
-		@Override
-		public ItemStack getStackInSlot(int slot) {
-			return this.items[slot];
-		}
-		
-		@Override
-		public ItemStack decrStackSize(int slot, int num) {
-			if(this.bagitem == null) { //TODO: DUPE FIX
-				((EntityPlayerMP)this.player).closeContainer();
-				return null;
-			}
-			if (this.items[slot] == null) {
-				return null;
-			} else {
-				ItemStack tr;
-				if (this.items[slot].stackSize <= num) {
-					tr = this.items[slot];
-					this.items[slot] = null;
-					this.markDirty();
-					return tr;
-				} else {
-					tr = this.items[slot].splitStack(num);
-					if (this.items[slot].stackSize == 0) {
-						this.items[slot] = null;
-					}
-					this.markDirty();
-					return tr;
-				}
-			}
-		}
-		
-		@Override
-		public ItemStack getStackInSlotOnClosing(int slot) {
-			if(this.bagitem == null) { //TODO: DUPE FIX
-				((EntityPlayerMP)this.player).closeContainer();
-				return null;
-			}
-			if (this.items[slot] == null) {
-				return null;
-			} else {
-				ItemStack tr = this.items[slot];
-				this.items[slot] = null;
-				return tr;
-			}
-		}
-		
-		@Override
-		public void setInventorySlotContents(int slot, ItemStack ist) {
-			if(this.bagitem == null) { //TODO: DUPE FIX
-				((EntityPlayerMP)this.player).closeContainer();
-				return;
-			}
-			this.items[slot] = ist;
-			if (ist != null && ist.stackSize > this.getInventoryStackLimit()) {
-				ist.stackSize = this.getInventoryStackLimit();
-			}
-			this.markDirty();
-		}
-		
-		@Override
-		public String getInventoryName() {
-			return "Canvas Bag";
-		}
-		
-		@Override
-		public int getInventoryStackLimit() {
-			return 64;
-		}
-		
-		@Override
-		public void markDirty() {
-			this.packInventory();
-		}
-		
-		@Override
-		public boolean isUseableByPlayer(EntityPlayer pl) {
-			return true;
-		}
-		
-		@Override
-		public void openInventory() {
-		}
-		
-		@Override
-		public void closeInventory() {
-		}
 
-		@Override
-		public boolean hasCustomInventoryName() {
-			return true; //Maybe not
-		}
-
-		@Override
-		public boolean isItemValidForSlot(int slotID, ItemStack itemStack) {
-			return true; //Maybe not
-		}
-	}
+    public static IInventory getBagInventory(ItemStack ist, EntityPlayer player) {
+        return !(ist.getItem() instanceof ItemBag) ? null : new ItemBag.InventoryBag(ist, player);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(final IIconRegister registerer) {
+        for (int color = 0; color < 16; ++color) {
+            this.icons[color] = registerer.registerIcon("rpbase:bag/" + color);
+        }
+    }
+    
+    public int getMaxItemUseDuration(final ItemStack ist) {
+        return 1;
+    }
+    
+    public IIcon getIconFromDamage(final int meta) {
+        return this.icons[meta % this.icons.length];
+    }
+    
+    public ItemStack onItemRightClick(final ItemStack ist, final World world, final EntityPlayer player) {
+        if (!world.isRemote && !player.isSneaking()) {
+            player.openGui((Object)RedPowerBase.instance, 4, world, 0, 0, 0);
+        }
+        return ist;
+    }
+    
+    public static class InventoryBag implements IInventory
+    {
+        ItemStack bagitem;
+        ItemStack[] items;
+        EntityPlayer player;
+        
+        InventoryBag(final ItemStack ist, final EntityPlayer host) {
+            this.bagitem = ist;
+            this.player = host;
+            this.unpackInventory();
+        }
+        
+        private void unpackInventory() {
+            this.items = new ItemStack[27];
+            if (this.bagitem.stackTagCompound != null) {
+                final NBTTagList list = this.bagitem.stackTagCompound.getTagList("contents", 10);
+                for (int i = 0; i < list.tagCount(); ++i) {
+                    final NBTTagCompound item = list.getCompoundTagAt(i);
+                    final byte slt = item.getByte("Slot");
+                    if (slt < 27) {
+                        this.items[slt] = ItemStack.loadItemStackFromNBT(item);
+                    }
+                }
+            }
+        }
+        
+        private void packInventory() {
+            if (this.bagitem.stackTagCompound == null) {
+                this.bagitem.setTagCompound(new NBTTagCompound());
+            }
+            final NBTTagList contents = new NBTTagList();
+            for (int i = 0; i < 27; ++i) {
+                if (this.items[i] != null) {
+                    final NBTTagCompound cpd = new NBTTagCompound();
+                    this.items[i].writeToNBT(cpd);
+                    cpd.setByte("Slot", (byte)i);
+                    contents.appendTag((NBTBase)cpd);
+                }
+            }
+            this.bagitem.stackTagCompound.setTag("contents", (NBTBase)contents);
+        }
+        
+        public int getSizeInventory() {
+            return 27;
+        }
+        
+        public ItemStack getStackInSlot(final int slot) {
+            return this.items[slot];
+        }
+        
+        public ItemStack decrStackSize(final int slot, final int num) {
+            if (this.bagitem != this.player.getHeldItem()) {
+                this.markDirty();
+                this.player.closeScreen();
+                return null;
+            }
+            if (this.items[slot] == null) {
+                return null;
+            }
+            if (this.items[slot].stackSize <= num) {
+                final ItemStack tr = this.items[slot];
+                this.items[slot] = null;
+                this.markDirty();
+                return tr;
+            }
+            final ItemStack tr = this.items[slot].splitStack(num);
+            if (this.items[slot].stackSize == 0) {
+                this.items[slot] = null;
+            }
+            this.markDirty();
+            return tr;
+        }
+        
+        public ItemStack getStackInSlotOnClosing(final int slot) {
+            if (this.items[slot] == null) {
+                return null;
+            }
+            final ItemStack tr = this.items[slot];
+            this.items[slot] = null;
+            return tr;
+        }
+        
+        public void setInventorySlotContents(final int slot, final ItemStack ist) {
+            if (this.bagitem != this.player.getHeldItem()) {
+                this.markDirty();
+                this.player.closeScreen();
+                return;
+            }
+            this.items[slot] = ist;
+            if (ist != null && ist.stackSize > this.getInventoryStackLimit()) {
+                ist.stackSize = this.getInventoryStackLimit();
+            }
+        }
+        
+        public String getInventoryName() {
+            return "item.rpBag.name";
+        }
+        
+        public int getInventoryStackLimit() {
+            return 64;
+        }
+        
+        public void markDirty() {
+            this.packInventory();
+        }
+        
+        public boolean isUseableByPlayer(final EntityPlayer player) {
+            return this.bagitem == this.player.getHeldItem();
+        }
+        
+        public void openInventory() {
+        }
+        
+        public void closeInventory() {
+        }
+        
+        public boolean hasCustomInventoryName() {
+            return false;
+        }
+        
+        public boolean isItemValidForSlot(final int slotID, final ItemStack stack) {
+            return true;
+        }
+    }
 }

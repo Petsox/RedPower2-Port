@@ -1,68 +1,56 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.world.BlockCustomLeaves;
+import net.minecraft.util.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.world.*;
+import net.minecraft.block.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-public class BlockCustomLog extends BlockLog {
-	
-	private String side;
-	private IIcon sideIcon;
-	private String top;
-	private IIcon topIcon;
-	
-	public BlockCustomLog(String side, String top) {
-		super();
-		this.side = side;
-		this.top = top;
-	}
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-    public void registerBlockIcons(IIconRegister register) {
-		this.sideIcon = register.registerIcon(this.side);
-		this.topIcon = register.registerIcon(this.top);
+public class BlockCustomLog extends BlockLog
+{
+    private String side;
+    private IIcon sideIcon;
+    private String top;
+    private IIcon topIcon;
+    
+    public BlockCustomLog(final String side, final String top) {
+        this.side = side;
+        this.top = top;
     }
-	
-	public static int func_150165_c(int p_150165_0_) {
+    
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(final IIconRegister register) {
+        this.sideIcon = register.registerIcon(this.side);
+        this.topIcon = register.registerIcon(this.top);
+    }
+    
+    public static int func_150165_c(final int p_150165_0_) {
         return p_150165_0_;
     }
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-	protected IIcon getSideIcon(int damage) {
-		return this.sideIcon;
-	}
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-	protected IIcon getTopIcon(int damage) {
-		return this.topIcon;
-	}
-	
-	@Override
-	public int damageDropped(int i) {
-		return i == 1 ? 0 : i;
-	}
-	
-	@Override
-	public boolean isWood(IBlockAccess world, int x, int y, int z) {
-		return true;
-	}
-	
-	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int meta) {
-		BlockCustomLeaves.updateLeaves(world, i, j, k, 4);
-	}
-	
-	/*public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this, 1, 0));
-	}*/
+    
+    @SideOnly(Side.CLIENT)
+    protected IIcon getSideIcon(final int damage) {
+        return this.sideIcon;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    protected IIcon getTopIcon(final int damage) {
+        return this.topIcon;
+    }
+    
+    public int damageDropped(final int i) {
+        return (i == 1) ? 0 : i;
+    }
+    
+    public boolean isWood(final IBlockAccess world, final int x, final int y, final int z) {
+        return true;
+    }
+    
+    public void breakBlock(final World world, final int i, final int j, final int k, final Block block, final int meta) {
+        BlockCustomLeaves.updateLeaves(world, i, j, k, 4);
+    }
 }

@@ -1,14 +1,16 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.FluidBuffer;
-
-public interface IPipeConnectable {
-
-   int getPipeConnectableSides();
-
-   int getPipeFlangeSides();
-
-   int getPipePressure(int var1);
-
-   FluidBuffer getPipeBuffer(int var1);
+public interface IPipeConnectable
+{
+    int getPipeConnectableSides();
+    
+    int getPipeFlangeSides();
+    
+    int getPipePressure(final int p0);
+    
+    FluidBuffer getPipeBuffer(final int p0);
 }

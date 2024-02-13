@@ -1,253 +1,278 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.BlockExtended;
-import com.eloraam.redpower.core.BlockMultipart;
-import com.eloraam.redpower.core.CoverLib;
-import com.eloraam.redpower.core.CoverRenderer;
-import com.eloraam.redpower.core.RenderContext;
+import net.minecraft.client.*;
+import cpw.mods.fml.relauncher.*;
+import cpw.mods.fml.common.eventhandler.*;
+import net.minecraftforge.client.event.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.util.*;
+import net.minecraft.item.*;
+import net.minecraft.world.*;
+import net.minecraft.block.*;
+import java.util.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.init.*;
+import net.minecraft.client.renderer.*;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.DestroyBlockProgress;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-
-import org.lwjgl.opengl.GL11;
-
-public class RenderHighlight {
-	
-	RenderContext context = new RenderContext();
-	CoverRenderer coverRenderer;
-	
-	public RenderHighlight() {
-		this.coverRenderer = new CoverRenderer(this.context);
-	}
-	
-	@SubscribeEvent
-	public void highlightEvent(DrawBlockHighlightEvent ev) {
-		this.onBlockHighlight(ev.context, ev.player, ev.target, ev.subID, ev.currentItem, ev.partialTicks);
-	}
-	
-	@SuppressWarnings("rawtypes") //TODO: Костыль...
-	public boolean onBlockHighlight(RenderGlobal renderglobal, EntityPlayer player, MovingObjectPosition mop, int i, ItemStack ist, float f) {
-		World world = player.worldObj;
-		Block bid = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
-		Map dmgBlocks = (HashMap)ReflectionHelper.getPrivateValue(RenderGlobal.class, renderglobal, new String[]{"field_72738_E", "damagedBlocks"});
-		if (!dmgBlocks.isEmpty()) {
-			Iterator plp = dmgBlocks.values().iterator();
-			
-			while (plp.hasNext()) {
-				Object o = plp.next();
-				DestroyBlockProgress drb = (DestroyBlockProgress) o;
-				if (drb.getPartialBlockX() == mop.blockX && drb.getPartialBlockY() == mop.blockY && 
-						drb.getPartialBlockZ() == mop.blockZ) {
-					if (bid instanceof BlockExtended) {
-						this.drawBreaking(player.worldObj, renderglobal, (BlockExtended) bid, player, mop, f, 
-							drb.getPartialBlockDamage());
-						renderglobal.drawSelectionBox(player, mop, i/*, ist*/, f);
-						return true;
-					}
-					break;
-				}
-			}
-		}
-		
-		if (ist != null && CoverLib.blockCoverPlate != null && Block.getBlockFromItem(ist.getItem()) == CoverLib.blockCoverPlate) {
-			if (mop.typeOfHit != MovingObjectType.BLOCK) {
-				return false;
-			} else {
-				MovingObjectPosition plp1;
-				switch (ist.getItemDamage() >> 8) {
-					case 45: //TODO: Может напортачил...
-						this.drawSideBox(world, player, mop, f);
-						plp1 = CoverLib.getPlacement(world, mop, ist.getItemDamage());
-						if (plp1 != null) {
-							this.drawPreview(player, plp1, f, ist.getItemDamage());
-						}
-						break;
-					default:
-						return false;
-					case 38:
-						this.drawCornerBox(world, player, mop, f);
-						plp1 = CoverLib.getPlacement(world, mop, ist.getItemDamage());
-						if (plp1 != null) {
-							this.drawPreview(player, plp1, f, ist.getItemDamage());
-						}
-				}
-				return true;
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	private void setRawPos(EntityPlayer player, MovingObjectPosition mop, float f) {
-		double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * f;
-		double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * f;
-		double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * f;
-		this.context.setPos(mop.blockX - x, mop.blockY - y, mop.blockZ - z);
-	}
-	
-	private void setCollPos(EntityPlayer player, MovingObjectPosition mop, float f) {
-		this.setRawPos(player, mop, f);
-		switch (mop.sideHit) {
-			case 0:
-				this.context.setRelPos(0.0D, mop.hitVec.yCoord - mop.blockY, 0.0D);
-				break;
-			case 1:
-				this.context.setRelPos(0.0D, mop.blockY - mop.hitVec.yCoord + 1.0D, 0.0D);
-				break;
-			case 2:
-				this.context.setRelPos(0.0D, mop.hitVec.zCoord - mop.blockZ, 0.0D);
-				break;
-			case 3:
-				this.context.setRelPos(0.0D, mop.blockZ - mop.hitVec.zCoord + 1.0D, 0.0D);
-				break;
-			case 4:
-				this.context.setRelPos(0.0D, mop.hitVec.xCoord - mop.blockX, 0.0D);
-				break;
-			default:
-				this.context.setRelPos(0.0D, mop.blockX - mop.hitVec.xCoord + 1.0D, 0.0D);
-		}
-	}
-	
-	public void drawCornerBox(World world, EntityPlayer player, MovingObjectPosition mop, float f) {
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.9F);
-		GL11.glLineWidth(3.0F);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glDepthMask(false);
-		float sx = 0.002F;
-		//float sbs = 0.25F;
-		Block bid = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
-		if (bid != Blocks.air) {
-			this.context.setSize(0.0D, (-sx), 0.0D, 1.0D, (-sx), 1.0D);
-			this.context.setupBox();
-			this.context.vertexList[4].set(0.0D, (-sx), 0.5D);
-			this.context.vertexList[5].set(1.0D, (-sx), 0.5D);
-			this.context.vertexList[6].set(0.5D, (-sx), 0.0D);
-			this.context.vertexList[7].set(0.5D, (-sx), 1.0D);
-			this.context.setOrientation(mop.sideHit, 0);
-			this.setCollPos(player, mop, f);
-			this.context.transformRotate();
-			Tessellator.instance.startDrawing(3);
-			this.context.drawPoints(new int[] { 0, 1, 2, 3, 0 });
-			Tessellator.instance.draw();
-			Tessellator.instance.startDrawing(1);
-			this.context.drawPoints(new int[] { 4, 5, 6, 7 });
-			Tessellator.instance.draw();
-		}
-		
-		GL11.glDepthMask(true);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
-		this.context.setRelPos(0.0D, 0.0D, 0.0D);
-	}
-	
-	public void drawSideBox(World world, EntityPlayer player, MovingObjectPosition mop, float f) {
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.9F);
-		GL11.glLineWidth(3.0F);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glDepthMask(false);
-		float sx = 0.002F;
-		float sbs = 0.25F;
-		Block bid = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
-		if (bid != Blocks.air) {
-			this.context.setSize(0.0D, (-sx), 0.0D, 1.0D, (-sx), 1.0D);
-			this.context.setupBox();
-			this.context.vertexList[4].set(1.0F - sbs, (-sx), sbs);
-			this.context.vertexList[5].set(sbs, (-sx), sbs);
-			this.context.vertexList[6].set(sbs, (-sx), 1.0F - sbs);
-			this.context.vertexList[7].set(1.0F - sbs, (-sx), 1.0F - sbs);
-			this.context.setOrientation(mop.sideHit, 0);
-			this.setCollPos(player, mop, f);
-			this.context.transformRotate();
-			Tessellator.instance.startDrawing(3);
-			this.context.drawPoints(new int[] { 0, 1, 2, 3, 0 });
-			Tessellator.instance.draw();
-			Tessellator.instance.startDrawing(3);
-			this.context.drawPoints(new int[] { 4, 5, 6, 7, 4 });
-			Tessellator.instance.draw();
-			Tessellator.instance.startDrawing(1);
-			this.context.drawPoints(new int[] { 0, 4, 1, 5, 2, 6, 3, 7 });
-			Tessellator.instance.draw();
-		}
-		
-		GL11.glDepthMask(true);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
-		this.context.setRelPos(0.0D, 0.0D, 0.0D);
-	}
-	
-	public void drawBreaking(World world, RenderGlobal rg, BlockExtended bex, EntityPlayer player, 
-			MovingObjectPosition mop, float f, int dmg) {
-		if (bex instanceof BlockMultipart) {
-			BlockMultipart j = (BlockMultipart) bex;
-			j.setPartBounds(world, mop.blockX, mop.blockY, mop.blockZ, mop.subHit);
-		}
-		
-		GL11.glEnable(3042);
-	    GL11.glBlendFunc(774, 768);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-		GL11.glPolygonOffset(-3.0F, -3.0F);
-		GL11.glEnable('\u8037');
-		double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * f;
-		double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * f;
-		double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * f;
-		GL11.glEnable(3008);
-		this.context.setPos(mop.blockX - x, mop.blockY - y, mop.blockZ - z);
-		//TODO: Hook to get destroying icons
-		IIcon[] destroyIcons = ReflectionHelper.getPrivateValue(RenderGlobal.class, Minecraft.getMinecraft().renderGlobal, new String[] { "destroyBlockIcons", "field_94141_F" });
-		this.context.setIcon(destroyIcons[dmg]);
-		Tessellator.instance.startDrawingQuads();
-		this.context.setSize(bex.getBlockBoundsMinX(), bex.getBlockBoundsMinY(), bex.getBlockBoundsMinZ(),
-			bex.getBlockBoundsMaxX(), bex.getBlockBoundsMaxY(), bex.getBlockBoundsMaxZ());
-		this.context.setupBox();
-		this.context.transform();
-		this.context.renderFaces(63);
-		Tessellator.instance.draw();
-		GL11.glPolygonOffset(0.0F, 0.0F);
-		GL11.glDisable('\u8037');
-	}
-	
-	public void drawPreview(EntityPlayer player, MovingObjectPosition mop, float f, int item) {
-		this.setRawPos(player, mop, f);
-		this.coverRenderer.start();
-		this.coverRenderer.setupCorners();
-		this.coverRenderer.setSize(mop.subHit, CoverLib.getThickness(mop.subHit, CoverLib.damageToCoverValue(item)));
-		this.context.setIcon(CoverLib.coverIcons[item & 255]);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, 1);
-		GL11.glDepthMask(false);
-		GL11.glPolygonOffset(-3.0F, -3.0F);
-		GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-		Tessellator.instance.startDrawingQuads();
-		this.context.setupBox();
-		this.context.transform();
-		this.context.doMappingBox(63);
-		this.context.doLightLocal(63);
-		this.context.renderAlpha(63, 0.8F);
-		Tessellator.instance.draw();
-		GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
-		GL11.glDepthMask(true);
-		GL11.glDisable(GL11.GL_BLEND);
-	}
+@SideOnly(Side.CLIENT)
+public class RenderHighlight
+{
+    private RenderContext context;
+    private CoverRenderer coverRenderer;
+    private IIcon[] destroyIcons;
+    
+    public RenderHighlight() {
+        this.context = new RenderContext();
+        this.coverRenderer = new CoverRenderer(this.context);
+    }
+    
+    @SubscribeEvent
+    public void onTextureStitchEventPost(final TextureStitchEvent.Post evt) {
+        if (evt.map.getTextureType() == 0) {
+            CoverRenderer.reInitIcons();
+        }
+        this.destroyIcons = (IIcon[])ReflectionHelper.getPrivateValue((Class)RenderGlobal.class, (Object)Minecraft.getMinecraft().renderGlobal, new String[] { "destroyBlockIcons", "destroyBlockIcons" });
+    }
+    
+    @SubscribeEvent
+    public void highlightEvent(final DrawBlockHighlightEvent evt) {
+        this.onBlockHighlight(evt.context, evt.player, evt.target, evt.subID, evt.currentItem, evt.partialTicks);
+    }
+    
+    public boolean onBlockHighlight(final RenderGlobal render, final EntityPlayer pl, final MovingObjectPosition mop, final int subID, final ItemStack ist, final float partialTicks) {
+        final World world = pl.worldObj;
+        final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
+        final Map<Integer, DestroyBlockProgress> damagedBlocks = (Map<Integer, DestroyBlockProgress>)ReflectionHelper.getPrivateValue((Class)RenderGlobal.class, (Object)render, new String[] { "damagedBlocks", "damagedBlocks" });
+        if (bl instanceof BlockMultipart) {
+            final BlockMultipart bm = (BlockMultipart)bl;
+            bm.setPartBounds(pl.worldObj, mop.blockX, mop.blockY, mop.blockZ, mop.subHit);
+        }
+        if (!damagedBlocks.isEmpty()) {
+            for (final DestroyBlockProgress dbp : damagedBlocks.values()) {
+                if (dbp.getPartialBlockX() == mop.blockX && dbp.getPartialBlockY() == mop.blockY && dbp.getPartialBlockZ() == mop.blockZ) {
+                    if (bl instanceof BlockExtended) {
+                        this.drawBreaking(pl.worldObj, render, (BlockExtended)bl, pl, mop, partialTicks, dbp.getPartialBlockDamage());
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        if (ist == null || CoverLib.blockCoverPlate == null || ist.getItem() != Item.getItemFromBlock(CoverLib.blockCoverPlate)) {
+            return false;
+        }
+        if (mop.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
+            return false;
+        }
+        switch (ist.getItemDamage() >> 8) {
+            case 0:
+            case 16:
+            case 17:
+            case 21:
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+            case 31:
+            case 32:
+            case 33:
+            case 34:
+            case 39:
+            case 40:
+            case 41:
+            case 42:
+            case 43:
+            case 44:
+            case 45: {
+                this.drawSideBox(world, pl, mop, partialTicks);
+                final MovingObjectPosition placement = CoverLib.getPlacement(world, mop, ist.getItemDamage());
+                if (placement != null) {
+                    this.drawPreview(pl, placement, partialTicks, ist.getItemDamage());
+                    break;
+                }
+                break;
+            }
+            case 18:
+            case 19:
+            case 20:
+            case 35:
+            case 36:
+            case 37:
+            case 38: {
+                this.drawCornerBox(world, pl, mop, partialTicks);
+                final MovingObjectPosition placement = CoverLib.getPlacement(world, mop, ist.getItemDamage());
+                if (placement != null) {
+                    this.drawPreview(pl, placement, partialTicks, ist.getItemDamage());
+                    break;
+                }
+                break;
+            }
+            default: {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private void setRawPos(final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
+        final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+        final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+        final double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+        this.context.setPos(mop.blockX - dx, mop.blockY - dy, mop.blockZ - dz);
+    }
+    
+    private void setCollPos(final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
+        this.setRawPos(player, mop, partialTicks);
+        switch (mop.sideHit) {
+            case 0: {
+                this.context.setRelPos(0.0, mop.hitVec.yCoord - mop.blockY, 0.0);
+                break;
+            }
+            case 1: {
+                this.context.setRelPos(0.0, mop.blockY - mop.hitVec.yCoord + 1.0, 0.0);
+                break;
+            }
+            case 2: {
+                this.context.setRelPos(0.0, mop.hitVec.zCoord - mop.blockZ, 0.0);
+                break;
+            }
+            case 3: {
+                this.context.setRelPos(0.0, mop.blockZ - mop.hitVec.zCoord + 1.0, 0.0);
+                break;
+            }
+            case 4: {
+                this.context.setRelPos(0.0, mop.hitVec.xCoord - mop.blockX, 0.0);
+                break;
+            }
+            default: {
+                this.context.setRelPos(0.0, mop.blockX - mop.hitVec.xCoord + 1.0, 0.0);
+                break;
+            }
+        }
+    }
+    
+    public void drawCornerBox(final World world, final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
+        GL11.glEnable(3042);
+        GL11.glBlendFunc(770, 771);
+        GL11.glColor4f(0.0f, 0.0f, 0.0f, 0.9f);
+        GL11.glLineWidth(3.0f);
+        GL11.glDisable(3553);
+        GL11.glDepthMask(false);
+        final float var5 = 0.002f;
+        final float var6 = 0.25f;
+        final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
+        if (bl != Blocks.air) {
+            this.context.setSize(0.0, (double)(-var5), 0.0, 1.0, (double)(-var5), 1.0);
+            this.context.setupBox();
+            this.context.vertices[4].set(0.0, -var5, 0.5);
+            this.context.vertices[5].set(1.0, -var5, 0.5);
+            this.context.vertices[6].set(0.5, -var5, 0.0);
+            this.context.vertices[7].set(0.5, -var5, 1.0);
+            this.context.setOrientation(mop.sideHit, 0);
+            this.setCollPos(player, mop, partialTicks);
+            this.context.transformRotate();
+            Tessellator.instance.startDrawing(3);
+            this.context.drawPoints(new int[] { 0, 1, 2, 3, 0 });
+            Tessellator.instance.draw();
+            Tessellator.instance.startDrawing(1);
+            this.context.drawPoints(new int[] { 4, 5, 6, 7 });
+            Tessellator.instance.draw();
+        }
+        GL11.glDepthMask(true);
+        GL11.glEnable(3553);
+        GL11.glDisable(3042);
+        this.context.setRelPos(0.0, 0.0, 0.0);
+    }
+    
+    public void drawSideBox(final World world, final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
+        GL11.glEnable(3042);
+        GL11.glBlendFunc(770, 771);
+        GL11.glColor4f(0.0f, 0.0f, 0.0f, 0.9f);
+        GL11.glLineWidth(3.0f);
+        GL11.glDisable(3553);
+        GL11.glDepthMask(false);
+        final float var5 = 0.002f;
+        final float var6 = 0.25f;
+        final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
+        if (bl != Blocks.air) {
+            this.context.setSize(0.0, (double)(-var5), 0.0, 1.0, (double)(-var5), 1.0);
+            this.context.setupBox();
+            this.context.vertices[4].set(1.0f - var6, -var5, var6);
+            this.context.vertices[5].set(var6, -var5, var6);
+            this.context.vertices[6].set(var6, -var5, 1.0f - var6);
+            this.context.vertices[7].set(1.0f - var6, -var5, 1.0f - var6);
+            this.context.setOrientation(mop.sideHit, 0);
+            this.setCollPos(player, mop, partialTicks);
+            this.context.transformRotate();
+            Tessellator.instance.startDrawing(3);
+            this.context.drawPoints(new int[] { 0, 1, 2, 3, 0 });
+            Tessellator.instance.draw();
+            Tessellator.instance.startDrawing(3);
+            this.context.drawPoints(new int[] { 4, 5, 6, 7, 4 });
+            Tessellator.instance.draw();
+            Tessellator.instance.startDrawing(1);
+            this.context.drawPoints(new int[] { 0, 4, 1, 5, 2, 6, 3, 7 });
+            Tessellator.instance.draw();
+        }
+        GL11.glDepthMask(true);
+        GL11.glEnable(3553);
+        GL11.glDisable(3042);
+        this.context.setRelPos(0.0, 0.0, 0.0);
+    }
+    
+    public void drawBreaking(final World world, final RenderGlobal render, final BlockExtended bl, final EntityPlayer pl, final MovingObjectPosition mop, final float partialTicks, final int destroyStage) {
+        GL11.glEnable(3042);
+        GL11.glBlendFunc(774, 768);
+        this.context.bindBlockTexture();
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        GL11.glPolygonOffset(-3.0f, -3.0f);
+        GL11.glEnable(32823);
+        final double dx = pl.lastTickPosX + (pl.posX - pl.lastTickPosX) * partialTicks;
+        final double dy = pl.lastTickPosY + (pl.posY - pl.lastTickPosY) * partialTicks;
+        final double dz = pl.lastTickPosZ + (pl.posZ - pl.lastTickPosZ) * partialTicks;
+        GL11.glEnable(3008);
+        this.context.setPos(mop.blockX - dx, mop.blockY - dy, mop.blockZ - dz);
+        this.context.setIcon(this.destroyIcons[destroyStage]);
+        Tessellator.instance.startDrawingQuads();
+        this.context.setSize(bl.getBlockBoundsMinX(), bl.getBlockBoundsMinY(), bl.getBlockBoundsMinZ(), bl.getBlockBoundsMaxX(), bl.getBlockBoundsMaxY(), bl.getBlockBoundsMaxZ());
+        this.context.setupBox();
+        this.context.transform();
+        this.context.renderFaces(63);
+        Tessellator.instance.draw();
+        GL11.glPolygonOffset(0.0f, 0.0f);
+        GL11.glDisable(32823);
+    }
+    
+    public void drawPreview(final EntityPlayer pl, final MovingObjectPosition mop, final float partialTicks, final int md) {
+        this.setRawPos(pl, mop, partialTicks);
+        this.context.bindBlockTexture();
+        this.coverRenderer.start();
+        this.coverRenderer.setupCorners();
+        this.coverRenderer.setSize(mop.subHit, CoverLib.getThickness(mop.subHit, CoverLib.damageToCoverValue(md)));
+        this.context.setIcon(CoverRenderer.coverIcons[md & 0xFF]);
+        GL11.glEnable(3042);
+        GL11.glBlendFunc(770, 1);
+        GL11.glDepthMask(false);
+        GL11.glPolygonOffset(-3.0f, -3.0f);
+        GL11.glEnable(32823);
+        Tessellator.instance.startDrawingQuads();
+        this.context.setupBox();
+        this.context.transform();
+        this.context.doMappingBox(63);
+        this.context.doLightLocal(63);
+        this.context.renderAlpha(63, 0.8f);
+        Tessellator.instance.draw();
+        GL11.glDisable(32823);
+        GL11.glDepthMask(true);
+        GL11.glDisable(3042);
+    }
 }

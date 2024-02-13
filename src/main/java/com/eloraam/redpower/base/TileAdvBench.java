@@ -1,194 +1,172 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.base;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.base.TileAppliance;
-import com.eloraam.redpower.core.CoreLib;
+import net.minecraft.inventory.*;
+import net.minecraft.item.*;
+import net.minecraft.entity.player.*;
+import com.eloraam.redpower.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.tileentity.*;
+import net.minecraft.nbt.*;
+import java.util.stream.*;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.StatCollector;
-
-public class TileAdvBench extends TileAppliance implements IInventory, ISidedInventory {
-	
-	private ItemStack[] contents = new ItemStack[28];
-	
-	@Override
-	public int getExtendedID() {
-		return 3;
-	}
-	
-	@Override
-	public boolean canUpdate() { //TODO IN MASS AMOUNT CAN CAUSE TPS DROP :(
-		return true;
-	}
-	
-	@Override
-	public boolean onBlockActivated(EntityPlayer player) {
-		if (player.isSneaking()) {
-			return false;
-		} else if (CoreLib.isClient(super.worldObj)) {
-			return true;
-		} else {
-			player.openGui(RedPowerBase.instance, 2, super.worldObj, super.xCoord, super.yCoord, super.zCoord);
-			return true;
-		}
-	}
-	
-	@Override
-	public void onBlockPlaced(ItemStack ist, int side, EntityLivingBase ent) {
-		super.Rotation = (int) Math.floor(ent.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-		this.sendPacket();
-		this.markDirty();
-	}
-	
-	@Override
-	public void onBlockRemoval() {
-		for (int i = 0; i < 27; ++i) {
-			ItemStack ist = this.contents[i];
-			if (ist != null && ist.stackSize > 0) {
-				CoreLib.dropItem(super.worldObj, super.xCoord, super.yCoord, super.zCoord, ist);
-			}
-		}
-	}
-	
-	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		return new int[]{10, 11, 12, 13, 14, 15, 16, 17, 18}; //TODO x2 maybe if needed
-	}
-	
-	@Override
-	public int getSizeInventory() {
-		return 28;
-	}
-	
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return this.contents[i];
-	}
-	
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		if (this.contents[i] == null) {
-			return null;
-		} else {
-			ItemStack tr;
-			if (this.contents[i].stackSize <= j) {
-				tr = this.contents[i];
-				this.contents[i] = null;
-				this.markDirty();
-				return tr;
-			} else {
-				tr = this.contents[i].splitStack(j);
-				if (this.contents[i].stackSize == 0) {
-					this.contents[i] = null;
-				}
-				
-				this.markDirty();
-				return tr;
-			}
-		}
-	}
-	
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		if (this.contents[i] == null) {
-			return null;
-		} else {
-			ItemStack ist = this.contents[i];
-			this.contents[i] = null;
-			return ist;
-		}
-	}
-	
-	@Override
-	public void setInventorySlotContents(int i, ItemStack ist) {
-		this.contents[i] = ist;
-		if (ist != null && ist.stackSize > this.getInventoryStackLimit()) {
-			ist.stackSize = this.getInventoryStackLimit();
-		}
-		this.markDirty();
-	}
-	
-	@Override
-	public String getInventoryName() {
-		return StatCollector.translateToLocal("tile.ProjectTable.name");
-	}
-	
-	@Override
-	public int getInventoryStackLimit() {
-		return 64;
-	}
-	
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		TileEntity tile = super.worldObj.getTileEntity(super.xCoord, super.yCoord, super.zCoord);
-		return tile != this || tile == null || tile.isInvalid() ? false : 
-			player.getDistanceSq(super.xCoord + 0.5D, super.yCoord + 0.5D, super.zCoord + 0.5D) <= 64.0D;
-	}
-	
-	@Override
-	public void closeInventory() {
-	}
-	
-	@Override
-	public void openInventory() {
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-		NBTTagList items = nbttagcompound.getTagList("Items", 10); //TODO:  Look on this
-		this.contents = new ItemStack[this.getSizeInventory()];
-		
-		for (int i = 0; i < items.tagCount(); ++i) {
-			NBTTagCompound item = (NBTTagCompound) items.getCompoundTagAt(i);
-			int j = item.getByte("Slot") & 255;
-			if (j >= 0 && j < this.contents.length) {
-				this.contents[j] = ItemStack.loadItemStackFromNBT(item);
-			}
-		}
-		this.markDirty();
-	}
-	
-	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-		NBTTagList items = new NBTTagList();
-		
-		for (int i = 0; i < this.contents.length; ++i) {
-			if (this.contents[i] != null) {
-				NBTTagCompound item = new NBTTagCompound();
-				item.setByte("Slot", (byte) i);
-				this.contents[i].writeToNBT(item);
-				items.appendTag(item);
-			}
-		}
-		nbttagcompound.setTag("Items", items);
-	}
-
-	@Override
-	public boolean canInsertItem(int slotID, ItemStack itemStack, int side) {
-		return slotID >= 10 && slotID <= 18;
-	}
-
-	@Override
-	public boolean canExtractItem(int slotID, ItemStack itemStack, int side) {
-		return slotID >= 10 && slotID <= 18;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return true;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slotID, ItemStack itemStack) {
-		return true;
-	}
+public class TileAdvBench extends TileAppliance implements ISidedInventory
+{
+    private ItemStack[] contents;
+    
+    public TileAdvBench() {
+        this.contents = new ItemStack[28];
+    }
+    
+    public int getExtendedID() {
+        return 3;
+    }
+    
+    public boolean canUpdate() {
+        return true;
+    }
+    
+    public boolean onBlockActivated(final EntityPlayer player) {
+        if (player.isSneaking()) {
+            return false;
+        }
+        if (!this.worldObj.isRemote) {
+            player.openGui((Object)RedPowerBase.instance, 2, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+        }
+        return true;
+    }
+    
+    public void onBlockRemoval() {
+        for (int i = 0; i < 27; ++i) {
+            final ItemStack ist = this.contents[i];
+            if (ist != null && ist.stackSize > 0) {
+                CoreLib.dropItem(this.worldObj, this.xCoord, this.yCoord, this.zCoord, ist);
+            }
+        }
+    }
+    
+    public int getSizeInventory() {
+        return 28;
+    }
+    
+    public ItemStack getStackInSlot(final int i) {
+        return this.contents[i];
+    }
+    
+    public ItemStack decrStackSize(final int i, final int j) {
+        if (this.contents[i] == null) {
+            return null;
+        }
+        if (this.contents[i].stackSize <= j) {
+            final ItemStack tr = this.contents[i];
+            this.contents[i] = null;
+            this.markDirty();
+            return tr;
+        }
+        final ItemStack tr = this.contents[i].splitStack(j);
+        if (this.contents[i].stackSize == 0) {
+            this.contents[i] = null;
+        }
+        this.markDirty();
+        return tr;
+    }
+    
+    public ItemStack getStackInSlotOnClosing(final int i) {
+        if (this.contents[i] == null) {
+            return null;
+        }
+        final ItemStack ist = this.contents[i];
+        this.contents[i] = null;
+        return ist;
+    }
+    
+    public void setInventorySlotContents(final int i, final ItemStack ist) {
+        this.contents[i] = ist;
+        if (ist != null && ist.stackSize > this.getInventoryStackLimit()) {
+            ist.stackSize = this.getInventoryStackLimit();
+        }
+        this.markDirty();
+    }
+    
+    public String getInventoryName() {
+        return "tile.rpabench.name";
+    }
+    
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+    
+    public boolean isUseableByPlayer(final EntityPlayer player) {
+        final TileEntity tile = this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord);
+        return tile == this && tile != null && !tile.isInvalid() && player.getDistanceSq(this.xCoord + 0.5, this.yCoord + 0.5, this.zCoord + 0.5) <= 64.0;
+    }
+    
+    public void closeInventory() {
+    }
+    
+    public void openInventory() {
+    }
+    
+    @Override
+    public void readFromNBT(final NBTTagCompound data) {
+        super.readFromNBT(data);
+        final NBTTagList items = data.getTagList("Items", 10);
+        this.contents = new ItemStack[this.getSizeInventory()];
+        for (int i = 0; i < items.tagCount(); ++i) {
+            final NBTTagCompound item = items.getCompoundTagAt(i);
+            final int j = item.getByte("Slot") & 0xFF;
+            if (j >= 0 && j < this.contents.length) {
+                this.contents[j] = ItemStack.loadItemStackFromNBT(item);
+            }
+        }
+        this.markDirty();
+    }
+    
+    @Override
+    public void writeToNBT(final NBTTagCompound data) {
+        super.writeToNBT(data);
+        final NBTTagList items = new NBTTagList();
+        for (int i = 0; i < this.contents.length; ++i) {
+            if (this.contents[i] != null) {
+                final NBTTagCompound item = new NBTTagCompound();
+                item.setByte("Slot", (byte)i);
+                this.contents[i].writeToNBT(item);
+                items.appendTag((NBTBase)item);
+            }
+        }
+        data.setTag("Items", (NBTBase)items);
+    }
+    
+    public int[] getAccessibleSlotsFromSide(final int side) {
+        switch (side) {
+            case 1: {
+                return IntStream.range(0, 9).toArray();
+            }
+            default: {
+                if (side != (this.Rotation ^ 0x1)) {
+                    return IntStream.range(10, 28).toArray();
+                }
+                return new int[0];
+            }
+        }
+    }
+    
+    public boolean canInsertItem(final int slotID, final ItemStack itemStack, final int side) {
+        return side != (this.Rotation ^ 0x1) && slotID >= 0 && slotID < 28 && slotID != 9;
+    }
+    
+    public boolean canExtractItem(final int slotID, final ItemStack itemStack, final int side) {
+        return side == 0 && slotID >= 10 && slotID < 28;
+    }
+    
+    public boolean hasCustomInventoryName() {
+        return false;
+    }
+    
+    public boolean isItemValidForSlot(final int slotID, final ItemStack stack) {
+        return slotID != 9 || stack.getItem() == RedPowerBase.itemPlanBlank || stack.getItem() == RedPowerBase.itemPlanFull;
+    }
 }

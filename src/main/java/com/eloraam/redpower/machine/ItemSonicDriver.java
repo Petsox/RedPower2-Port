@@ -1,34 +1,33 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.base.ItemScrewdriver;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.IChargeable;
+import com.eloraam.redpower.base.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.item.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.world.*;
+import com.google.common.collect.*;
+import net.minecraft.entity.*;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-
-public class ItemSonicDriver extends ItemScrewdriver implements IChargeable {
-	
-	public ItemSonicDriver() {
-		this.setMaxDamage(400);
-		this.setNoRepair();
-	}
-	
-	@Override
-	public boolean onItemUseFirst(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l, float xp, float yp, float zp) {
-		return CoreLib.isClient(world) ? false : (ist.getItemDamage() == ist .getMaxDamage() ? false : super.onItemUseFirst(ist, player, world, i, j, k, l, xp, yp, zp));
-	}
-	
-	@Override
-	public int getDamageVsEntity(Entity entity) {
-		return 1;
-	}
-	
-	@Override
-	public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving player) {
-		return false;
-	}
+public class ItemSonicDriver extends ItemScrewdriver implements IChargeable
+{
+    public ItemSonicDriver() {
+        this.setMaxDamage(400);
+        this.setNoRepair();
+    }
+    
+    public boolean onItemUseFirst(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float xp, final float yp, final float zp) {
+        return !world.isRemote && ist.getItemDamage() != ist.getMaxDamage() && super.onItemUseFirst(ist, player, world, x, y, z, side, xp, yp, zp);
+    }
+    
+    public Multimap getAttributeModifiers(final ItemStack stack) {
+        return (Multimap)HashMultimap.create();
+    }
+    
+    public boolean hitEntity(final ItemStack ist, final EntityLivingBase ent, final EntityLivingBase hitter) {
+        return false;
+    }
 }

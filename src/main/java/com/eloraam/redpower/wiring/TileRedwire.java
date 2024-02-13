@@ -1,130 +1,113 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.wiring;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.IRedPowerWiring;
-import com.eloraam.redpower.core.RedPowerLib;
-import com.eloraam.redpower.wiring.TileWiring;
+import net.minecraft.world.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.nbt.*;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-
-import net.minecraft.nbt.NBTTagCompound;
-
-public class TileRedwire extends TileWiring implements IRedPowerWiring {
-	
-	public short PowerState = 0;
-	
-	@Override
-	public int getExtendedID() {
-		return 1;
-	}
-	
-	@Override
-	public boolean isBlockStrongPoweringTo(int side) {
-		if (RedPowerLib.isSearching()) {
-			return false;
-		} else {
-			int dir = 15 << ((side ^ 1) << 2);
-			dir &= this.getConnectableMask();
-			return dir == 0 ? false : this.PowerState > 0;
-		}
-	}
-	
-	@Override
-	public boolean isBlockWeakPoweringTo(int side) {
-		if (RedPowerLib.isSearching()) {
-			return false;
-		} else {
-			int dir = 15 << ((side ^ 1) << 2);
-			dir |= RedPowerLib.getConDirMask(side ^ 1);
-			dir &= this.getConnectableMask();
-			return dir == 0 ? false : (RedPowerLib.isBlockRedstone(
-				super.worldObj, super.xCoord, super.yCoord, super.zCoord, side ^ 1) ? 
-					this.PowerState > 15 : this.PowerState > 0);
-		}
-	}
-	
-	@Override
-	public int getConnectClass(int side) {
-		return 1;
-	}
-	
-	@Override
-	public int getConnectableMask() {
-		if (super.ConaMask >= 0) {
-			return super.ConaMask;
-		} else {
-			int tr = super.getConnectableMask();
-			if ((super.ConSides & 1) > 0) {
-				tr |= 0x1000000;
-			}
-			if ((super.ConSides & 2) > 0) {
-				tr |= 0x2000000;
-			}
-			if ((super.ConSides & 4) > 0) {
-				tr |= 0x4000000;
-			}
-			if ((super.ConSides & 8) > 0) {
-				tr |= 0x8000000;
-			}
-			if ((super.ConSides & 16) > 0) {
-				tr |= 0x10000000;
-			}
-			if ((super.ConSides & 32) > 0) {
-				tr |= 0x20000000;
-			}
-			super.ConaMask = tr;
-			return tr;
-		}
-	}
-	
-	@Override
-	public int getCurrentStrength(int cons, int ch) {
-		return ch != 0 ? -1 : ((cons & this.getConnectableMask()) == 0 ? -1 : this.PowerState);
-	}
-	
-	@Override
-	public int scanPoweringStrength(int cons, int ch) {
-		return ch != 0 ? 0 : 
-			(RedPowerLib.isPowered(super.worldObj, super.xCoord, super.yCoord, super.zCoord, cons, super.ConSides) ? 
-				255 : 0);
-	}
-	
-	@Override
-	public void updateCurrentStrength() {
-		this.PowerState = (short) RedPowerLib.updateBlockCurrentStrength(
-			super.worldObj, this, super.xCoord, super.yCoord, super.zCoord, 0x3FFFFFFF, 1);
-		CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
-	}
-	
-	@Override
-	public int getPoweringMask(int ch) {
-		return ch == 0 && this.PowerState != 0 ? this.getConnectableMask() : 0;
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-		this.PowerState = /*(short) (*/nbttagcompound./*getByte*/getShort("pwr")/* & 255)*/;
-	}
-	
-	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-		nbttagcompound./*setByte*/setShort("pwr", /*(byte) */this.PowerState);
-	}
-	
-	@Override
-	protected void readFromPacket(ByteBuf buffer) {
-		super.readFromPacket(buffer);
-		this.PowerState = (short)buffer.readInt();
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	protected void writeToPacket(ArrayList data) {
-		super.writeToPacket(data);
-		data.add((int)this.PowerState);
-	}
+public class TileRedwire extends TileWiring implements IRedPowerWiring
+{
+    public short PowerState;
+    
+    public TileRedwire() {
+        this.PowerState = 0;
+    }
+    
+    public int getExtendedID() {
+        return 1;
+    }
+    
+    public boolean isBlockStrongPoweringTo(final int side) {
+        if (RedPowerLib.isSearching()) {
+            return false;
+        }
+        int dir = 15 << ((side ^ 0x1) << 2);
+        dir &= this.getConnectableMask();
+        return dir != 0 && this.PowerState > 0;
+    }
+    
+    public boolean isBlockWeakPoweringTo(final int side) {
+        if (RedPowerLib.isSearching()) {
+            return false;
+        }
+        int dir = 15 << ((side ^ 0x1) << 2);
+        dir |= RedPowerLib.getConDirMask(side ^ 0x1);
+        dir &= this.getConnectableMask();
+        return dir != 0 && (RedPowerLib.isBlockRedstone((IBlockAccess)super.worldObj, super.xCoord, super.yCoord, super.zCoord, side ^ 0x1) ? (this.PowerState > 15) : (this.PowerState > 0));
+    }
+    
+    public int getConnectClass(final int side) {
+        return 1;
+    }
+    
+    @Override
+    public int getConnectableMask() {
+        if (super.ConaMask >= 0) {
+            return super.ConaMask;
+        }
+        int tr = super.getConnectableMask();
+        if ((super.ConSides & 0x1) > 0) {
+            tr |= 0x1000000;
+        }
+        if ((super.ConSides & 0x2) > 0) {
+            tr |= 0x2000000;
+        }
+        if ((super.ConSides & 0x4) > 0) {
+            tr |= 0x4000000;
+        }
+        if ((super.ConSides & 0x8) > 0) {
+            tr |= 0x8000000;
+        }
+        if ((super.ConSides & 0x10) > 0) {
+            tr |= 0x10000000;
+        }
+        if ((super.ConSides & 0x20) > 0) {
+            tr |= 0x20000000;
+        }
+        return super.ConaMask = tr;
+    }
+    
+    public int getCurrentStrength(final int cons, final int ch) {
+        return (ch != 0) ? -1 : (((cons & this.getConnectableMask()) == 0x0) ? -1 : this.PowerState);
+    }
+    
+    public int scanPoweringStrength(final int cons, final int ch) {
+        return (ch != 0) ? 0 : (RedPowerLib.isPowered((IBlockAccess)super.worldObj, super.xCoord, super.yCoord, super.zCoord, cons, super.ConSides) ? 255 : 0);
+    }
+    
+    public void updateCurrentStrength() {
+        this.PowerState = (short)RedPowerLib.updateBlockCurrentStrength(super.worldObj, (IRedPowerWiring)this, super.xCoord, super.yCoord, super.zCoord, 1073741823, 1);
+        CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
+    }
+    
+    public int getPoweringMask(final int ch) {
+        return (ch == 0 && this.PowerState != 0) ? this.getConnectableMask() : 0;
+    }
+    
+    @Override
+    public void readFromNBT(final NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.PowerState = (short)(data.getByte("pwr") & 0xFF);
+    }
+    
+    @Override
+    public void writeToNBT(final NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setByte("pwr", (byte)this.PowerState);
+    }
+    
+    @Override
+    protected void readFromPacket(final NBTTagCompound data) {
+        super.readFromPacket(data);
+        this.PowerState = (short)(data.getByte("pwr") & 0xFF);
+    }
+    
+    @Override
+    protected void writeToPacket(final NBTTagCompound data) {
+        super.writeToPacket(data);
+        data.setByte("pwr", (byte)this.PowerState);
+    }
 }

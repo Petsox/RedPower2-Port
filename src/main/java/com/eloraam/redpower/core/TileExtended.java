@@ -1,172 +1,178 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.RedPowerCore;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RedPowerLib;
+import net.minecraft.tileentity.*;
+import com.mojang.authlib.*;
+import net.minecraft.block.*;
+import net.minecraft.item.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.entity.*;
+import net.minecraft.util.*;
+import java.util.*;
+import net.minecraft.nbt.*;
+import net.minecraft.network.play.server.*;
+import net.minecraft.network.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
-
-public abstract class TileExtended extends TileEntity implements INetworkDataProvider {
-	
-	protected long timeSched = -1L;
-	protected int updateRange = 16;
-	protected int updateDelay = 1 * 20;
-
-	public int Rotation = 0;
-	
-	public void onBlockNeighborChange(Block block) {
-	}
-	
-	public void onBlockPlaced(ItemStack ist, int side, EntityLivingBase ent) {
-		this.Rotation = MathHelper.floor_double((double)(ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-		this.sendPacket();
-		this.markDirty();
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void sendPacket() {
-		if(this != null && !this.worldObj.isRemote) {
-			RedPowerCore.packetHandler.sendToReceivers(new PacketTileEntityUpdate.TileEntityMessage(DimCoord.get(this), getNetworkedData(new ArrayList())), Range4D.getChunkRange(this));
-		}
-	}
-	
-	public void onBlockRemoval() {
-	}
-	
-	public boolean isBlockStrongPoweringTo(int side) {
-		return false;
-	}
-	
-	public boolean isBlockWeakPoweringTo(int side) {
-		return this.isBlockStrongPoweringTo(side);
-	}
-	
-	public boolean onBlockActivated(EntityPlayer player) {
-		this.sendPacket();
-		return false;
-	}
-	
-	public void onEntityCollidedWithBlock(Entity ent) {
-	}
-	
-	public AxisAlignedBB getCollisionBoundingBox() {
-		return null;
-	}
-	
-	public void onTileTick() {
-	}
-	
-	public int getExtendedID() {
-		return 0;
-	}
-	
-	public int getExtendedMetadata() {
-		return 0;
-	}
-	
-	public void setExtendedMetadata(int md) {
-	}
-	
-	public void addHarvestContents(List<ItemStack> ist) {
-		ist.add(new ItemStack(this.getBlockType(), 1, this.getExtendedID()));
-	}
-	
-	public void scheduleTick(int time) {
-		long tn = super.worldObj.getWorldTime() + time;
-		if (this.timeSched <= 0L || this.timeSched >= tn) {
-			this.timeSched = tn;
-			this.dirtyBlock();
-		}
-	}
-	
-	public boolean isTickRunnable() {
-		return this.timeSched >= 0L && this.timeSched <= super.worldObj.getWorldTime();
-	}
-	
-	public boolean isTickScheduled() {
-		return this.timeSched >= 0L;
-	}
-	
-	public void updateBlockChange() {
-		RedPowerLib.updateIndirectNeighbors(super.worldObj, super.xCoord, super.yCoord, super.zCoord, this.getBlockType());
-		super.worldObj.markBlockForUpdate(super.xCoord, super.yCoord, super.zCoord);
-		//CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
-		this.dirtyBlock();
-		this.sendPacket();
-	}
-	
-	public void updateBlock() {
-		//int md = super.worldObj.getBlockMetadata(super.xCoord, super.yCoord, super.zCoord);
-		super.worldObj.markBlockForUpdate(super.xCoord, super.yCoord, super.zCoord);
-		//CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
-		this.dirtyBlock();
-	}
-	
-	public void dirtyBlock() {
-		CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
-		this.markDirty();
-	}
-	
-	public void breakBlock() {
-		ArrayList<ItemStack> il = new ArrayList<ItemStack>();
-		this.addHarvestContents(il);
-		Iterator<ItemStack> iter = il.iterator();
-		while (iter.hasNext()) {
-			ItemStack it = iter.next();
-			CoreLib.dropItem(super.worldObj, super.xCoord, super.yCoord, super.zCoord, it);
-		}
-		super.worldObj.setBlockToAir(super.xCoord, super.yCoord, super.zCoord);
-	}
-	
-	@Override
-	public void updateEntity() {
-		if (!CoreLib.isClient(super.worldObj)) {
-			if (this.timeSched >= 0L) {
-				long wtime = super.worldObj.getWorldTime();
-				if (this.timeSched > wtime + 1200L) {
-					this.timeSched = wtime + 1200L;
-				} else if (this.timeSched <= wtime) {
-					this.timeSched = -1L;
-					this.onTileTick();
-					this.markDirty();
-				}
-			}
-			
-			updateDelay--;
-			if(updateDelay == 0) {
-				this.sendPacket();
-				updateDelay = 20;
-			}
-		}
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-		this.timeSched = nbttagcompound.getLong("sched");
-	}
-	
-	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-		nbttagcompound.setLong("sched", this.timeSched);
-	}
-	
-	@SuppressWarnings("rawtypes")
-	@Override
-	public ArrayList getNetworkedData(ArrayList data) {
-		return data;
-	}
+public abstract class TileExtended extends TileEntity
+{
+    protected long timeSched;
+    public GameProfile Owner;
+    
+    public TileExtended() {
+        this.timeSched = -1L;
+        this.Owner = CoreLib.REDPOWER_PROFILE;
+    }
+    
+    public void onBlockNeighborChange(final Block block) {
+    }
+    
+    public void onBlockPlaced(final ItemStack ist, final int side, final EntityLivingBase ent) {
+        this.updateBlock();
+    }
+    
+    public void onBlockRemoval() {
+    }
+    
+    public boolean isBlockStrongPoweringTo(final int side) {
+        return false;
+    }
+    
+    public boolean isBlockWeakPoweringTo(final int side) {
+        return this.isBlockStrongPoweringTo(side);
+    }
+    
+    public boolean onBlockActivated(final EntityPlayer player) {
+        return false;
+    }
+    
+    public void onEntityCollidedWithBlock(final Entity ent) {
+    }
+    
+    public AxisAlignedBB getCollisionBoundingBox() {
+        return null;
+    }
+    
+    public void onTileTick() {
+    }
+    
+    public int getExtendedID() {
+        return 0;
+    }
+    
+    public int getExtendedMetadata() {
+        return 0;
+    }
+    
+    public void setExtendedMetadata(final int md) {
+    }
+    
+    public void addHarvestContents(final List<ItemStack> ist) {
+        ist.add(new ItemStack(this.getBlockType(), 1, this.getExtendedID()));
+    }
+    
+    public void scheduleTick(final int time) {
+        final long tn = super.worldObj.getWorldTime() + time;
+        if (this.timeSched <= 0L || this.timeSched >= tn) {
+            this.timeSched = tn;
+            this.updateBlock();
+        }
+    }
+    
+    public boolean isTickRunnable() {
+        return this.timeSched >= 0L && this.timeSched <= super.worldObj.getWorldTime();
+    }
+    
+    public boolean isTickScheduled() {
+        return this.timeSched >= 0L;
+    }
+    
+    public void updateBlockChange() {
+        RedPowerLib.updateIndirectNeighbors(super.worldObj, super.xCoord, super.yCoord, super.zCoord, this.getBlockType());
+        this.updateBlock();
+    }
+    
+    public void updateBlock() {
+        this.markDirty();
+        this.markForUpdate();
+    }
+    
+    public void markForUpdate() {
+        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+    }
+    
+    public void breakBlock() {
+        this.breakBlock(true);
+    }
+    
+    public void breakBlock(final boolean shouldDrop) {
+        if (shouldDrop) {
+            final List<ItemStack> il = new ArrayList<ItemStack>();
+            this.addHarvestContents(il);
+            for (final ItemStack it : il) {
+                CoreLib.dropItem(super.worldObj, super.xCoord, super.yCoord, super.zCoord, it);
+            }
+        }
+        super.worldObj.setBlockToAir(super.xCoord, super.yCoord, super.zCoord);
+    }
+    
+    public void updateEntity() {
+        if (!this.worldObj.isRemote && this.timeSched >= 0L) {
+            final long wtime = super.worldObj.getWorldTime();
+            if (this.timeSched > wtime + 1200L) {
+                this.timeSched = wtime + 1200L;
+            }
+            else if (this.timeSched <= wtime) {
+                this.timeSched = -1L;
+                this.onTileTick();
+                this.markDirty();
+            }
+        }
+    }
+    
+    public void readFromNBT(final NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.timeSched = data.getLong("sched");
+        if (data.hasKey("Owner")) {
+            this.Owner = NBTUtil.func_152459_a(data.getCompoundTag("Owner"));
+        }
+        else {
+            this.Owner = CoreLib.REDPOWER_PROFILE;
+        }
+    }
+    
+    public void writeToNBT(final NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setLong("sched", this.timeSched);
+        final NBTTagCompound owner = new NBTTagCompound();
+        NBTUtil.func_152460_a(owner, this.Owner);
+        data.setTag("Owner", (NBTBase)owner);
+    }
+    
+    public Packet getDescriptionPacket() {
+        final NBTTagCompound syncData = new NBTTagCompound();
+        this.writeToPacket(syncData);
+        return (Packet)new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, syncData);
+    }
+    
+    public AxisAlignedBB getRenderBoundingBox() {
+        return AxisAlignedBB.getBoundingBox((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, this.xCoord + 1.0, this.yCoord + 1.0, this.zCoord + 1.0);
+    }
+    
+    public void onDataPacket(final NetworkManager netManager, final S35PacketUpdateTileEntity packet) {
+        this.readFromPacket(packet.func_148857_g());
+        this.updateBlock();
+    }
+    
+    protected void writeToPacket(final NBTTagCompound tag) {
+    }
+    
+    protected void readFromPacket(final NBTTagCompound tag) {
+    }
+    
+    public double getMaxRenderDistanceSquared() {
+        return 65535.0;
+    }
 }

@@ -1,18 +1,20 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.TubeItem;
-
-public interface ITubeConnectable {
-	
-	int getTubeConnectableSides();
-	
-	int getTubeConClass();
-	
-	boolean canRouteItems();
-	
-	boolean tubeItemEnter(int var1, int var2, TubeItem var3);
-	
-	boolean tubeItemCanEnter(int var1, int var2, TubeItem var3);
-	
-	int tubeWeight(int var1, int var2);
+public interface ITubeConnectable
+{
+    int getTubeConnectableSides();
+    
+    int getTubeConClass();
+    
+    boolean canRouteItems();
+    
+    boolean tubeItemEnter(final int p0, final int p1, final TubeItem p2);
+    
+    boolean tubeItemCanEnter(final int p0, final int p1, final TubeItem p2);
+    
+    int tubeWeight(final int p0, final int p1);
 }

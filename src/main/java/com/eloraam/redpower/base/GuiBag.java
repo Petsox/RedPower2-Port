@@ -1,41 +1,45 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.base;
 
-import com.eloraam.redpower.base.ContainerBag;
+import net.minecraft.client.gui.inventory.*;
+import net.minecraft.util.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.item.*;
+import net.minecraft.inventory.*;
+import net.minecraft.client.resources.*;
+import org.lwjgl.opengl.*;
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
-public class GuiBag extends GuiContainer {
-	
-	public GuiBag(InventoryPlayer pli, IInventory td) {
-		super(new ContainerBag(pli, td, (ItemStack) null));
-		super.ySize = 167;
-	}
-	
-	public GuiBag(Container cn) {
-		super(cn);
-		super.ySize = 167;
-	}
-	
-	@Override
-	protected void drawGuiContainerForegroundLayer(int p1, int p2) {
-		super.fontRendererObj.drawString("Canvas Bag", 8, 6, 4210752);
-		super.fontRendererObj.drawString("Inventory", 8, super.ySize - 94 + 2, 4210752);
-	}
-	
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int p1, int p2) {
-		ResourceLocation res = new ResourceLocation("rpbase", "textures/gui/baggui.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		super.mc.renderEngine.bindTexture(res);
-		int j = (super.width - super.xSize) / 2;
-		int k = (super.height - super.ySize) / 2;
-		this.drawTexturedModalRect(j, k, 0, 0, super.xSize, super.ySize);
-	}
+public class GuiBag extends GuiContainer
+{
+    private static ResourceLocation res;
+    
+    public GuiBag(final InventoryPlayer pli, final IInventory td) {
+        super((Container)new ContainerBag(pli, td, (ItemStack)null));
+        super.ySize = 167;
+    }
+    
+    public GuiBag(final Container cn) {
+        super(cn);
+        super.ySize = 167;
+    }
+    
+    protected void drawGuiContainerForegroundLayer(final int p1, final int p2) {
+        super.fontRendererObj.drawString(I18n.format("item.rpBag.name", new Object[0]), 8, 6, 4210752);
+        super.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, super.ySize - 94 + 2, 4210752);
+    }
+    
+    protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY) {
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        super.mc.renderEngine.bindTexture(GuiBag.res);
+        final int halfWidth = (super.width - super.xSize) / 2;
+        final int halfHeight = (super.height - super.ySize) / 2;
+        this.drawTexturedModalRect(halfWidth, halfHeight, 0, 0, super.xSize, super.ySize);
+    }
+    
+    static {
+        GuiBag.res = new ResourceLocation("rpbase", "textures/gui/baggui.png");
+    }
 }

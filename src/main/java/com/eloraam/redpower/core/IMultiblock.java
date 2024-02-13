@@ -1,13 +1,17 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.*;
+import net.minecraft.entity.player.*;
 
-public interface IMultiblock {
-	
-	void onMultiRemoval(int var1);
-	
-	AxisAlignedBB getMultiBounds(int var1);
-	
-	float getMultiBlockStrength(int var1, EntityPlayer var2);
+public interface IMultiblock
+{
+    void onMultiRemoval(final int p0);
+    
+    AxisAlignedBB getMultiBounds(final int p0);
+    
+    float getMultiBlockStrength(final int p0, final EntityPlayer p1);
 }

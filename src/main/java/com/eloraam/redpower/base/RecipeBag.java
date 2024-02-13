@@ -1,75 +1,67 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.base;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.base.ItemBag;
+import net.minecraft.item.crafting.*;
+import net.minecraft.item.*;
+import com.eloraam.redpower.*;
+import net.minecraft.inventory.*;
+import net.minecraft.init.*;
+import net.minecraft.world.*;
 
-import net.minecraft.init.Items;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.world.World;
-
-public class RecipeBag implements IRecipe {
-	
-	@Override
-	public int getRecipeSize() {
-		return 2;
-	}
-	
-	@Override
-	public ItemStack getRecipeOutput() {
-		return new ItemStack(RedPowerBase.itemBag, 1, 0);
-	}
-	
-	private ItemStack findResult(InventoryCrafting inv) {
-		ItemStack bag = null;
-		int color = -1;
-		
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				ItemStack ist = inv.getStackInRowAndColumn(i, j);
-				if (ist != null) {
-					if (ist.getItem() instanceof ItemBag) {
-						if (bag != null) {
-							return null;
-						}
-						
-						bag = ist;
-					} else {
-						if (ist.getItem() != Items.dye) {
-							return null;
-						}
-						
-						if (color >= 0) {
-							return null;
-						}
-						
-						color = 15 - ist.getItemDamage();
-					}
-				}
-			}
-		}
-		
-		if (bag != null && color >= 0) {
-			if (bag.getItemDamage() == color) {
-				return null;
-			} else {
-				bag = bag.copy();
-				bag.setItemDamage(color);
-				return bag;
-			}
-		} else {
-			return null;
-		}
-	}
-	
-	@Override
-	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		return this.findResult(inv).copy();
-	}
-	
-	@Override
-	public boolean matches(InventoryCrafting inv, World world) {
-		return this.findResult(inv) != null;
-	}
+public class RecipeBag implements IRecipe
+{
+    public int getRecipeSize() {
+        return 2;
+    }
+    
+    public ItemStack getRecipeOutput() {
+        return new ItemStack(RedPowerBase.itemBag, 1, 0);
+    }
+    
+    private ItemStack findResult(final InventoryCrafting inv) {
+        ItemStack bag = null;
+        int color = -1;
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                final ItemStack ist = inv.getStackInRowAndColumn(i, j);
+                if (ist != null) {
+                    if (ist.getItem() instanceof ItemBag) {
+                        if (bag != null) {
+                            return null;
+                        }
+                        bag = ist;
+                    }
+                    else {
+                        if (ist.getItem() != Items.dye) {
+                            return null;
+                        }
+                        if (color >= 0) {
+                            return null;
+                        }
+                        color = 15 - ist.getItemDamage();
+                    }
+                }
+            }
+        }
+        if (bag == null || color < 0) {
+            return null;
+        }
+        if (bag.getItemDamage() == color) {
+            return null;
+        }
+        bag = bag.copy();
+        bag.setItemDamage(color);
+        return bag;
+    }
+    
+    public ItemStack getCraftingResult(final InventoryCrafting inv) {
+        return this.findResult(inv).copy();
+    }
+    
+    public boolean matches(final InventoryCrafting inv, final World world) {
+        return this.findResult(inv) != null;
+    }
 }

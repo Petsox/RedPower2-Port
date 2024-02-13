@@ -1,78 +1,115 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.TubeLib;
-import com.eloraam.redpower.machine.RenderTube;
-import com.eloraam.redpower.machine.TileRedstoneTube;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.*;
+import net.minecraft.client.renderer.entity.*;
+import net.minecraft.entity.item.*;
+import net.minecraft.world.*;
+import com.eloraam.redpower.core.*;
+import java.util.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-public class RenderRedstoneTube extends RenderTube {
-	
-	public RenderRedstoneTube(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k,
-			Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int i, int j, int k, int md) {
-		//boolean cons = false;
-		TileRedstoneTube tt = (TileRedstoneTube) CoreLib.getTileEntity(iba, i, j, k, TileRedstoneTube.class);
-		if (tt != null) {
-			super.context.setTint(1.0F, 1.0F, 1.0F);
-			super.context.setPos(i, j, k);
-			if (tt.CoverSides > 0) {
-				super.context.readGlobalLights(iba, i, j, k);
-				this.renderCovers(tt.CoverSides, tt.Covers);
-			}
-			
-			int cons1 = TubeLib.getConnections(iba, i, j, k) | tt.getConnectionMask() >> 24;
-			super.context.setBrightness(super.block.getMixedBrightnessForBlock(iba, i, j, k));
-			super.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-			super.context.setPos(i, j, k);
-			int ps = (tt.PowerState + 84) / 85;
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-			this.renderCenterBlock(cons1, super.block.getIcon(68 + ps, md), super.block.getIcon(72 + ps, md));
-			if (tt.paintColor > 0) {
-				int tc = super.paintColors[tt.paintColor - 1];
-				super.context.setTint((tc >> 16) / 255.0F, (tc >> 8 & 255) / 255.0F, (tc & 255) / 255.0F);
-				this.renderBlockPaint(cons1, BlockMachine.baseTubeFaceColorIcon, BlockMachine.baseTubeSideColorIcon, md);
-			}
-			//RenderLib.unbindTexture();
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		super.block.setBlockBoundsForItemRender();
-		super.context.setDefaults();
-		super.context.setPos(-0.5D, -0.5D, -0.5D);
-		super.context.useNormal = true;
-		super.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-		//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		super.context.useNormal = true;
-		IIcon vertIcon = super.block.getIcon(72, md);
-		IIcon sideIcon = super.block.getIcon(68, md);
-		super.context.setIcon(vertIcon, vertIcon, sideIcon, sideIcon, sideIcon, sideIcon);
-		super.context.renderBox(63, 0.25D, 0.0D, 0.25D, 0.75D, 1.0D, 0.75D);
-		super.context.renderBox(63, 0.7400000095367432D, 0.9900000095367432D,
-				0.7400000095367432D, 0.25999999046325684D,
-				0.009999999776482582D, 0.25999999046325684D);
-		tessellator.draw();
-		//RenderLib.unbindTexture();
-		super.context.useNormal = false;
-	}
+@SideOnly(Side.CLIENT)
+public class RenderRedstoneTube extends RenderTube
+{
+    public RenderRedstoneTube(final Block block) {
+        super(block);
+    }
+    
+    @Override
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileRedstoneTube redstoneTube = (TileRedstoneTube)tile;
+        final World world = redstoneTube.getWorldObj();
+        GL11.glDisable(2896);
+        final Tessellator tess = Tessellator.instance;
+        final int lv = world.getLightBrightnessForSkyBlocks(redstoneTube.xCoord, redstoneTube.yCoord, redstoneTube.zCoord, 0);
+        tess.setBrightness(lv);
+        tess.startDrawingQuads();
+        this.context.bindBlockTexture();
+        this.context.setTint(1.0f, 1.0f, 1.0f);
+        this.context.setPos(x, y, z);
+        if (redstoneTube.CoverSides > 0) {
+            this.context.readGlobalLights((IBlockAccess)world, redstoneTube.xCoord, redstoneTube.yCoord, redstoneTube.zCoord);
+            this.renderCovers(redstoneTube.CoverSides, redstoneTube.Covers);
+        }
+        final int cons1 = TubeLib.getConnections((IBlockAccess)world, redstoneTube.xCoord, redstoneTube.yCoord, redstoneTube.zCoord) | redstoneTube.getConnectionMask() >> 24;
+        this.context.setBrightness(this.getMixedBrightness((TileEntity)redstoneTube));
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        this.context.setPos(x, y, z);
+        final int ps = (redstoneTube.PowerState + 84) / 85;
+        this.renderCenterBlock(cons1, RedPowerMachine.redstoneTubeSide[ps], RedPowerMachine.redstoneTubeFace[ps]);
+        if (redstoneTube.paintColor > 0) {
+            final int tc = super.paintColors[redstoneTube.paintColor - 1];
+            this.context.setTint((tc >> 16) / 255.0f, (tc >> 8 & 0xFF) / 255.0f, (tc & 0xFF) / 255.0f);
+            this.renderBlockPaint(cons1, RedPowerMachine.baseTubeFaceColor, RedPowerMachine.baseTubeSideColor, redstoneTube.getBlockMetadata());
+        }
+        tess.draw();
+        this.item.worldObj = world;
+        this.item.setPosition(x + 0.5, y + 0.5, z + 0.5);
+        final RenderItem renderitem = (RenderItem)RenderManager.instance.getEntityClassRenderObject((Class)EntityItem.class);
+        this.item.age = 0;
+        this.item.hoverStart = 0.0f;
+        final WorldCoord offset = new WorldCoord(0, 0, 0);
+        final TubeFlow flow = redstoneTube.getTubeFlow();
+        for (final TubeItem item : flow.contents) {
+            this.item.setEntityItemStack(item.item);
+            offset.x = 0;
+            offset.y = 0;
+            offset.z = 0;
+            offset.step((int)item.side);
+            double d = item.progress / 128.0 * 0.5;
+            if (!item.scheduled) {
+                d = 0.5 - d;
+            }
+            double yo = 0.0;
+            if (Item.getIdFromItem(item.item.getItem()) >= 256) {
+                yo += 0.1;
+            }
+            renderitem.doRender(this.item, x + 0.5 + offset.x * d, y + 0.5 - this.item.yOffset - yo + offset.y * d, z + 0.5 + offset.z * d, 0.0f, 0.0f);
+            if (item.color > 0) {
+                this.context.bindBlockTexture();
+                tess.startDrawingQuads();
+                this.context.useNormal = true;
+                this.context.setDefaults();
+                this.context.setBrightness(lv);
+                this.context.setPos(x + offset.x * d, y + offset.y * d, z + offset.z * d);
+                this.context.setTintHex(this.paintColors[item.color - 1]);
+                this.context.setIcon(RedPowerMachine.tubeItemOverlay);
+                this.context.renderBox(63, 0.25999999046325684, 0.25999999046325684, 0.25999999046325684, 0.7400000095367432, 0.7400000095367432, 0.7400000095367432);
+                tess.draw();
+            }
+        }
+        GL11.glEnable(2896);
+    }
+    
+    @Override
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.5, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.0, 0.0);
+        }
+        this.context.useNormal = true;
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        this.context.useNormal = true;
+        this.context.setIcon(RedPowerMachine.redstoneTubeFace[0], RedPowerMachine.redstoneTubeFace[0], RedPowerMachine.redstoneTubeSide[0], RedPowerMachine.redstoneTubeSide[0], RedPowerMachine.redstoneTubeSide[0], RedPowerMachine.redstoneTubeSide[0]);
+        this.context.renderBox(63, 0.25, 0.0, 0.25, 0.75, 1.0, 0.75);
+        this.context.renderBox(63, 0.7400000095367432, 0.9900000095367432, 0.7400000095367432, 0.25999999046325684, 0.009999999776482582, 0.25999999046325684);
+        tess.draw();
+        this.context.useNormal = false;
+    }
 }

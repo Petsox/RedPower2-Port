@@ -1,42 +1,40 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.CoreLib;
+import net.minecraft.item.*;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-public class ItemPartialCraft extends Item {
-	
-	private ItemStack emptyItem = null;
-	
-	public ItemPartialCraft() {
-		this.setMaxStackSize(1);
-		this.setNoRepair();
-	}
-	
-	public void setEmptyItem(ItemStack ei) {
-		this.emptyItem = ei;
-	}
-	
-	@Override
-	public ItemStack getContainerItem(ItemStack ist) {
-		int dmg = ist.getItemDamage();
-		if (dmg == ist.getMaxDamage() && this.emptyItem != null) {
-			return CoreLib.copyStack(this.emptyItem, 1);
-		} else {
-			ItemStack tr = CoreLib.copyStack(ist, 1);
-			tr.setItemDamage(dmg + 1);
-			return tr;
-		}
-	}
-	
-	@Override
-	public boolean hasContainerItem() {
-		return true;
-	}
-	
-	@Override
-	public boolean doesContainerItemLeaveCraftingGrid(ItemStack ist) {
-		return false;
-	}
+public class ItemPartialCraft extends Item
+{
+    private ItemStack emptyItem;
+    
+    public ItemPartialCraft() {
+        this.emptyItem = null;
+        this.setMaxStackSize(1);
+        this.setNoRepair();
+    }
+    
+    public void setEmptyItem(final ItemStack ei) {
+        this.emptyItem = ei;
+    }
+    
+    public ItemStack getContainerItem(final ItemStack ist) {
+        final int dmg = ist.getItemDamage();
+        if (dmg == ist.getMaxDamage() && this.emptyItem != null) {
+            return CoreLib.copyStack(this.emptyItem, 1);
+        }
+        final ItemStack tr = CoreLib.copyStack(ist, 1);
+        tr.setItemDamage(dmg + 1);
+        return tr;
+    }
+    
+    public boolean hasContainerItem(final ItemStack stack) {
+        return true;
+    }
+    
+    public boolean doesContainerItemLeaveCraftingGrid(final ItemStack ist) {
+        return false;
+    }
 }

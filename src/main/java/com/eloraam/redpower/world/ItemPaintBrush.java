@@ -1,77 +1,55 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.RedPowerWorld;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.IPaintable;
+import net.minecraft.creativetab.*;
+import net.minecraft.item.*;
+import net.minecraft.entity.player.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.world.*;
+import net.minecraft.entity.*;
+import com.eloraam.redpower.*;
+import net.minecraft.util.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
-
-public class ItemPaintBrush extends Item {
-	
-	int color;
-	private IIcon[] icons = new IIcon[16];
-	
-	public ItemPaintBrush(int col) {
-		this.color = col;
-		this.setMaxStackSize(1);
-		this.setMaxDamage(15);
-		this.setNoRepair();
-		this.setCreativeTab(CreativeTabs.tabTools);
-	}
-	
-	@SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int meta) {
-        return this.icons[meta];
+public class ItemPaintBrush extends Item
+{
+    private int color;
+    
+    public ItemPaintBrush(final int col) {
+        this.color = col;
+        this.setMaxStackSize(1);
+        this.setMaxDamage(15);
+        this.setNoRepair();
+        this.setCreativeTab(CreativeTabs.tabTools);
+        this.setTextureName("rpworld:paintBrush/" + col);
     }
-	
-	@SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister registerer) {
-        for(int i = 0; i < 16; i ++) {
-        	this.icons[i] = registerer.registerIcon("rpworld:itemPaintBrush"+i);
+    
+    private boolean itemUseShared(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side) {
+        final IPaintable ip = (IPaintable)CoreLib.getTileEntity((IBlockAccess)world, x, y, z, (Class)IPaintable.class);
+        if (ip == null) {
+            return false;
         }
+        final MovingObjectPosition mop = CoreLib.retraceBlock(world, (EntityLivingBase)player, x, y, z);
+        if (mop == null) {
+            return false;
+        }
+        if (!ip.tryPaint(mop.subHit, mop.sideHit, this.color + 1)) {
+            return false;
+        }
+        ist.damageItem(1, (EntityLivingBase)player);
+        if (ist.stackSize == 0) {
+            player.inventory.setItemStack(new ItemStack(RedPowerWorld.itemBrushDry));
+        }
+        return true;
     }
-
-	private boolean itemUseShared(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l) {
-		IPaintable ip = (IPaintable) CoreLib.getTileEntity(world, i, j, k, IPaintable.class);
-		if (ip == null) {
-			return false;
-		} else {
-			MovingObjectPosition mop = CoreLib.retraceBlock(world, player, i,
-					j, k);
-			if (mop == null) {
-				return false;
-			} else if (!ip.tryPaint(mop.subHit, mop.sideHit, this.color + 1)) {
-				return false;
-			} else {
-				ist.damageItem(1, player);
-				if (ist.stackSize == 0) {
-					ist = new ItemStack(RedPowerWorld.itemBrushDry);
-				}
-				return true;
-			}
-		}
-	}
-	
-	@Override
-	public boolean onItemUse(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l, float xp, float yp, float zp) {
-		return CoreLib.isClient(world) ? false : (player.isSneaking() ? false : this
-				.itemUseShared(ist, player, world, i, j, k, l));
-	}
-	
-	@Override
-	public boolean onItemUseFirst(ItemStack ist, EntityPlayer player,
-			World world, int i, int j, int k, int l, float xp, float yp,
-			float zp) {
-		return CoreLib.isClient(world) ? false : (!player.isSneaking() ? false : this
-				.itemUseShared(ist, player, world, i, j, k, l));
-	}
+    
+    public boolean onItemUse(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float xp, final float yp, final float zp) {
+        return !world.isRemote && !player.isSneaking() && this.itemUseShared(ist, player, world, x, y, z, side);
+    }
+    
+    public boolean onItemUseFirst(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float xp, final float yp, final float zp) {
+        return !world.isRemote && player.isSneaking() && this.itemUseShared(ist, player, world, x, y, z, side);
+    }
 }

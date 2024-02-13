@@ -1,83 +1,69 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.base;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.nbt.*;
+import java.util.*;
+import net.minecraft.item.*;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-
-public class ItemPlan extends Item {
-	
-	public ItemPlan() {
-		this.setMaxDamage(0);
-		this.setHasSubtypes(true);
-		this.setUnlocalizedName("planFull");
-		this.setTextureName("rpbase:itemPlanFull");
-		this.setMaxStackSize(1);
-	}
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-	public String getItemStackDisplayName(ItemStack ist) {
-		if (ist.stackTagCompound == null) {
-			return super.getItemStackDisplayName(ist);
-		} else if (!ist.stackTagCompound.hasKey("result")) {
-			return super.getItemStackDisplayName(ist);
-		} else {
-			NBTTagCompound res = ist.stackTagCompound.getCompoundTag("result");
-			ItemStack result = ItemStack.loadItemStackFromNBT(res);
-			return result.getItem().getItemStackDisplayName(result) + " Plan";
-		}
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void addInformation(ItemStack ist, EntityPlayer player, List lines, boolean par4) {
-		if (ist.stackTagCompound != null) {
-			NBTTagList require = ist.stackTagCompound.getTagList("requires", 10); //TODO: Remember this
-			if (require != null) {
-				HashMap<HashMap<Item, Integer>, Integer> counts = new HashMap<HashMap<Item, Integer>, Integer>();
-				
-				for (int i = 0; i < require.tagCount(); ++i) {
-					NBTTagCompound kv = (NBTTagCompound)require.getCompoundTagAt(i);
-					ItemStack li = ItemStack.loadItemStackFromNBT(kv);
-					HashMap<Item, Integer> i2d = new HashMap<Item, Integer>();
-					i2d.put(li.getItem(), li.getItemDamage());
-					Integer lc = (Integer)counts.get(i2d);
-					if (lc == null) {
-						lc = Integer.valueOf(0);
-					}
-					counts.put(i2d, Integer.valueOf(lc.intValue() + 1));
-				}
-				
-				Iterator<Entry<HashMap<Item, Integer>, Integer>> iter = counts.entrySet().iterator();
-				
-				while(iter.hasNext()) {
-					Entry<HashMap<Item, Integer>, Integer> entry = iter.next();
-					HashMap<Item, Integer> keySet = entry.getKey();
-					ItemStack itemStack = new ItemStack(keySet.keySet().iterator().next(), 1, keySet.values().iterator().next()); //TODO: Maybe very very bad
-					lines.add(entry.getValue() + " x " + itemStack.getItem().getItemStackDisplayName(itemStack));
-				}
-			}
-		}
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public EnumRarity getRarity(ItemStack ist) {
-		return EnumRarity.rare;
-	}
-	
-	@Override
-	public boolean getShareTag() {
-		return true;
-	}
+public class ItemPlan extends Item
+{
+    public ItemPlan() {
+        this.setMaxDamage(0);
+        this.setHasSubtypes(true);
+        this.setUnlocalizedName("planFull");
+        this.setTextureName("rpbase:planFull");
+        this.setMaxStackSize(1);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public String getItemStackDisplayName(final ItemStack ist) {
+        if (ist.stackTagCompound == null) {
+            return super.getItemStackDisplayName(ist);
+        }
+        if (!ist.stackTagCompound.hasKey("result")) {
+            return super.getItemStackDisplayName(ist);
+        }
+        final NBTTagCompound res = ist.stackTagCompound.getCompoundTag("result");
+        final ItemStack result = ItemStack.loadItemStackFromNBT(res);
+        return result.getItem().getItemStackDisplayName(result) + " Plan";
+    }
+    
+    public void addInformation(final ItemStack ist, final EntityPlayer player, final List lines, final boolean par4) {
+        if (ist.stackTagCompound != null) {
+            final NBTTagList require = ist.stackTagCompound.getTagList("requires", 10);
+            if (require != null) {
+                final HashMap<HashMap<Item, Integer>, Integer> counts = new HashMap<HashMap<Item, Integer>, Integer>();
+                for (int i = 0; i < require.tagCount(); ++i) {
+                    final NBTTagCompound kv = require.getCompoundTagAt(i);
+                    final ItemStack li = ItemStack.loadItemStackFromNBT(kv);
+                    final HashMap<Item, Integer> i2d = new HashMap<Item, Integer>();
+                    i2d.put(li.getItem(), li.getItemDamage());
+                    Integer lc = counts.get(i2d);
+                    if (lc == null) {
+                        lc = 0;
+                    }
+                    counts.put(i2d, lc + 1);
+                }
+                for (final Map.Entry<HashMap<Item, Integer>, Integer> entry : counts.entrySet()) {
+                    final HashMap<Item, Integer> keySet = entry.getKey();
+                    final ItemStack itemStack = new ItemStack((Item)keySet.keySet().iterator().next(), 1, (int)keySet.values().iterator().next());
+                    lines.add(entry.getValue() + " x " + itemStack.getItem().getItemStackDisplayName(itemStack));
+                }
+            }
+        }
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public EnumRarity getRarity(final ItemStack ist) {
+        return EnumRarity.rare;
+    }
+    
+    public boolean getShareTag() {
+        return true;
+    }
 }

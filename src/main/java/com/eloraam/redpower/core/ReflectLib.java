@@ -1,81 +1,78 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
-public class ReflectLib {
-
-   public static void callClassMethod(String className, String method, Class[] def, Object ... params) {
-      Class cl;
-      try {
-         cl = Class.forName(className);
-      } catch (ClassNotFoundException var10) {
-         return;
-      }
-
-      Method mth;
-      try {
-         mth = cl.getDeclaredMethod(method, def);
-      } catch (NoSuchMethodException var9) {
-         return;
-      }
-
-      try {
-         mth.invoke((Object)null, params);
-      } catch (IllegalAccessException var7) {
-         ;
-      } catch (InvocationTargetException var8) {
-         ;
-      }
-   }
-
-   public static Object getStaticField(String classname, String var, Class varcl) {
-      Class cl;
-      try {
-         cl = Class.forName(classname);
-      } catch (ClassNotFoundException var10) {
-         return null;
-      }
-
-      Field fld;
-      try {
-         fld = cl.getDeclaredField(var);
-      } catch (NoSuchFieldException var9) {
-         return null;
-      }
-
-      Object ob;
-      try {
-         ob = fld.get((Object)null);
-      } catch (IllegalAccessException var7) {
-         return null;
-      } catch (NullPointerException var8) {
-         return null;
-      }
-
-      return !varcl.isInstance(ob)?null:ob;
-   }
-
-   public static Object getField(Object ob, String var, Class varcl) {
-      Class cl = ob.getClass();
-
-      Field fld;
-      try {
-         fld = cl.getDeclaredField(var);
-      } catch (NoSuchFieldException var9) {
-         return null;
-      }
-
-      Object ob2;
-      try {
-         ob2 = fld.get(ob);
-      } catch (IllegalAccessException var7) {
-         return null;
-      } catch (NullPointerException var8) {
-         return null;
-      }
-
-      return !varcl.isInstance(ob2)?null:ob2;
-   }
+public class ReflectLib
+{
+    public static void callClassMethod(final String className, final String method, final Class[] def, final Object... params) {
+        Class cl;
+        try {
+            cl = Class.forName(className);
+        }
+        catch (ClassNotFoundException var10) {
+            return;
+        }
+        Method mth;
+        try {
+            mth = cl.getDeclaredMethod(method, (Class[])def);
+        }
+        catch (NoSuchMethodException var11) {
+            return;
+        }
+        try {
+            mth.invoke(null, params);
+        }
+        catch (IllegalAccessException ex) {}
+        catch (InvocationTargetException ex2) {}
+    }
+    
+    public static <T> T getStaticField(final String classname, final String var, final Class<? extends T> varcl) {
+        Class cl;
+        try {
+            cl = Class.forName(classname);
+        }
+        catch (ClassNotFoundException var2) {
+            return null;
+        }
+        Field fld;
+        try {
+            fld = cl.getDeclaredField(var);
+        }
+        catch (NoSuchFieldException var3) {
+            return null;
+        }
+        Object ob;
+        try {
+            ob = fld.get(null);
+        }
+        catch (IllegalAccessException | NullPointerException ex2) {
+            final Exception ex;
+            return null;
+        }
+        return (T)(varcl.isInstance(ob) ? ob : null);
+    }
+    
+    public static <T> T getField(final Object ob, final String var, final Class<? extends T> varcl) {
+        final Class cl = ob.getClass();
+        Field fld;
+        try {
+            fld = cl.getDeclaredField(var);
+        }
+        catch (NoSuchFieldException var2) {
+            return null;
+        }
+        Object ob2;
+        try {
+            ob2 = fld.get(ob);
+        }
+        catch (IllegalAccessException | NullPointerException ex2) {
+            final Exception ex;
+            return null;
+        }
+        return (T)(varcl.isInstance(ob2) ? ob2 : null);
+    }
 }

@@ -1,25 +1,25 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.CoverLib;
-import com.eloraam.redpower.core.CoverRenderer;
-import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.core.RenderCustomBlock;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.block.*;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.IIcon;
-
-public abstract class RenderCovers extends RenderCustomBlock {
-	
-	protected static IIcon[][] coverIcons = CoverLib.coverIcons;
-	protected CoverRenderer coverRenderer;
-	protected RenderContext context = new RenderContext();
-	
-	public RenderCovers(Block bl) {
-		super(bl);
-		this.coverRenderer = new CoverRenderer(this.context);
-	}
-	
-	public void renderCovers(int uc, short[] covs) {
-		this.coverRenderer.render(uc, covs);
-	}
+@SideOnly(Side.CLIENT)
+public abstract class RenderCovers extends RenderCustomBlock
+{
+    protected CoverRenderer coverRenderer;
+    protected RenderContext context;
+    
+    public RenderCovers(final Block block) {
+        super(block);
+        this.context = new RenderContext();
+        this.coverRenderer = new CoverRenderer(this.context);
+    }
+    
+    public void renderCovers(final int uc, final short[] covs) {
+        this.coverRenderer.render(uc, covs);
+    }
 }

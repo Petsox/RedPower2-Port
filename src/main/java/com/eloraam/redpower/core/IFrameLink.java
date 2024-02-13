@@ -1,14 +1,16 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.WorldCoord;
-
-public interface IFrameLink {
-
-   boolean isFrameMoving();
-
-   boolean canFrameConnectIn(int var1);
-
-   boolean canFrameConnectOut(int var1);
-
-   WorldCoord getFrameLinkset();
+public interface IFrameLink
+{
+    boolean isFrameMoving();
+    
+    boolean canFrameConnectIn(final int p0);
+    
+    boolean canFrameConnectOut(final int p0);
+    
+    WorldCoord getFrameLinkset();
 }

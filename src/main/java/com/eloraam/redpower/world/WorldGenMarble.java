@@ -1,86 +1,103 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.world.WorldGenCustomOre;
+import net.minecraft.util.*;
+import net.minecraft.block.*;
+import net.minecraft.world.*;
+import java.util.*;
+import net.minecraft.init.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
-
-public class WorldGenMarble extends WorldGenCustomOre {
-	
-	LinkedList<List<Integer>> fillStack = new LinkedList<List<Integer>>();
-	HashSet<List<Integer>> fillStackTest = new HashSet<List<Integer>>();
-	
-	public WorldGenMarble(Block block, int meta, int num) {
-		super(block, meta, num);
-	}
-	
-	private void addBlock(int i, int j, int k, int p) {
-		List<Integer> sb = Arrays.asList(new Integer[] { Integer.valueOf(i), Integer
-				.valueOf(j), Integer.valueOf(k) });
-		if (!this.fillStackTest.contains(sb)) {
-			this.fillStack
-					.addLast(Arrays.asList(new Integer[] { Integer.valueOf(i), Integer
-							.valueOf(j), Integer.valueOf(k), Integer.valueOf(p) }));
-			this.fillStackTest.add(sb);
-		}
-	}
-	
-	private void searchBlock(World world, int i, int j, int k, int p) {
-		if (world.isAirBlock(i - 1, j, k)
-				|| world.isAirBlock(i + 1, j, k)
-				|| world.isAirBlock(i, j - 1, k)
-				|| world.isAirBlock(i, j + 1, k)
-				|| world.isAirBlock(i, j, k - 1)
-				|| world.isAirBlock(i, j, k + 1)) {
-			p = 6;
-		}
-		
-		this.addBlock(i - 1, j, k, p);
-		this.addBlock(i + 1, j, k, p);
-		this.addBlock(i, j - 1, k, p);
-		this.addBlock(i, j + 1, k, p);
-		this.addBlock(i, j, k - 1, p);
-		this.addBlock(i, j, k + 1, p);
-	}
-	
-	@Override
-	public boolean generate(World world, Random random, int i, int j, int k) {
-		if (!world.isAirBlock(i, j, k)) {
-			return false;
-		} else {
-			int l;
-			for (l = j; world.getBlock(i, l, k) != Blocks.stone; ++l) {
-				if (l > 96) {
-					return false;
-				}
-			}
-			
-			this.addBlock(i, l, k, 6);
-			
-			while (this.fillStack.size() > 0 && super.numberOfBlocks > 0) {
-				System.out.println("KOKO LOOP FREEZE MARBLE");
-				List<Integer> sp1 = this.fillStack.removeFirst();
-				Integer[] sp = ((Integer[]) sp1.toArray());
-				if (world.getBlock(sp[0].intValue(), sp[1].intValue(), sp[2].intValue()) == Blocks.stone) {
-					world.setBlock(sp[0].intValue(),
-							sp[1].intValue(), sp[2].intValue(),
-							super.minableBlock, super.minableBlockMeta, 3);
-					if (sp[3].intValue() > 0) {
-						this.searchBlock(world, sp[0].intValue(),
-								sp[1].intValue(), sp[2].intValue(),
-								sp[3].intValue() - 1);
-					}
-					--super.numberOfBlocks;
-				}
-			}
-			return true;
-		}
-	}
+public class WorldGenMarble extends WorldGenCustomOre
+{
+    private Deque<CoordSearchPath> fillStack;
+    private Set<ChunkCoordinates> fillStackTest;
+    
+    public WorldGenMarble(final Block block, final int meta, final int num) {
+        super(block, meta, num);
+        this.fillStack = new LinkedList<CoordSearchPath>();
+        this.fillStackTest = new HashSet<ChunkCoordinates>();
+    }
+    
+    private void addBlock(final int x, final int y, final int z, final int p) {
+        final ChunkCoordinates sb = new ChunkCoordinates(x, y, z);
+        if (!this.fillStackTest.contains(sb)) {
+            this.fillStack.addLast(new CoordSearchPath(x, y, z, p));
+            this.fillStackTest.add(sb);
+        }
+    }
+    
+    private void searchBlock(final World world, final int x, final int y, final int z, int p) {
+        if (world.isAirBlock(x - 1, y, z) || world.isAirBlock(x + 1, y, z) || world.isAirBlock(x, y - 1, z) || world.isAirBlock(x, y + 1, z) || world.isAirBlock(x, y, z - 1) || world.isAirBlock(x, y, z + 1)) {
+            p = 6;
+        }
+        this.addBlock(x - 1, y, z, p);
+        this.addBlock(x + 1, y, z, p);
+        this.addBlock(x, y - 1, z, p);
+        this.addBlock(x, y + 1, z, p);
+        this.addBlock(x, y, z - 1, p);
+        this.addBlock(x, y, z + 1, p);
+    }
+    
+    public boolean generate(final World world, final Random random, final int x, final int y, final int z) {
+        if (!world.isAirBlock(x, y, z)) {
+            return false;
+        }
+        int l;
+        for (l = y; world.getBlock(x, l, z) != Blocks.stone; ++l) {
+            if (l > 96) {
+                return false;
+            }
+        }
+        this.addBlock(x, l, z, 6);
+        while (this.fillStack.size() > 0 && super.numberOfBlocks > 0) {
+            final CoordSearchPath sp = this.fillStack.removeFirst();
+            if (world.getBlock(sp.x, sp.y, sp.z) == Blocks.stone) {
+                world.setBlock(sp.x, sp.y, sp.z, super.minableBlock, super.minableBlockMeta, 3);
+                if (sp.p > 0) {
+                    this.searchBlock(world, sp.x, sp.y, sp.z, sp.p - 1);
+                }
+                --super.numberOfBlocks;
+            }
+        }
+        return true;
+    }
+    
+    public static class CoordSearchPath
+    {
+        private final int x;
+        private final int y;
+        private final int z;
+        private final int p;
+        
+        public CoordSearchPath(final int x, final int y, final int z, final int p) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.p = p;
+        }
+        
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || this.getClass() != o.getClass()) {
+                return false;
+            }
+            final CoordSearchPath that = (CoordSearchPath)o;
+            return this.x == that.x && this.y == that.y && this.z == that.z && this.p == that.p;
+        }
+        
+        @Override
+        public int hashCode() {
+            int result = this.x;
+            result = 31 * result + this.y;
+            result = 31 * result + this.z;
+            result = 31 * result + this.p;
+            return result;
+        }
+    }
 }

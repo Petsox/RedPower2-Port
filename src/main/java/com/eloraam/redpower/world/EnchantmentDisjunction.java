@@ -1,55 +1,40 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.RedPowerWorld;
+import net.minecraft.item.*;
+import com.eloraam.redpower.*;
+import net.minecraft.enchantment.*;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentDamage;
-import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.item.ItemStack;
-
-public class EnchantmentDisjunction extends Enchantment {
-	
-	public EnchantmentDisjunction(int i, int j) {
-		super(i, j, EnumEnchantmentType.weapon);
-	}
-	
-	@Override
-	public int getMinEnchantability(int i) {
-		return 5 + 8 * i;
-	}
-	
-	@Override
-	public int getMaxEnchantability(int i) {
-		return this.getMinEnchantability(i) + 20;
-	}
-	
-	@Override
-	public int getMaxLevel() {
-		return 5;
-	}
-	
-	/*@Override  //TODO: FIX THIS
-	public int calcModifierLiving(int i, EntityLivingBase ent) {
-		return !(ent instanceof EntityEnderman)
-				&& !(ent instanceof EntityDragon) ? 0 : i * 6;
-	}
-	
-	public int calcModifierDamage(int i, DamageSource damageSource) {
-        return 0;
-    }*/
-	
-	@Override
-	public String getName() {
-		return "enchantment.damage.disjunction";
-	}
-	
-	@Override
-	public boolean canApply(ItemStack ist) {
-		return ist.getItem() == RedPowerWorld.itemAthame;
+public class EnchantmentDisjunction extends Enchantment
+{
+    public EnchantmentDisjunction(final int i, final int j) {
+        super(i, j, EnumEnchantmentType.weapon);
     }
-	
-	@Override
-	public boolean canApplyTogether(Enchantment enchantment) {
-		return enchantment == this ? false : !(enchantment instanceof EnchantmentDamage);
-	}
+    
+    public int getMinEnchantability(final int i) {
+        return 5 + 8 * i;
+    }
+    
+    public int getMaxEnchantability(final int i) {
+        return this.getMinEnchantability(i) + 20;
+    }
+    
+    public int getMaxLevel() {
+        return 5;
+    }
+    
+    public String getName() {
+        return "enchantment.damage.disjunction";
+    }
+    
+    public boolean canApply(final ItemStack ist) {
+        return ist.getItem() == RedPowerWorld.itemAthame;
+    }
+    
+    public boolean canApplyTogether(final Enchantment enchantment) {
+        return enchantment != this && !(enchantment instanceof EnchantmentDamage);
+    }
 }

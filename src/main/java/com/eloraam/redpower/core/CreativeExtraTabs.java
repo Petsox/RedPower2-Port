@@ -1,46 +1,47 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.RedPowerBase;
+import net.minecraft.creativetab.*;
+import com.eloraam.redpower.*;
+import net.minecraft.block.*;
+import net.minecraft.item.*;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-public class CreativeExtraTabs {
-	
-	public static CreativeTabs tabWires = new CreativeTabs(
-			CreativeTabs.getNextID(), "RPWires") {
-		@Override
-		public ItemStack getIconItemStack() {
-			return new ItemStack(RedPowerBase.blockMicro, 1, 768);
-		}
-
-		@Override
-		public Item getTabIconItem() {
-			return null;
-		}
-	};
-	public static CreativeTabs tabMicros = new CreativeTabs( CreativeTabs.getNextID(), "RPMicroblocks") {
-		@Override
-		public ItemStack getIconItemStack() {
-			return new ItemStack(RedPowerBase.blockMicro, 1, 23);
-		}
-		
-		@Override
-		public Item getTabIconItem() {
-			return null;
-		}
-	};
-	public static CreativeTabs tabMachine = new CreativeTabs( CreativeTabs.getNextID(), "RPMachines") {
-		@Override
-		public ItemStack getIconItemStack() {
-			return new ItemStack(RedPowerBase.blockAppliance, 1, 3);
-		}
-		
-		@Override
-		public Item getTabIconItem() {
-			return null;
-		}
-	};
-	
+public class CreativeExtraTabs
+{
+    public static CreativeTabs tabWires;
+    public static CreativeTabs tabMicros;
+    public static CreativeTabs tabMachine;
+    
+    static {
+        CreativeExtraTabs.tabWires = new CreativeTabs(CreativeTabs.getNextID(), "RPWires") {
+            public ItemStack getIconItemStack() {
+                return new ItemStack((Block)RedPowerBase.blockMicro, 1, 768);
+            }
+            
+            public Item getTabIconItem() {
+                return null;
+            }
+        };
+        CreativeExtraTabs.tabMicros = new CreativeTabs(CreativeTabs.getNextID(), "RPMicroblocks") {
+            public ItemStack getIconItemStack() {
+                return new ItemStack((Block)RedPowerBase.blockMicro, 1, 23);
+            }
+            
+            public Item getTabIconItem() {
+                return null;
+            }
+        };
+        CreativeExtraTabs.tabMachine = new CreativeTabs(CreativeTabs.getNextID(), "RPMachines") {
+            public ItemStack getIconItemStack() {
+                return new ItemStack((Block)RedPowerBase.blockAppliance, 1, 3);
+            }
+            
+            public Item getTabIconItem() {
+                return null;
+            }
+        };
+    }
 }

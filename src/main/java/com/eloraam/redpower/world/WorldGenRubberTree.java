@@ -1,190 +1,161 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.RedPowerWorld;
-import com.eloraam.redpower.core.FractalLib;
-import com.eloraam.redpower.core.Vector3;
+import net.minecraft.world.gen.feature.*;
+import com.eloraam.redpower.*;
+import net.minecraft.block.*;
+import net.minecraft.world.*;
+import net.minecraft.init.*;
+import java.util.*;
+import com.eloraam.redpower.core.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
-
-public class WorldGenRubberTree extends WorldGenerator {
-	
-	public void putLeaves(World world, int i, int j, int k) {
-		if (world.isAirBlock(i, j, k)) {
-			world.setBlock(i, j, k, RedPowerWorld.blockLeaves, 0, 3);
-		}
-	}
-	
-	public boolean fillBlock(World world, int i, int j, int k) {
-		if (j >= 0 && j <= 126) {
-			Block bl = world.getBlock(i, j, k);
-			if (bl != null && bl.isWood(world, i, j, k)) {
-				return true;
-			} else if (bl != null && !bl.isLeaves(world, i, j, k) && bl != Blocks.tallgrass
-					&& bl != Blocks.grass && bl != Blocks.vine) {
-				return false;
-			} else {
-				world.setBlock(i, j, k, RedPowerWorld.blockLogs, 0, 3);
-				this.putLeaves(world, i, j - 1, k);
-				this.putLeaves(world, i, j + 1, k);
-				this.putLeaves(world, i, j, k - 1);
-				this.putLeaves(world, i, j, k + 1);
-				this.putLeaves(world, i - 1, j, k);
-				this.putLeaves(world, i + 1, j, k);
-				return true;
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean generate(World world, Random random, int i, int j, int k) {
-		int trh = random.nextInt(6) + 25;
-		if (j >= 1 && j + trh + 2 <= world.getHeight()) {
-			Block bid;
-			int x;
-			int z;
-			for (x = -1; x <= 1; ++x) {
-				for (z = -1; z <= 1; ++z) {
-					bid = world.getBlock(i + x, j - 1, k + z);
-					if (bid != Blocks.grass && bid != Blocks.dirt) {
-						return false;
-					}
-				}
-			}
-			
-			byte rw = 1;
-			
-			int org;
-			for (org = j; org < j + trh; ++org) {
-				if (org > j + 3) {
-					rw = 5;
-				}
-				
-				for (x = i - rw; x <= i + rw; ++x) {
-					for (z = k - rw; z <= k + rw; ++z) {
-						Block dest = world.getBlock(x, org, z);
-						if (dest != null && !dest.isLeaves(world, x, org, z)
-								&& !dest.isWood(world, x, org, z)
-								&& dest != Blocks.tallgrass
-								&& dest != Blocks.grass
-								&& dest != Blocks.vine) {
-							return false;
-						}
-					}
-				}
-			}
-			
-			for (x = -1; x <= 1; ++x) {
-				for (z = -1; z <= 1; ++z) {
-					world.setBlock(i + x, j - 1, k + z, Blocks.dirt);
-				}
-			}
-			
-			for (org = 0; org <= 6; ++org) {
-				for (x = -1; x <= 1; ++x) {
-					for (z = -1; z <= 1; ++z) {
-						world.setBlock(i + x, j + org, k
-								+ z, RedPowerWorld.blockLogs, 1, 3);
-					}
-				}
-				
-				for (x = -1; x <= 1; ++x) {
-					if (random.nextInt(5) == 1
-							&& world.isAirBlock(i + x, j + org, k - 2)) {
-						world.setBlock(i + x, j + org,
-								k - 2, Blocks.vine, 1, 3);
-					}
-					
-					if (random.nextInt(5) == 1
-							&& world.isAirBlock(i + x, j + org, k + 2)) {
-						world.setBlock(i + x, j + org,
-								k + 2, Blocks.vine, 4, 3);
-					}
-				}
-				
-				for (z = -1; z <= 1; ++z) {
-					if (random.nextInt(5) == 1
-							&& world.isAirBlock(i - 2, j + org, k + z)) {
-						world.setBlock(i - 2, j + org, k
-								+ z, Blocks.vine, 8, 3);
-					}
-					
-					if (random.nextInt(5) == 1
-							&& world.isAirBlock(i + 2, j + org, k + z)) {
-						world.setBlock(i + 2, j + org, k
-								+ z, Blocks.vine, 2, 3);
-					}
-				}
-			}
-			
-			Vector3 var23 = new Vector3();
-			Vector3 var24 = new Vector3();
-			int nbr = random.nextInt(100) + 10;
-			int br = 0;
-			
-			while (br < nbr) {
-				var24.set(random.nextFloat() - 0.5D, random.nextFloat(), random.nextFloat() - 0.5D);
-				var24.normalize();
-				double m = (nbr / 10.0D + 4.0D) * (1.0F + 1.0F * random.nextFloat());
-				var24.x *= m;
-				var24.z *= m;
-				var24.y = var24.y * (trh - 15) + nbr / 10.0D;
-				if (nbr < 8) {
-					switch (nbr) {
-						case 0:
-							var23.set(i - 1, j + 6, k - 1);
-							break;
-						case 1:
-							var23.set(i - 1, j + 6, k);
-							break;
-						case 2:
-							var23.set(i - 1, j + 6, k + 1);
-							break;
-						case 3:
-							var23.set(i, j + 6, k + 1);
-							break;
-						case 4:
-							var23.set(i + 1, j + 6, k + 1);
-							break;
-						case 5:
-							var23.set(i + 1, j + 6, k);
-							break;
-						case 6:
-							var23.set(i + 1, j + 6, k - 1);
-							break;
-						default:
-							var23.set(i, j + 6, k - 1);
-					}
-				} else {
-					var23.set(i + random.nextInt(3) - 1, j + 6,
-							k + random.nextInt(3) - 1);
-				}
-				
-				long brseed = random.nextLong();
-				FractalLib.BlockSnake bsn = new FractalLib.BlockSnake(var23, var24, brseed);
-				
-				while (true) {
-					System.out.println("KOKO LOOP FREEZE");
-					if (bsn.iterate()) {
-						Vector3 v = bsn.get();
-						if (this.fillBlock(world, (int) Math.floor(v.x), (int) Math.floor(v.y), (int) Math.floor(v.z))) {
-							continue;
-						}
-					}
-					++br;
-					break;
-				}
-			}
-			
-			return true;
-		} else {
-			return false;
-		}
-	}
+public class WorldGenRubberTree extends WorldGenerator
+{
+    public void putLeaves(final World world, final int x, final int y, final int z) {
+        if (world.isAirBlock(x, y, z)) {
+            world.setBlock(x, y, z, (Block)RedPowerWorld.blockLeaves, 0, 3);
+        }
+    }
+    
+    public boolean fillBlock(final World world, final int x, final int y, final int z) {
+        if (y < 0 || y > 126) {
+            return false;
+        }
+        final Block bl = world.getBlock(x, y, z);
+        if (bl != null && bl.isWood((IBlockAccess)world, x, y, z)) {
+            return true;
+        }
+        if (bl != Blocks.air && bl != null && !bl.isLeaves((IBlockAccess)world, x, y, z) && bl != Blocks.tallgrass && bl != Blocks.grass && bl != Blocks.vine) {
+            return false;
+        }
+        world.setBlock(x, y, z, (Block)RedPowerWorld.blockLogs, 0, 3);
+        this.putLeaves(world, x, y - 1, z);
+        this.putLeaves(world, x, y + 1, z);
+        this.putLeaves(world, x, y, z - 1);
+        this.putLeaves(world, x, y, z + 1);
+        this.putLeaves(world, x - 1, y, z);
+        this.putLeaves(world, x + 1, y, z);
+        return true;
+    }
+    
+    public boolean generate(final World world, final Random random, final int xPos, final int yPos, final int zPos) {
+        final int trh = random.nextInt(6) + 25;
+        if (yPos >= 1 && yPos + trh + 2 <= world.getHeight()) {
+            for (int x = -1; x <= 1; ++x) {
+                for (int z = -1; z <= 1; ++z) {
+                    final Block bid = world.getBlock(xPos + x, yPos - 1, zPos + z);
+                    if (bid != Blocks.grass && bid != Blocks.dirt) {
+                        return false;
+                    }
+                }
+            }
+            byte rw = 1;
+            for (int org = yPos; org < yPos + trh; ++org) {
+                if (org > yPos + 3) {
+                    rw = 5;
+                }
+                for (int x2 = xPos - rw; x2 <= xPos + rw; ++x2) {
+                    for (int z2 = zPos - rw; z2 <= zPos + rw; ++z2) {
+                        final Block dest = world.getBlock(x2, org, z2);
+                        if (dest != Blocks.air && dest != null && !dest.isLeaves((IBlockAccess)world, x2, org, z2) && !dest.isWood((IBlockAccess)world, x2, org, z2) && dest != Blocks.tallgrass && dest != Blocks.grass && dest != Blocks.vine) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            for (int x2 = -1; x2 <= 1; ++x2) {
+                for (int z2 = -1; z2 <= 1; ++z2) {
+                    world.setBlock(xPos + x2, yPos - 1, zPos + z2, Blocks.dirt);
+                }
+            }
+            for (int org = 0; org <= 6; ++org) {
+                for (int x2 = -1; x2 <= 1; ++x2) {
+                    for (int z2 = -1; z2 <= 1; ++z2) {
+                        world.setBlock(xPos + x2, yPos + org, zPos + z2, (Block)RedPowerWorld.blockLogs, 1, 3);
+                    }
+                }
+                for (int x2 = -1; x2 <= 1; ++x2) {
+                    if (random.nextInt(5) == 1 && world.isAirBlock(xPos + x2, yPos + org, zPos - 2)) {
+                        world.setBlock(xPos + x2, yPos + org, zPos - 2, Blocks.vine, 1, 3);
+                    }
+                    if (random.nextInt(5) == 1 && world.isAirBlock(xPos + x2, yPos + org, zPos + 2)) {
+                        world.setBlock(xPos + x2, yPos + org, zPos + 2, Blocks.vine, 4, 3);
+                    }
+                }
+                for (int z3 = -1; z3 <= 1; ++z3) {
+                    if (random.nextInt(5) == 1 && world.isAirBlock(xPos - 2, yPos + org, zPos + z3)) {
+                        world.setBlock(xPos - 2, yPos + org, zPos + z3, Blocks.vine, 8, 3);
+                    }
+                    if (random.nextInt(5) == 1 && world.isAirBlock(xPos + 2, yPos + org, zPos + z3)) {
+                        world.setBlock(xPos + 2, yPos + org, zPos + z3, Blocks.vine, 2, 3);
+                    }
+                }
+            }
+            final Vector3 var23 = new Vector3();
+            final Vector3 var24 = new Vector3();
+            for (int nbr = random.nextInt(100) + 10, br = 0; br < nbr; ++br) {
+                var24.set(random.nextFloat() - 0.5, (double)random.nextFloat(), random.nextFloat() - 0.5);
+                var24.normalize();
+                final double m = (nbr / 10.0 + 4.0) * (1.0f + 1.0f * random.nextFloat());
+                final Vector3 vector3 = var24;
+                vector3.x *= m;
+                final Vector3 vector4 = var24;
+                vector4.z *= m;
+                var24.y = var24.y * (trh - 15) + nbr / 10.0;
+                if (nbr < 8) {
+                    switch (nbr - 1) {
+                        case 0: {
+                            var23.set((double)(xPos - 1), (double)(yPos + 6), (double)(zPos - 1));
+                            break;
+                        }
+                        case 1: {
+                            var23.set((double)(xPos - 1), (double)(yPos + 6), (double)zPos);
+                            break;
+                        }
+                        case 2: {
+                            var23.set((double)(xPos - 1), (double)(yPos + 6), (double)(zPos + 1));
+                            break;
+                        }
+                        case 3: {
+                            var23.set((double)xPos, (double)(yPos + 6), (double)(zPos + 1));
+                            break;
+                        }
+                        case 4: {
+                            var23.set((double)(xPos + 1), (double)(yPos + 6), (double)(zPos + 1));
+                            break;
+                        }
+                        case 5: {
+                            var23.set((double)(xPos + 1), (double)(yPos + 6), (double)zPos);
+                            break;
+                        }
+                        case 6: {
+                            var23.set((double)(xPos + 1), (double)(yPos + 6), (double)(zPos - 1));
+                            break;
+                        }
+                        default: {
+                            var23.set((double)xPos, (double)(yPos + 6), (double)(zPos - 1));
+                            break;
+                        }
+                    }
+                }
+                else {
+                    var23.set((double)(xPos + random.nextInt(3) - 1), (double)(yPos + 6), (double)(zPos + random.nextInt(3) - 1));
+                }
+                final long brseed = random.nextLong();
+                final FractalLib.BlockSnake bsn = new FractalLib.BlockSnake(var23, var24, brseed);
+                while (bsn.iterate()) {
+                    final Vector3 v = bsn.get();
+                    if (this.fillBlock(world, (int)Math.floor(v.x), (int)Math.floor(v.y), (int)Math.floor(v.z))) {
+                        continue;
+                    }
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }

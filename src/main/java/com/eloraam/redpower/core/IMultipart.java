@@ -1,14 +1,17 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import java.util.List;
+import java.util.*;
+import net.minecraft.item.*;
 
-import net.minecraft.item.ItemStack;
-
-public interface IMultipart {
-	
-	boolean isSideSolid(int side);
-	
-	boolean isSideNormal(int side);
-	
-	List<ItemStack> harvestMultipart();
+public interface IMultipart
+{
+    boolean isSideSolid(final int p0);
+    
+    boolean isSideNormal(final int p0);
+    
+    List<ItemStack> harvestMultipart();
 }

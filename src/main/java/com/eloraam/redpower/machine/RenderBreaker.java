@@ -1,64 +1,69 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.core.RenderCustomBlock;
-import com.eloraam.redpower.machine.TileBreaker;
+import cpw.mods.fml.relauncher.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.*;
+import net.minecraft.world.*;
+import net.minecraft.util.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-public class RenderBreaker extends RenderCustomBlock {
-	
-	protected RenderContext context = new RenderContext();
-	
-	public RenderBreaker(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k,
-			Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int i, int j, int k, int md) {
-		TileBreaker tb = (TileBreaker) CoreLib.getTileEntity(iba, i, j, k, TileBreaker.class);
-		if (tb != null) {
-			this.context.setDefaults();
-			this.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-			int act = tb.Active ? 1 : 0;
-			this.context.setPos(i, j, k);
-			this.context.readGlobalLights(iba, i, j, k);
-			this.context.setIcon(super.block.getIcon(58, md), super.block.getIcon(49 + act, md), super.block.getIcon(51 + act, md), super.block.getIcon(51 + act, md), super.block.getIcon(51 + act, md), super.block.getIcon(51 + act, md));
-			this.context.setSize(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-			this.context.setupBox();
-			this.context.transform();
-			this.context.orientTextures(tb.Rotation);
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-			this.context.renderGlobFaces(63);
-			//RenderLib.unbindTexture();
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		super.block.setBlockBoundsForItemRender();
-		this.context.setDefaults();
-		this.context.setPos(-0.5D, -0.5D, -0.5D);
-		this.context.useNormal = true;
-		//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		this.context.setIcon(super.block.getIcon(58, md), super.block.getIcon(49, md), super.block.getIcon(51, md), super.block.getIcon(51, md), super.block.getIcon(51, md), super.block.getIcon(51, md));
-		this.context.renderBox(63, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-		tessellator.draw();
-		//RenderLib.unbindTexture();
-		this.context.useNormal = false;
-	}
+@SideOnly(Side.CLIENT)
+public class RenderBreaker extends RenderCustomBlock
+{
+    protected RenderContext context;
+    
+    public RenderBreaker(final Block block) {
+        super(block);
+        this.context = new RenderContext();
+    }
+    
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileBreaker breaker = (TileBreaker)tile;
+        final World world = breaker.getWorldObj();
+        GL11.glDisable(2896);
+        final Tessellator tess = Tessellator.instance;
+        this.context.bindBlockTexture();
+        this.context.setDefaults();
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        final IIcon front = breaker.Active ? RedPowerMachine.breakerFrontOn : RedPowerMachine.breakerFront;
+        final IIcon side = breaker.Active ? RedPowerMachine.breakerSideOn : RedPowerMachine.breakerSide;
+        this.context.setPos(x, y, z);
+        this.context.readGlobalLights((IBlockAccess)world, breaker.xCoord, breaker.yCoord, breaker.zCoord);
+        this.context.setIcon(RedPowerMachine.breakerBack, front, side, side, side, side);
+        this.context.setSize(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        this.context.setupBox();
+        this.context.transform();
+        this.context.orientTextures(breaker.Rotation);
+        tess.startDrawingQuads();
+        this.context.renderGlobFaces(63);
+        tess.draw();
+        GL11.glEnable(2896);
+    }
+    
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.5, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.0, 0.0);
+        }
+        this.context.useNormal = true;
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        this.context.setIcon(RedPowerMachine.breakerBack, RedPowerMachine.breakerFront, RedPowerMachine.breakerSide, RedPowerMachine.breakerSide, RedPowerMachine.breakerSide, RedPowerMachine.breakerSide);
+        this.context.renderBox(63, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        tess.draw();
+        this.context.useNormal = false;
+    }
 }

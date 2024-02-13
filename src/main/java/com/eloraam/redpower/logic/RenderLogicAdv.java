@@ -1,98 +1,94 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.logic;
 
-import com.eloraam.redpower.core.RenderModel;
-import com.eloraam.redpower.logic.RenderLogic;
-import com.eloraam.redpower.logic.TileLogic;
-import com.eloraam.redpower.logic.TileLogicAdv;
+import cpw.mods.fml.relauncher.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.util.*;
+import net.minecraft.block.*;
+import net.minecraft.world.*;
+import net.minecraft.client.renderer.*;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.IBlockAccess;
-
-public class RenderLogicAdv extends RenderLogic {
-	
-	RenderModel modelXcvr = RenderModel.loadModel("/assets/rplogic/models/busxcvr.obj");
-	ResourceLocation modelRes = new ResourceLocation("rplogic", "models/arraytex.png");
-	
-	public RenderLogicAdv(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	protected int getTorchState(TileLogic tl) {
-		//int md = tl.getExtendedMetadata();
-		return 0;
-	}
-	
-	@Override
-	protected int getInvTorchState(int md) {
-		return 0;
-	}
-	
-	@Override
-	protected RenderLogic.TorchPos[] getTorchVectors(TileLogic tl) {
-		//int md = tl.getExtendedMetadata();
-		return null;
-	}
-	
-	@Override
-	protected RenderLogic.TorchPos[] getInvTorchVectors(int md) {
-		return null;
-	}
-	
-	@Override
-	protected void renderWorldPart(IBlockAccess iba, TileLogic tl) {
-		int md = tl.getExtendedMetadata();
-		TileLogicAdv tls = (TileLogicAdv) tl;
-		switch (md) {
-			case 0:
-				TileLogicAdv.LogicAdvXcvr lsc = (TileLogicAdv.LogicAdvXcvr) tls.getLogicStorage(TileLogicAdv.LogicAdvXcvr.class);
-				//super.context.bindTexture("/eloraam/logic/array1.png");
-				Minecraft.getMinecraft().renderEngine.bindTexture(modelRes);
-				
-				super.context.bindModelOffset(this.modelXcvr, 0.5D, 0.5D, 0.5D);
-				super.context.setTint(1.0F, 1.0F, 1.0F);
-				boolean b = (3552867 >> tl.Rotation & 1) == 0;
-				super.context.renderModelGroup(1, 1 + (b ? 1 : 0) + (tl.Deadmap == 0 ? 2 : 0));
-				super.context.renderModelGroup(2, 1 + ((tl.PowerState & 1) > 0 ? 1 : 0) + ((tl.PowerState & 4) > 0 ? 2 : 0));
-				
-				for (int i = 0; i < 4; ++i) {
-					if (tl.Deadmap == 0) {
-						super.context.renderModelGroup(3 + i, 1 + (lsc.State2 >> 4 * i & 15));
-						super.context.renderModelGroup(7 + i, 1 + (lsc.State1 >> 4 * i & 15));
-					} else {
-						super.context.renderModelGroup(3 + i, 1 + (lsc.State1 >> 4 * i & 15));
-						super.context.renderModelGroup(7 + i, 1 + (lsc.State2 >> 4 * i & 15));
-					}
-				}
-				return;
-			default:
-		}
-	}
-	
-	@Override
-	protected void renderInvPart(int md) {
-		switch (md) {
-			case 1024:
-				Minecraft.getMinecraft().renderEngine.bindTexture(modelRes);
-				Tessellator tessellator = Tessellator.instance;
-				tessellator.startDrawingQuads();
-				super.context.useNormal = true;
-				super.context.bindModelOffset(this.modelXcvr, 0.5D, 0.5D, 0.5D);
-				super.context.setTint(1.0F, 1.0F, 1.0F);
-				super.context.renderModelGroup(1, 1);
-				super.context.renderModelGroup(2, 1);
-				
-				for (int i = 0; i < 8; ++i) {
-					super.context.renderModelGroup(3 + i, 1);
-				}
-				
-				super.context.useNormal = false;
-				tessellator.draw();
-			default:
-				break;
-		}
-	}
+@SideOnly(Side.CLIENT)
+public class RenderLogicAdv extends RenderLogic
+{
+    private RenderModel modelXcvr;
+    private ResourceLocation modelRes;
+    
+    public RenderLogicAdv(final Block block) {
+        super(block);
+        this.modelXcvr = RenderModel.loadModel("rplogic:models/busxcvr.obj");
+        this.modelRes = new ResourceLocation("rplogic", "models/arraytex.png");
+    }
+    
+    protected int getTorchState(final TileLogic tileLogic) {
+        return 0;
+    }
+    
+    protected int getInvTorchState(final int metadata) {
+        return 0;
+    }
+    
+    protected RenderLogic.TorchPos[] getTorchVectors(final TileLogic tileLogic) {
+        return null;
+    }
+    
+    protected RenderLogic.TorchPos[] getInvTorchVectors(final int metadata) {
+        return null;
+    }
+    
+    protected void renderWorldPart(final IBlockAccess iba, final TileLogic tileLogic, final double x, final double y, final double z, final float partialTicks) {
+        final int md = tileLogic.getExtendedMetadata();
+        final TileLogicAdv tls = (TileLogicAdv)tileLogic;
+        final Tessellator tess = Tessellator.instance;
+        tess.draw();
+        switch (md) {
+            case 0: {
+                final TileLogicAdv.LogicAdvXcvr lsc = tls.getLogicStorage(TileLogicAdv.LogicAdvXcvr.class);
+                tess.startDrawingQuads();
+                this.context.bindTexture(this.modelRes);
+                this.context.bindModelOffset(this.modelXcvr, 0.5, 0.5, 0.5);
+                this.context.setTint(1.0f, 1.0f, 1.0f);
+                final boolean b = (3552867 >> tileLogic.Rotation & 0x1) == 0x0;
+                this.context.renderModelGroup(1, 1 + (b ? 1 : 0) + ((tileLogic.Deadmap == 0) ? 2 : 0));
+                this.context.renderModelGroup(2, 1 + (((tileLogic.PowerState & 0x1) > 0) ? 1 : 0) + (((tileLogic.PowerState & 0x4) > 0) ? 2 : 0));
+                for (int i = 0; i < 4; ++i) {
+                    if (tileLogic.Deadmap == 0) {
+                        this.context.renderModelGroup(3 + i, 1 + (lsc.State2 >> 4 * i & 0xF));
+                        this.context.renderModelGroup(7 + i, 1 + (lsc.State1 >> 4 * i & 0xF));
+                    }
+                    else {
+                        this.context.renderModelGroup(3 + i, 1 + (lsc.State1 >> 4 * i & 0xF));
+                        this.context.renderModelGroup(7 + i, 1 + (lsc.State2 >> 4 * i & 0xF));
+                    }
+                }
+                tess.draw();
+                break;
+            }
+        }
+        tess.startDrawingQuads();
+    }
+    
+    protected void renderInvPart(final int metadata) {
+        switch (metadata) {
+            case 1024: {
+                this.context.bindTexture(this.modelRes);
+                final Tessellator tess = Tessellator.instance;
+                tess.startDrawingQuads();
+                this.context.useNormal = true;
+                this.context.bindModelOffset(this.modelXcvr, 0.5, 0.5, 0.5);
+                this.context.setTint(1.0f, 1.0f, 1.0f);
+                this.context.renderModelGroup(1, 1);
+                this.context.renderModelGroup(2, 1);
+                for (int i = 0; i < 8; ++i) {
+                    this.context.renderModelGroup(3 + i, 1);
+                }
+                this.context.useNormal = false;
+                tess.draw();
+                break;
+            }
+        }
+    }
 }

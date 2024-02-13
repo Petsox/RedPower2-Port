@@ -1,134 +1,132 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.core.IBlockHardness;
+import net.minecraft.block.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.block.material.*;
+import net.minecraft.creativetab.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.world.*;
+import net.minecraft.entity.*;
+import java.util.*;
+import net.minecraft.item.*;
+import net.minecraft.util.*;
+import net.minecraft.entity.player.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
-
-public class BlockCustomStone extends Block implements IBlockHardness {
-	
-	private String[] textures = new String[16];
-	private IIcon[] icons = new IIcon[16];
-	
-	public BlockCustomStone() {
-		super(Material.rock);
-		this.setHardness(3.0F);
-		this.setResistance(10.0F);
-		this.setCreativeTab(CreativeTabs.tabBlock);
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister register) {
-        for(int i = 0; i < this.textures.length; i ++) {
-        	if(this.textures[i] != null && !this.textures[i].trim().isEmpty()) {
-        		this.icons[i] = register.registerIcon(this.textures[i]);
-        	} else {
-        		this.icons[i] = null;
-        	}
+public class BlockCustomStone extends Block implements IBlockHardness
+{
+    private String[] textures;
+    private IIcon[] icons;
+    
+    public BlockCustomStone() {
+        super(Material.rock);
+        this.textures = new String[16];
+        this.icons = new IIcon[16];
+        this.setHardness(3.0f);
+        this.setResistance(10.0f);
+        this.setCreativeTab(CreativeTabs.tabBlock);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(final IIconRegister register) {
+        for (int i = 0; i < this.textures.length; ++i) {
+            if (this.textures[i] != null && !this.textures[i].trim().isEmpty()) {
+                this.icons[i] = register.registerIcon(this.textures[i]);
+            }
+            else {
+                this.icons[i] = null;
+            }
         }
     }
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-    public IIcon getIcon(int side, int meta) {
+    
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(final int side, final int meta) {
         return this.icons[meta];
     }
-	
-	public BlockCustomStone setBlockTexture(int meta, String textureName) {
-		this.textures[meta] = textureName;
-		return this;
-	}
-	
-	@Override
-	public float getPrototypicalHardness(int md) {
-		switch (md) {
-			case 0:
-				return 1.0F;
-			case 1:
-				return 2.5F;
-			case 2:
-				return 1.0F;
-			case 3:
-				return 2.5F;
-			case 4:
-				return 2.5F;
-			case 5:
-				return 2.5F;
-			case 6:
-				return 2.5F;
-			default:
-				return 3.0F;
-		}
-	}
-	
-	@Override
-	public float getBlockHardness(World world, int x, int y, int z) {
-		int md = world.getBlockMetadata(x, y, z);
-		return this.getPrototypicalHardness(md);
-	}
-	
-	@Override
-	public float getExplosionResistance(Entity exploder, World world, int X, int Y, int Z, double srcX, double srcY, double srcZ) {
-		int md = world.getBlockMetadata(X, Y, Z);
-		switch (md) {
-			case 1:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-				return 12.0F;
-			case 2:
-			default:
-				return 6.0F;
-		}
-	}
-	
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		return 16 + j;
-	}
-	
-	@Override
-	public Item getItemDropped(int meta, Random random, int fortune) {
-		return Item.getItemFromBlock(this);
-	}
-	
-	@Override
-	public int quantityDropped(Random random) {
-		return 1;
-	}
-	
-	@Override
-	public int damageDropped(int i) {
-		return i == 1 ? 3 : (i == 6 ? 3 : i);
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-		for (int i = 0; i <= 6; ++i) {
-			list.add(new ItemStack(this, 1, i));
-		}
-	}
-	
-	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player) {
-        return new ItemStack(this, 1, world.getBlockMetadata(x, y, z));
+    
+    public BlockCustomStone setBlockTexture(final int meta, final String textureName) {
+        this.textures[meta] = textureName;
+        return this;
+    }
+    
+    public float getPrototypicalHardness(final int metadata) {
+        switch (metadata) {
+            case 0: {
+                return 1.0f;
+            }
+            case 1: {
+                return 2.5f;
+            }
+            case 2: {
+                return 1.0f;
+            }
+            case 3: {
+                return 2.5f;
+            }
+            case 4: {
+                return 2.5f;
+            }
+            case 5: {
+                return 2.5f;
+            }
+            case 6: {
+                return 2.5f;
+            }
+            default: {
+                return 3.0f;
+            }
+        }
+    }
+    
+    public float getBlockHardness(final World world, final int x, final int y, final int z) {
+        final int md = world.getBlockMetadata(x, y, z);
+        return this.getPrototypicalHardness(md);
+    }
+    
+    public float getExplosionResistance(final Entity exploder, final World world, final int X, final int Y, final int Z, final double srcX, final double srcY, final double srcZ) {
+        final int md = world.getBlockMetadata(X, Y, Z);
+        switch (md) {
+            case 1:
+            case 3:
+            case 4:
+            case 5:
+            case 6: {
+                return 12.0f;
+            }
+            default: {
+                return 6.0f;
+            }
+        }
+    }
+    
+    public int getBlockTextureFromSideAndMetadata(final int i, final int j) {
+        return 16 + j;
+    }
+    
+    public Item getItemDropped(final int meta, final Random random, final int fortune) {
+        return Item.getItemFromBlock((Block)this);
+    }
+    
+    public int quantityDropped(final Random random) {
+        return 1;
+    }
+    
+    public int damageDropped(final int i) {
+        return (i == 1) ? 3 : ((i == 6) ? 3 : i);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(final Item item, final CreativeTabs tab, final List list) {
+        for (int i = 0; i <= 6; ++i) {
+            list.add(new ItemStack((Block)this, 1, i));
+        }
+    }
+    
+    public ItemStack getPickBlock(final MovingObjectPosition target, final World world, final int x, final int y, final int z, final EntityPlayer player) {
+        return new ItemStack((Block)this, 1, world.getBlockMetadata(x, y, z));
     }
 }

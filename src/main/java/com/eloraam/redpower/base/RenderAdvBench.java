@@ -1,58 +1,67 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.base;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.base.TileAdvBench;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.core.RenderCustomBlock;
+import cpw.mods.fml.relauncher.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.*;
+import net.minecraft.world.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-public class RenderAdvBench extends RenderCustomBlock {
-	
-	protected RenderContext context = new RenderContext();
-	
-	public RenderAdvBench(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k,
-			Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int x, int y, int z, int md) {
-		TileAdvBench tb = (TileAdvBench) CoreLib.getTileEntity(iba, x, y, z, TileAdvBench.class);
-		if (tb != null) {
-			renderblocks.renderStandardBlock(block, x, y, z);
-			renderblocks.setRenderBoundsFromBlock(block);
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		super.block.setBlockBoundsForItemRender();
-		this.context.setDefaults();
-		this.context.setPos(-0.5D, -0.5D, -0.5D);
-		this.context.useNormal = true;
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		IIcon frontIcon = RedPowerBase.blockAppliance.getIcon(ForgeDirection.NORTH.ordinal(), 3);
-		IIcon topIcon = RedPowerBase.blockAppliance.getIcon(ForgeDirection.UP.ordinal(), 3);
-		IIcon bottomIcon = RedPowerBase.blockAppliance.getIcon(ForgeDirection.DOWN.ordinal(), 3);
-		IIcon sideIcon = RedPowerBase.blockAppliance.getIcon(ForgeDirection.UNKNOWN.ordinal(), 3);
-		this.context.setIcon(bottomIcon, topIcon, sideIcon, sideIcon, sideIcon, frontIcon);
-		this.context.renderBox(63, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-		tessellator.draw();
-		this.context.useNormal = false;
-	}
+@SideOnly(Side.CLIENT)
+public class RenderAdvBench extends RenderCustomBlock
+{
+    protected RenderContext context;
+    
+    public RenderAdvBench(final Block block) {
+        super(block);
+        this.context = new RenderContext();
+    }
+    
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileAdvBench bench = (TileAdvBench)tile;
+        final World world = bench.getWorldObj();
+        GL11.glDisable(2896);
+        final Tessellator tess = Tessellator.instance;
+        this.context.bindBlockTexture();
+        this.context.setDefaults();
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        this.context.setPos(x, y, z);
+        this.context.readGlobalLights((IBlockAccess)world, bench.xCoord, bench.yCoord, bench.zCoord);
+        this.context.setIcon(RedPowerBase.projectTableBottom, RedPowerBase.projectTableTop, RedPowerBase.projectTableFront, RedPowerBase.projectTableSide, RedPowerBase.projectTableSide, RedPowerBase.projectTableSide);
+        this.context.setSize(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        this.context.setupBox();
+        this.context.transform();
+        this.context.rotateTextures(bench.Rotation);
+        tess.startDrawingQuads();
+        this.context.renderGlobFaces(63);
+        tess.draw();
+        GL11.glEnable(2896);
+    }
+    
+    @Override
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.5, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.0, 0.0);
+        }
+        this.context.useNormal = true;
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        this.context.setIcon(RedPowerBase.projectTableBottom, RedPowerBase.projectTableTop, RedPowerBase.projectTableSide, RedPowerBase.projectTableSide, RedPowerBase.projectTableSide, RedPowerBase.projectTableFront);
+        this.context.renderBox(63, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        tess.draw();
+        this.context.useNormal = false;
+    }
 }

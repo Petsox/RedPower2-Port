@@ -1,20 +1,21 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.*;
+import net.minecraft.world.*;
 
-import java.util.ArrayList;
-
-import net.minecraft.world.IBlockAccess;
-
-public interface IFrameSupport {
-	
-	ArrayList<?> getFramePacket();
-	
-	void handleFramePacket(ByteBuf buffer);
-	
-	void onFrameRefresh(IBlockAccess iba);
-	
-	void onFramePickup(IBlockAccess iba);
-	
-	void onFrameDrop();
+public interface IFrameSupport
+{
+    void writeFramePacket(final NBTTagCompound p0);
+    
+    void readFramePacket(final NBTTagCompound p0);
+    
+    void onFrameRefresh(final IBlockAccess p0);
+    
+    void onFramePickup(final IBlockAccess p0);
+    
+    void onFrameDrop();
 }

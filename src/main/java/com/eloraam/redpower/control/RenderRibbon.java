@@ -1,77 +1,72 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.control;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.core.RenderLib;
-import com.eloraam.redpower.core.TileCovered;
-import com.eloraam.redpower.wiring.RenderWiring;
-import com.eloraam.redpower.wiring.TileWiring;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import com.eloraam.redpower.core.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.wiring.*;
+import com.eloraam.redpower.*;
+import net.minecraft.world.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-public class RenderRibbon extends RenderWiring {
-	
-	public RenderRibbon(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int i, int j, int k, int md) {
-		super.context.setBrightness(super.block.getMixedBrightnessForBlock(iba, i, j, k));
-		TileCovered tc = (TileCovered) iba.getTileEntity(i, j, k);
-		if (tc != null) {
-			super.context.setPos(i, j, k);
-			if (tc.CoverSides > 0) {
-				super.context.setTint(1.0F, 1.0F, 1.0F);
-				super.context.readGlobalLights(iba, i, j, k);
-				this.renderCovers(tc.CoverSides, tc.Covers);
-			}
-			
-			TileWiring tw = (TileWiring) tc;
-			int cons = tw.getConnectionMask();
-			int indcon = tw.getExtConnectionMask();
-			int indconex = tw.EConEMask;
-			cons |= indcon;
-			super.context.setTint(1.0F, 1.0F, 1.0F);
-			IIcon topIcon = RedPowerBase.blockMicro.getIcon(1, md);
-			IIcon centIcon = RedPowerBase.blockMicro.getIcon(2, md);
-			this.setSideTex(topIcon, centIcon, topIcon);
-			this.setWireSize(0.5F, 0.0625F);
-			//RenderLib.bindTexture("/eloraam/control/control1.png");
-			this.renderWireBlock(tw.ConSides, cons, indcon, indconex);
-			//RenderLib.unbindTexture();
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		Tessellator tessellator = Tessellator.instance;
-		super.block.setBlockBoundsForItemRender();
-		Block bid = Block.getBlockById(md >> 8);
-		md &= 255;
-		super.context.setDefaults();
-		super.context.setTexFlags(55);
-		super.context.setPos(-0.5D, -0.20000000298023224D, -0.5D);
-		IIcon topIcon = RedPowerBase.blockMicro.getIcon(1, md);
-		IIcon centIcon = RedPowerBase.blockMicro.getIcon(2, md);
-		this.setSideTex(topIcon, centIcon, topIcon);
-		this.setWireSize(0.5F, 0.0625F);
-		super.context.useNormal = true;
-		//RenderLib.bindTexture("/eloraam/control/control1.png");
-		tessellator.startDrawingQuads();
-		this.renderSideWires(127, 0, 0);
-		tessellator.draw();
-		//RenderLib.unbindTexture();
-		super.context.useNormal = false;
-	}
+@SideOnly(Side.CLIENT)
+public class RenderRibbon extends RenderWiring
+{
+    public RenderRibbon(final Block block) {
+        super(block);
+    }
+    
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileCovered covered = (TileCovered)tile;
+        final World world = covered.getWorldObj();
+        GL11.glDisable(2896);
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        this.context.bindBlockTexture();
+        this.context.setBrightness(this.getMixedBrightness(covered));
+        this.context.setPos(x, y, z);
+        if (covered.CoverSides > 0) {
+            this.context.setTint(1.0f, 1.0f, 1.0f);
+            this.context.readGlobalLights((IBlockAccess)world, covered.xCoord, covered.xCoord, covered.zCoord);
+            this.renderCovers(covered.CoverSides, covered.Covers);
+        }
+        final TileWiring tw = (TileWiring)covered;
+        final int indcon = tw.getExtConnectionMask();
+        final int cons = tw.getConnectionMask() | indcon;
+        final int indconex = tw.EConEMask;
+        this.context.setTint(1.0f, 1.0f, 1.0f);
+        this.setSideIcon(RedPowerControl.ribbonTop, RedPowerControl.ribbonFace, RedPowerControl.ribbonTop);
+        this.setWireSize(0.5f, 0.0625f);
+        this.renderWireBlock(tw.ConSides, cons, indcon, indconex);
+        tess.draw();
+        GL11.glEnable(2896);
+    }
+    
+    @Override
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        final Tessellator tess = Tessellator.instance;
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        this.context.setTexFlags(55);
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.20000000298023224, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.29999999701976776, 0.0);
+        }
+        this.setSideIcon(RedPowerControl.ribbonTop, RedPowerControl.ribbonFace, RedPowerControl.ribbonTop);
+        this.setWireSize(0.5f, 0.0625f);
+        this.context.useNormal = true;
+        tess.startDrawingQuads();
+        this.renderSideWires(127, 0, 0);
+        tess.draw();
+        this.context.useNormal = false;
+    }
 }

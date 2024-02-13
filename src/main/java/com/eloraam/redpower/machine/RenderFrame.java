@@ -1,102 +1,101 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RenderCovers;
-import com.eloraam.redpower.machine.TileFrame;
+import com.eloraam.redpower.core.*;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.*;
+import net.minecraft.world.*;
+import net.minecraft.util.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-public class RenderFrame extends RenderCovers {
-	
-	public RenderFrame(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int x, int y, int z, int md) {
-		//boolean cons = false;
-		TileFrame tc = (TileFrame) CoreLib.getTileEntity(iba, z, y, z, TileFrame.class);
-		if (tc != null) {
-			super.context.setDefaults();
-			super.context.setTint(1.0F, 1.0F, 1.0F);
-			super.context.setPos(x, y, z);
-			super.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-			super.context.readGlobalLights(iba, x, y, z);
-			int m;
-			if (tc.CoverSides > 0) {
-				short[] n = new short[6];
-				
-				for (m = 0; m < 6; ++m) {
-					n[m] = tc.Covers[m];
-					int tx = n[m] >> 8;
-					if (tx == 1 || tx == 4) {
-						n[m] = (short) (n[m] - 256);
-					}
-				}
-				super.coverRenderer.render(tc.CoverSides, n);
-			}
-			
-			super.context.exactTextureCoordinates = true;
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png", 1); //TODO: Strange int param
-			super.context.setIcon(getIcon(ForgeDirection.NORTH.ordinal(), md));
-			
-			for (int side = 0; side < 6; ++side) {
-				m = 1 << side;
-				int index = ForgeDirection.UNKNOWN.ordinal();
-				super.coverRenderer.start();
-				if ((tc.CoverSides & m) > 0) {
-					if ((tc.StickySides & m) > 0) {
-						index = ForgeDirection.SOUTH.ordinal();
-					} else {
-						index = ForgeDirection.NORTH.ordinal();
-					}
-				} else {
-					m |= 1 << (side ^ 1);
-					super.context.setIconNum(side ^ 1, getIcon(ForgeDirection.UNKNOWN.ordinal(), md));
-				}
-				
-				super.context.setIconNum(side, getIcon(index, md));
-				super.coverRenderer.setSize(side, 0.0625F);
-				super.context.calcBoundsGlobal();
-				super.context.renderGlobFaces(m);
-			}
-			
-			super.context.exactTextureCoordinates = false;
-			//RenderLib.unbindTexture();
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		super.block.setBlockBoundsForItemRender();
-		super.context.setDefaults();
-		super.context.setPos(-0.5D, -0.5D, -0.5D);
-		super.context.useNormal = true;
-		super.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-		//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		super.context.setIcon(getIcon(ForgeDirection.UNKNOWN.ordinal(), md));
-		this.doubleBox(63, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.01F);
-		tessellator.draw();
-		//RenderLib.unbindTexture();
-		super.context.useNormal = false;
-	}
-	
-	void doubleBox(int sides, float x1, float y1, float z1, float x2, float y2, float z2, float ino) {
-		int s2 = sides << 1 & 42 | sides >> 1 & 21;
-		super.context.renderBox(sides, x1, y1, z1, x2, y2, z2);
-		super.context.renderBox(s2, x2 - ino, y2 - ino, z2 - ino, x1 + ino, y1 + ino, z1 + ino);
-	}
+@SideOnly(Side.CLIENT)
+public class RenderFrame extends RenderCovers
+{
+    public RenderFrame(final Block block) {
+        super(block);
+    }
+    
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileFrame frame = (TileFrame)tile;
+        final World world = frame.getWorldObj();
+        GL11.glDisable(2896);
+        final Tessellator tess = Tessellator.instance;
+        this.context.bindBlockTexture();
+        this.context.setDefaults();
+        this.context.setTint(1.0f, 1.0f, 1.0f);
+        this.context.setPos(x, y, z);
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        this.context.readGlobalLights((IBlockAccess)world, frame.xCoord, frame.yCoord, frame.zCoord);
+        tess.startDrawingQuads();
+        if (frame.CoverSides > 0) {
+            final short[] sides = new short[6];
+            for (int ps = 0; ps < 6; ++ps) {
+                sides[ps] = frame.Covers[ps];
+                final int tx = sides[ps] >> 8;
+                if (tx == 1 || tx == 4) {
+                    sides[ps] -= 256;
+                }
+            }
+            super.coverRenderer.render(frame.CoverSides, sides);
+        }
+        this.context.exactTextureCoordinates = true;
+        this.context.setIcon(RedPowerMachine.frameCovered);
+        for (int ps2 = 0; ps2 < 6; ++ps2) {
+            int pc = 1 << ps2;
+            IIcon icon = RedPowerMachine.frameCrossed;
+            super.coverRenderer.start();
+            if ((frame.CoverSides & pc) > 0) {
+                if ((frame.StickySides & pc) > 0) {
+                    icon = RedPowerMachine.framePaneled;
+                }
+                else {
+                    icon = RedPowerMachine.frameCovered;
+                }
+            }
+            else {
+                pc |= 1 << (ps2 ^ 0x1);
+                this.context.setIconNum(ps2 ^ 0x1, RedPowerMachine.frameCrossed);
+            }
+            this.context.setIconNum(ps2, icon);
+            super.coverRenderer.setSize(ps2, 0.0625f);
+            this.context.calcBoundsGlobal();
+            this.context.renderGlobFaces(pc);
+        }
+        tess.draw();
+        this.context.exactTextureCoordinates = false;
+        GL11.glEnable(2896);
+    }
+    
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.5, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.0, 0.0);
+        }
+        this.context.useNormal = true;
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        this.context.setIcon(RedPowerMachine.frameCrossed);
+        this.doubleBox(63, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.01f);
+        tess.draw();
+        this.context.useNormal = false;
+    }
+    
+    private void doubleBox(final int sides, final float x1, final float y1, final float z1, final float x2, final float y2, final float z2, final float ino) {
+        final int s2 = (sides << 1 & 0x2A) | (sides >> 1 & 0x15);
+        this.context.renderBox(sides, (double)x1, (double)y1, (double)z1, (double)x2, (double)y2, (double)z2);
+        this.context.renderBox(s2, (double)(x2 - ino), (double)(y2 - ino), (double)(z2 - ino), (double)(x1 + ino), (double)(y1 + ino), (double)(z1 + ino));
+    }
 }

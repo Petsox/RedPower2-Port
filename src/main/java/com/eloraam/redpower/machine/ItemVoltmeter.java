@@ -1,59 +1,54 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.BluePowerConductor;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.IBluePowerConnectable;
-import com.eloraam.redpower.core.IPipeConnectable;
+import net.minecraft.creativetab.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.world.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.item.*;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-
-public class ItemVoltmeter extends Item {
-
-   public ItemVoltmeter() {
-      this.setMaxStackSize(1);
-      this.setCreativeTab(CreativeTabs.tabTools);
-      this.setTextureName("rpmachine:itemVoltmeter");
-      this.setUnlocalizedName("voltmeter");
-   }
-
-   private boolean measureBlue(EntityPlayer player, World world, int i, int j, int k, int l) {
-      IBluePowerConnectable ibc = (IBluePowerConnectable)CoreLib.getTileEntity(world, i, j, k, IBluePowerConnectable.class);
-      if(ibc == null) {
-         return false;
-      } else {
-         BluePowerConductor bpc = ibc.getBlueConductor(l);
-         double v = bpc.getVoltage();
-         CoreLib.writeChat(player, String.format("Reading %.2fV %.2fA (%.2fW)", new Object[]{Double.valueOf(v), Double.valueOf(bpc.Itot), Double.valueOf(v * bpc.Itot)}));
-         return true;
-      }
-   }
-
-   private boolean measurePressure(EntityPlayer player, World world, int i, int j, int k, int l) {
-      IPipeConnectable ipc = (IPipeConnectable)CoreLib.getTileEntity(world, i, j, k, IPipeConnectable.class);
-      if(ipc == null) {
-         return false;
-      } else {
-         int psi = ipc.getPipePressure(l);
-         CoreLib.writeChat(player, String.format("Reading %d psi", new Object[]{Integer.valueOf(psi)}));
-         return true;
-      }
-   }
-
-   private boolean itemUseShared(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l) {
-      return this.measureBlue(player, world, i, j, k, l)?true:this.measurePressure(player, world, i, j, k, l);
-   }
-
-   @Override
-public boolean onItemUse(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l, float xp, float yp, float zp) {
-      return player.isSneaking()?false:this.itemUseShared(ist, player, world, i, j, k, l);
-   }
-
-   @Override
-public boolean onItemUseFirst(ItemStack ist, EntityPlayer player, World world, int i, int j, int k, int l, float xp, float yp, float zp) {
-      return CoreLib.isClient(world)?false:(!player.isSneaking()?false:this.itemUseShared(ist, player, world, i, j, k, l));
-   }
+public class ItemVoltmeter extends Item
+{
+    public ItemVoltmeter() {
+        this.setMaxStackSize(1);
+        this.setCreativeTab(CreativeTabs.tabTools);
+        this.setTextureName("rpmachine:voltmeter");
+        this.setUnlocalizedName("voltmeter");
+    }
+    
+    private boolean measureBlue(final EntityPlayer player, final World world, final int x, final int y, final int z, final int side) {
+        final IBluePowerConnectable ibc = (IBluePowerConnectable)CoreLib.getTileEntity((IBlockAccess)world, x, y, z, (Class)IBluePowerConnectable.class);
+        if (ibc == null) {
+            return false;
+        }
+        final BluePowerConductor bpc = ibc.getBlueConductor(side);
+        final double v = bpc.getVoltage();
+        CoreLib.writeChat(player, String.format("Reading %.2fV %.2fA (%.2fW)", v, bpc.Itot, v * bpc.Itot));
+        return true;
+    }
+    
+    private boolean measurePressure(final EntityPlayer player, final World world, final int x, final int y, final int z, final int side) {
+        final IPipeConnectable ipc = (IPipeConnectable)CoreLib.getTileEntity((IBlockAccess)world, x, y, z, (Class)IPipeConnectable.class);
+        if (ipc == null) {
+            return false;
+        }
+        final int psi = ipc.getPipePressure(side);
+        CoreLib.writeChat(player, String.format("Reading %d psi", psi));
+        return true;
+    }
+    
+    private boolean itemUseShared(final ItemStack ist, final EntityPlayer player, final World world, final int i, final int j, final int k, final int l) {
+        return this.measureBlue(player, world, i, j, k, l) || this.measurePressure(player, world, i, j, k, l);
+    }
+    
+    public boolean onItemUse(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float xp, final float yp, final float zp) {
+        return !player.isSneaking() && this.itemUseShared(ist, player, world, x, y, z, side);
+    }
+    
+    public boolean onItemUseFirst(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float xp, final float yp, final float zp) {
+        return !world.isRemote && player.isSneaking() && this.itemUseShared(ist, player, world, x, y, z, side);
+    }
 }

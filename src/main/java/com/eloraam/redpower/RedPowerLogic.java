@@ -1,170 +1,246 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.core.Config;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.ItemParts;
-import com.eloraam.redpower.logic.BlockLogic;
-import com.eloraam.redpower.logic.ItemLogic;
-import com.eloraam.redpower.logic.LogicProxy;
-import com.eloraam.redpower.logic.TileLogicAdv;
-import com.eloraam.redpower.logic.TileLogicArray;
-import com.eloraam.redpower.logic.TileLogicPointer;
-import com.eloraam.redpower.logic.TileLogicSimple;
-import com.eloraam.redpower.logic.TileLogicStorage;
+import net.minecraft.util.*;
+import cpw.mods.fml.relauncher.*;
+import cpw.mods.fml.common.registry.*;
+import net.minecraft.item.*;
+import net.minecraft.item.crafting.*;
+import net.minecraft.init.*;
+import net.minecraft.block.*;
+import cpw.mods.fml.common.*;
+import net.minecraftforge.common.*;
+import cpw.mods.fml.common.network.*;
+import cpw.mods.fml.common.event.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.world.*;
+import net.minecraft.inventory.*;
+import com.eloraam.redpower.core.*;
+import java.util.function.*;
+import com.eloraam.redpower.logic.*;
+import cpw.mods.fml.client.registry.*;
+import net.minecraft.client.renderer.tileentity.*;
+import net.minecraftforge.client.event.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.common.eventhandler.*;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-
-@Mod(
-   modid = "RedPowerLogic",
-   name = "RedPower Logic",
-   version = "2.0pr6",
-   certificateFingerprint = "28f7f8a775e597088f3a418ea29290b6a1d23c7b",
-   dependencies = "required-after:RedPowerBase"
-)
-public class RedPowerLogic {
-
-   @Instance("RedPowerLogic")
-   public static RedPowerLogic instance;
-   @SidedProxy(
-      clientSide = "com.eloraam.redpower.logic.LogicProxyClient",
-      serverSide = "com.eloraam.redpower.logic.LogicProxy"
-   )
-   public static LogicProxy proxy;
-   public static BlockLogic blockLogic;
-   public static ItemParts itemParts;
-   public static ItemStack itemAnode;
-   public static ItemStack itemCathode;
-   public static ItemStack itemWire;
-   public static ItemStack itemWafer;
-   public static ItemStack itemPointer;
-   public static ItemStack itemPlate;
-   public static ItemStack itemWaferRedwire;
-   public static ItemStack itemChip;
-   public static ItemStack itemTaintedChip;
-   public static ItemStack itemWaferBundle;
-   public static boolean EnableSounds;
-
-
-   @EventHandler
-   public void preInit(FMLPreInitializationEvent event) {}
-
-   @EventHandler
-   public void load(FMLInitializationEvent event) {
-      EnableSounds = Config.getInt("settings.logic.enableSounds") > 0;
-      setupLogic();
-      proxy.registerRenderers();
-      NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-   }
-
-   @EventHandler
-   public void postInit(FMLPostInitializationEvent event) {}
-
-   private static void setupLogic() {
-      GameRegistry.registerTileEntity(TileLogicSimple.class, "RPLgSmp");
-      GameRegistry.registerTileEntity(TileLogicArray.class, "RPLgAr");
-      GameRegistry.registerTileEntity(TileLogicStorage.class, "RPLgStor");
-      GameRegistry.registerTileEntity(TileLogicAdv.class, "RPLgAdv");
-      GameRegistry.registerTileEntity(TileLogicPointer.class, "RPLgPtr");
-      itemParts = new ItemParts();
-      itemParts.addItem(0, "rplogic:itemWafer", "item.irwafer");
-      itemParts.addItem(1, "rplogic:itemWire", "item.irwire");
-      itemParts.addItem(2, "rplogic:itemAnode", "item.iranode");
-      itemParts.addItem(3, "rplogic:itemCatode", "item.ircathode");
-      itemParts.addItem(4, "rplogic:itemPointer", "item.irpointer");
-      itemParts.addItem(5, "rplogic:itemRedWire", "item.irredwire");
-      itemParts.addItem(6, "rplogic:itemPlate", "item.irplate");
-      itemParts.addItem(7, "rplogic:itemChip", "item.irchip");
-      itemParts.addItem(8, "rplogic:itemChip", "item.irtchip");
-      itemParts.addItem(9, "rplogic:itemBundle", "item.irbundle");
-      itemWafer = new ItemStack(itemParts, 1, 0);
-      itemWire = new ItemStack(itemParts, 1, 1);
-      itemAnode = new ItemStack(itemParts, 1, 2);
-      itemCathode = new ItemStack(itemParts, 1, 3);
-      itemPointer = new ItemStack(itemParts, 1, 4);
-      itemWaferRedwire = new ItemStack(itemParts, 1, 5);
-      itemPlate = new ItemStack(itemParts, 1, 6);
-      itemChip = new ItemStack(itemParts, 1, 7);
-      itemTaintedChip = new ItemStack(itemParts, 1, 8);
-      itemWaferBundle = new ItemStack(itemParts, 1, 9);
-      FurnaceRecipes.smelting().func_151393_a(Blocks.stone, new ItemStack(itemParts, 2, 0), 0.1F);
-      GameRegistry.addRecipe(itemWire, new Object[]{"R", "B", Character.valueOf('B'), itemWafer, Character.valueOf('R'), Items.redstone});
-      GameRegistry.addRecipe(new ItemStack(itemParts, 3, 2), new Object[]{" R ", "RRR", "BBB", Character.valueOf('B'), itemWafer, Character.valueOf('R'), Items.redstone});
-      GameRegistry.addRecipe(itemCathode, new Object[]{"T", "B", Character.valueOf('B'), itemWafer, Character.valueOf('T'), Blocks.redstone_torch});
-      GameRegistry.addRecipe(itemPointer, new Object[]{"S", "T", "B", Character.valueOf('B'), itemWafer, Character.valueOf('S'), Blocks.stone, Character.valueOf('T'), Blocks.redstone_torch});
-      GameRegistry.addRecipe(itemWaferRedwire, new Object[]{"W", "B", Character.valueOf('B'), itemWafer, Character.valueOf('W'), new ItemStack(RedPowerBase.blockMicro, 1, 256)});
-      GameRegistry.addRecipe(itemPlate, new Object[]{" B ", "SRS", "BCB", Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('R'), RedPowerBase.itemIngotRed, Character.valueOf('S'), Items.stick});
-      GameRegistry.addRecipe(CoreLib.copyStack(itemChip, 3), new Object[]{" R ", "BBB", Character.valueOf('B'), itemWafer, Character.valueOf('R'), RedPowerBase.itemWaferRed});
-      GameRegistry.addShapelessRecipe(CoreLib.copyStack(itemTaintedChip, 1), new Object[]{itemChip, Items.glowstone_dust});
-      GameRegistry.addRecipe(itemWaferBundle, new Object[]{"W", "B", Character.valueOf('B'), itemWafer, Character.valueOf('W'), new ItemStack(RedPowerBase.blockMicro, 1, 768)});
-      blockLogic = new BlockLogic();
-      GameRegistry.registerBlock(blockLogic, ItemLogic.class, "logic");
-      blockLogic.addTileEntityMapping(0, TileLogicPointer.class);
-      blockLogic.addTileEntityMapping(1, TileLogicSimple.class);
-      blockLogic.addTileEntityMapping(2, TileLogicArray.class);
-      blockLogic.addTileEntityMapping(3, TileLogicStorage.class);
-      blockLogic.addTileEntityMapping(4, TileLogicAdv.class);
-      blockLogic.setBlockName(0, "irtimer");
-      blockLogic.setBlockName(1, "irseq");
-      blockLogic.setBlockName(2, "irstate");
-      blockLogic.setBlockName(256, "irlatch");
-      blockLogic.setBlockName(257, "irnor");
-      blockLogic.setBlockName(258, "iror");
-      blockLogic.setBlockName(259, "irnand");
-      blockLogic.setBlockName(260, "irand");
-      blockLogic.setBlockName(261, "irxnor");
-      blockLogic.setBlockName(262, "irxor");
-      blockLogic.setBlockName(263, "irpulse");
-      blockLogic.setBlockName(264, "irtoggle");
-      blockLogic.setBlockName(265, "irnot");
-      blockLogic.setBlockName(266, "irbuf");
-      blockLogic.setBlockName(267, "irmux");
-      blockLogic.setBlockName(268, "irrepeater");
-      blockLogic.setBlockName(269, "irsync");
-      blockLogic.setBlockName(270, "irrand");
-      blockLogic.setBlockName(271, "irdlatch");
-      blockLogic.setBlockName(272, "rplightsensor");
-      blockLogic.setBlockName(512, "rpanc");
-      blockLogic.setBlockName(513, "rpainv");
-      blockLogic.setBlockName(514, "rpaninv");
-      blockLogic.setBlockName(768, "ircounter");
-      blockLogic.setBlockName(1024, "irbusxcvr");
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 0), new Object[]{"BWB", "WPW", "ACA", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode, Character.valueOf('P'), itemPointer});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 1), new Object[]{"BCB", "CPC", "BCB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode, Character.valueOf('P'), itemPointer});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 2), new Object[]{"BAC", "WSP", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode, Character.valueOf('P'), itemPointer, Character.valueOf('S'), itemChip});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 256), new Object[]{"WWA", "CBC", "AWW", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 257), new Object[]{"BAB", "WCW", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 258), new Object[]{"BCB", "WCW", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 259), new Object[]{"AAA", "CCC", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 260), new Object[]{"ACA", "CCC", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 261), new Object[]{"ACA", "CAC", "WCW", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 262), new Object[]{"AWA", "CAC", "WCW", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 263), new Object[]{"ACA", "CAC", "WWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 264), new Object[]{"BCB", "WLW", "BCB", Character.valueOf('L'), Blocks.lever, Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 265), new Object[]{"BAB", "ACA", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 266), new Object[]{"ACA", "WCW", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 267), new Object[]{"ACA", "CBC", "ACW", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 268), new Object[]{"BCW", "BAW", "BWC", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('A'), itemAnode, Character.valueOf('C'), itemCathode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 269), new Object[]{"WCW", "SAS", "WWW", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('A'), itemAnode, Character.valueOf('C'), itemCathode, Character.valueOf('S'), itemChip});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 270), new Object[]{"BSB", "WWW", "SWS", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('S'), itemTaintedChip});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 271), new Object[]{"ACW", "CCC", "CWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('A'), itemAnode});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 272), new Object[]{"BWB", "BSB", "BBB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('S'), RedPowerBase.itemWaferBlue});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 768), new Object[]{"BWB", "CPC", "BWB", Character.valueOf('W'), itemWire, Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('P'), itemPointer});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 512), new Object[]{"BRB", "RRR", "BRB", Character.valueOf('B'), itemWafer, Character.valueOf('R'), itemWaferRedwire});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 513), new Object[]{"BRB", "RPR", "BRB", Character.valueOf('B'), itemWafer, Character.valueOf('R'), itemWaferRedwire, Character.valueOf('P'), itemPlate});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 514), new Object[]{"BRB", "RPR", "BRC", Character.valueOf('B'), itemWafer, Character.valueOf('C'), itemCathode, Character.valueOf('R'), itemWaferRedwire, Character.valueOf('P'), itemPlate});
-      GameRegistry.addRecipe(new ItemStack(blockLogic, 1, 1024), new Object[]{"CCC", "WBW", "CCC", Character.valueOf('B'), itemWafer, Character.valueOf('W'), RedPowerBase.itemWaferRed, Character.valueOf('C'), itemWaferBundle});
-   }
+@Mod(modid = "RedPowerLogic", name = "RedPower Logic", version = "2.0pr6", dependencies = "required-after:RedPowerBase")
+public class RedPowerLogic implements IGuiHandler
+{
+    @Mod.Instance("RedPowerLogic")
+    public static RedPowerLogic instance;
+    public static BlockLogic blockLogic;
+    public static ItemParts itemParts;
+    public static ItemStack itemAnode;
+    public static ItemStack itemCathode;
+    public static ItemStack itemWire;
+    public static ItemStack itemWafer;
+    public static ItemStack itemPointer;
+    public static ItemStack itemPlate;
+    public static ItemStack itemWaferRedwire;
+    public static ItemStack itemChip;
+    public static ItemStack itemTaintedChip;
+    public static ItemStack itemWaferBundle;
+    public static boolean soundsEnabled;
+    @SideOnly(Side.CLIENT)
+    public static IIcon torch;
+    @SideOnly(Side.CLIENT)
+    public static IIcon torchOn;
+    @SideOnly(Side.CLIENT)
+    public static IIcon lever;
+    @SideOnly(Side.CLIENT)
+    public static IIcon cobblestone;
+    public static IIcon[] logicOne;
+    public static IIcon[] logicTwo;
+    public static IIcon[] logicSensor;
+    
+    private static void setupLogic() {
+        GameRegistry.registerTileEntity((Class)TileLogicSimple.class, "RPLgSmp");
+        GameRegistry.registerTileEntity((Class)TileLogicArray.class, "RPLgAr");
+        GameRegistry.registerTileEntity((Class)TileLogicStorage.class, "RPLgStor");
+        GameRegistry.registerTileEntity((Class)TileLogicAdv.class, "RPLgAdv");
+        GameRegistry.registerTileEntity((Class)TileLogicPointer.class, "RPLgPtr");
+        (RedPowerLogic.itemParts = new ItemParts()).addItem(0, "rplogic:wafer", "item.irwafer");
+        RedPowerLogic.itemParts.addItem(1, "rplogic:wire", "item.irwire");
+        RedPowerLogic.itemParts.addItem(2, "rplogic:anode", "item.iranode");
+        RedPowerLogic.itemParts.addItem(3, "rplogic:cathode", "item.ircathode");
+        RedPowerLogic.itemParts.addItem(4, "rplogic:pointer", "item.irpointer");
+        RedPowerLogic.itemParts.addItem(5, "rplogic:redWire", "item.irredwire");
+        RedPowerLogic.itemParts.addItem(6, "rplogic:plate", "item.irplate");
+        RedPowerLogic.itemParts.addItem(7, "rplogic:chip", "item.irchip");
+        RedPowerLogic.itemParts.addItem(8, "rplogic:tchip", "item.irtchip");
+        RedPowerLogic.itemParts.addItem(9, "rplogic:bundle", "item.irbundle");
+        GameRegistry.registerItem((Item)RedPowerLogic.itemParts, "parts");
+        RedPowerLogic.itemWafer = new ItemStack((Item)RedPowerLogic.itemParts, 1, 0);
+        RedPowerLogic.itemWire = new ItemStack((Item)RedPowerLogic.itemParts, 1, 1);
+        RedPowerLogic.itemAnode = new ItemStack((Item)RedPowerLogic.itemParts, 1, 2);
+        RedPowerLogic.itemCathode = new ItemStack((Item)RedPowerLogic.itemParts, 1, 3);
+        RedPowerLogic.itemPointer = new ItemStack((Item)RedPowerLogic.itemParts, 1, 4);
+        RedPowerLogic.itemWaferRedwire = new ItemStack((Item)RedPowerLogic.itemParts, 1, 5);
+        RedPowerLogic.itemPlate = new ItemStack((Item)RedPowerLogic.itemParts, 1, 6);
+        RedPowerLogic.itemChip = new ItemStack((Item)RedPowerLogic.itemParts, 1, 7);
+        RedPowerLogic.itemTaintedChip = new ItemStack((Item)RedPowerLogic.itemParts, 1, 8);
+        RedPowerLogic.itemWaferBundle = new ItemStack((Item)RedPowerLogic.itemParts, 1, 9);
+        FurnaceRecipes.smelting().func_151393_a(Blocks.stone, new ItemStack((Item)RedPowerLogic.itemParts, 2, 0), 0.1f);
+        GameRegistry.addRecipe(RedPowerLogic.itemWire, new Object[] { "R", "B", 'B', RedPowerLogic.itemWafer, 'R', Items.redstone });
+        GameRegistry.addRecipe(new ItemStack((Item)RedPowerLogic.itemParts, 3, 2), new Object[] { " R ", "RRR", "BBB", 'B', RedPowerLogic.itemWafer, 'R', Items.redstone });
+        GameRegistry.addRecipe(RedPowerLogic.itemCathode, new Object[] { "T", "B", 'B', RedPowerLogic.itemWafer, 'T', Blocks.redstone_torch });
+        GameRegistry.addRecipe(RedPowerLogic.itemPointer, new Object[] { "S", "T", "B", 'B', RedPowerLogic.itemWafer, 'S', Blocks.stone, 'T', Blocks.redstone_torch });
+        GameRegistry.addRecipe(RedPowerLogic.itemWaferRedwire, new Object[] { "W", "B", 'B', RedPowerLogic.itemWafer, 'W', new ItemStack((Block)RedPowerBase.blockMicro, 1, 256) });
+        GameRegistry.addRecipe(RedPowerLogic.itemPlate, new Object[] { " B ", "SRS", "BCB", 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'R', RedPowerBase.itemIngotRed, 'S', Items.stick });
+        GameRegistry.addRecipe(CoreLib.copyStack(RedPowerLogic.itemChip, 3), new Object[] { " R ", "BBB", 'B', RedPowerLogic.itemWafer, 'R', RedPowerBase.itemWaferRed });
+        GameRegistry.addShapelessRecipe(CoreLib.copyStack(RedPowerLogic.itemTaintedChip, 1), new Object[] { RedPowerLogic.itemChip, Items.glowstone_dust });
+        GameRegistry.addRecipe(RedPowerLogic.itemWaferBundle, new Object[] { "W", "B", 'B', RedPowerLogic.itemWafer, 'W', new ItemStack((Block)RedPowerBase.blockMicro, 1, 768) });
+        GameRegistry.registerBlock((Block)(RedPowerLogic.blockLogic = new BlockLogic()), (Class)ItemLogic.class, "logic");
+        RedPowerLogic.blockLogic.addTileEntityMapping(0, (Supplier)TileLogicPointer::new);
+        RedPowerLogic.blockLogic.addTileEntityMapping(1, (Supplier)TileLogicSimple::new);
+        RedPowerLogic.blockLogic.addTileEntityMapping(2, (Supplier)TileLogicArray::new);
+        RedPowerLogic.blockLogic.addTileEntityMapping(3, (Supplier)TileLogicStorage::new);
+        RedPowerLogic.blockLogic.addTileEntityMapping(4, (Supplier)TileLogicAdv::new);
+        RedPowerLogic.blockLogic.setBlockName(0, "irtimer");
+        RedPowerLogic.blockLogic.setBlockName(1, "irseq");
+        RedPowerLogic.blockLogic.setBlockName(2, "irstate");
+        RedPowerLogic.blockLogic.setBlockName(256, "irlatch");
+        RedPowerLogic.blockLogic.setBlockName(257, "irnor");
+        RedPowerLogic.blockLogic.setBlockName(258, "iror");
+        RedPowerLogic.blockLogic.setBlockName(259, "irnand");
+        RedPowerLogic.blockLogic.setBlockName(260, "irand");
+        RedPowerLogic.blockLogic.setBlockName(261, "irxnor");
+        RedPowerLogic.blockLogic.setBlockName(262, "irxor");
+        RedPowerLogic.blockLogic.setBlockName(263, "irpulse");
+        RedPowerLogic.blockLogic.setBlockName(264, "irtoggle");
+        RedPowerLogic.blockLogic.setBlockName(265, "irnot");
+        RedPowerLogic.blockLogic.setBlockName(266, "irbuf");
+        RedPowerLogic.blockLogic.setBlockName(267, "irmux");
+        RedPowerLogic.blockLogic.setBlockName(268, "irrepeater");
+        RedPowerLogic.blockLogic.setBlockName(269, "irsync");
+        RedPowerLogic.blockLogic.setBlockName(270, "irrand");
+        RedPowerLogic.blockLogic.setBlockName(271, "irdlatch");
+        RedPowerLogic.blockLogic.setBlockName(272, "rplightsensor");
+        RedPowerLogic.blockLogic.setBlockName(512, "rpanc");
+        RedPowerLogic.blockLogic.setBlockName(513, "rpainv");
+        RedPowerLogic.blockLogic.setBlockName(514, "rpaninv");
+        RedPowerLogic.blockLogic.setBlockName(768, "ircounter");
+        RedPowerLogic.blockLogic.setBlockName(1024, "irbusxcvr");
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 0), new Object[] { "BWB", "WPW", "ACA", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode, 'P', RedPowerLogic.itemPointer });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 1), new Object[] { "BCB", "CPC", "BCB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode, 'P', RedPowerLogic.itemPointer });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 2), new Object[] { "BAC", "WSP", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode, 'P', RedPowerLogic.itemPointer, 'S', RedPowerLogic.itemChip });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 256), new Object[] { "WWA", "CBC", "AWW", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 257), new Object[] { "BAB", "WCW", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 258), new Object[] { "BCB", "WCW", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 259), new Object[] { "AAA", "CCC", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 260), new Object[] { "ACA", "CCC", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 261), new Object[] { "ACA", "CAC", "WCW", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 262), new Object[] { "AWA", "CAC", "WCW", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 263), new Object[] { "ACA", "CAC", "WWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 264), new Object[] { "BCB", "WLW", "BCB", 'L', Blocks.lever, 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 265), new Object[] { "BAB", "ACA", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 266), new Object[] { "ACA", "WCW", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 267), new Object[] { "ACA", "CBC", "ACW", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 268), new Object[] { "BCW", "BAW", "BWC", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'A', RedPowerLogic.itemAnode, 'C', RedPowerLogic.itemCathode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 269), new Object[] { "WCW", "SAS", "WWW", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'A', RedPowerLogic.itemAnode, 'C', RedPowerLogic.itemCathode, 'S', RedPowerLogic.itemChip });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 270), new Object[] { "BSB", "WWW", "SWS", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'S', RedPowerLogic.itemTaintedChip });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 271), new Object[] { "ACW", "CCC", "CWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'A', RedPowerLogic.itemAnode });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 272), new Object[] { "BWB", "BSB", "BBB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'S', RedPowerBase.itemWaferBlue });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 768), new Object[] { "BWB", "CPC", "BWB", 'W', RedPowerLogic.itemWire, 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'P', RedPowerLogic.itemPointer });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 512), new Object[] { "BRB", "RRR", "BRB", 'B', RedPowerLogic.itemWafer, 'R', RedPowerLogic.itemWaferRedwire });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 513), new Object[] { "BRB", "RPR", "BRB", 'B', RedPowerLogic.itemWafer, 'R', RedPowerLogic.itemWaferRedwire, 'P', RedPowerLogic.itemPlate });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 514), new Object[] { "BRB", "RPR", "BRC", 'B', RedPowerLogic.itemWafer, 'C', RedPowerLogic.itemCathode, 'R', RedPowerLogic.itemWaferRedwire, 'P', RedPowerLogic.itemPlate });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerLogic.blockLogic, 1, 1024), new Object[] { "CCC", "WBW", "CCC", 'B', RedPowerLogic.itemWafer, 'W', RedPowerBase.itemWaferRed, 'C', RedPowerLogic.itemWaferBundle });
+    }
+    
+    @Mod.EventHandler
+    public void preInit(final FMLPreInitializationEvent event) {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            MinecraftForge.EVENT_BUS.register((Object)RedPowerLogic.instance);
+        }
+    }
+    
+    @Mod.EventHandler
+    public void load(final FMLInitializationEvent event) {
+        RedPowerLogic.soundsEnabled = (Config.getInt("settings.logic.enableSounds", 1) > 0);
+        setupLogic();
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            this.registerRenderers();
+        }
+        NetworkRegistry.INSTANCE.registerGuiHandler((Object)RedPowerLogic.instance, (IGuiHandler)RedPowerLogic.instance);
+    }
+    
+    @Mod.EventHandler
+    public void postInit(final FMLPostInitializationEvent event) {
+    }
+    
+    public Object getClientGuiElement(final int ID, final EntityPlayer player, final World world, final int X, final int Y, final int Z) {
+        switch (ID) {
+            case 1: {
+                return new GuiCounter(player.inventory, (TileLogicStorage)CoreLib.getGuiTileEntity(world, X, Y, Z, (Class)TileLogicStorage.class));
+            }
+            case 2: {
+                return new GuiTimer(player.inventory, (TileLogicPointer)CoreLib.getGuiTileEntity(world, X, Y, Z, (Class)TileLogicPointer.class));
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    
+    public Object getServerGuiElement(final int ID, final EntityPlayer player, final World world, final int X, final int Y, final int Z) {
+        switch (ID) {
+            case 1: {
+                return new ContainerCounter((IInventory)player.inventory, (TileLogicStorage)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileLogicStorage.class));
+            }
+            case 2: {
+                return new ContainerTimer((IInventory)player.inventory, (TileLogicPointer)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileLogicPointer.class));
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void registerRenderers() {
+        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicAdv.class, (TileEntitySpecialRenderer)new RenderLogicAdv((Block)RedPowerLogic.blockLogic));
+        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicSimple.class, (TileEntitySpecialRenderer)new RenderLogicSimple((Block)RedPowerLogic.blockLogic));
+        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicArray.class, (TileEntitySpecialRenderer)new RenderLogicArray((Block)RedPowerLogic.blockLogic));
+        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicStorage.class, (TileEntitySpecialRenderer)new RenderLogicStorage((Block)RedPowerLogic.blockLogic));
+        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicPointer.class, (TileEntitySpecialRenderer)new RenderLogicPointer((Block)RedPowerLogic.blockLogic));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onTextureStitch(final TextureStitchEvent.Pre evt) {
+        final TextureMap map = evt.map;
+        if (map.getTextureType() == 0) {
+            for (int i = 0; i < 232; ++i) {
+                RedPowerLogic.logicOne[i] = map.registerIcon("rplogic:logic1/" + i);
+            }
+            for (int i = 0; i < 256; ++i) {
+                RedPowerLogic.logicTwo[i] = map.registerIcon("rplogic:logic2/" + i);
+            }
+            for (int i = 0; i < 23; ++i) {
+                RedPowerLogic.logicSensor[i] = map.registerIcon("rplogic:sensors/" + i);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onTextureStitch(final TextureStitchEvent.Post evt) {
+        final TextureMap map = evt.map;
+        if (map.getTextureType() == 0) {
+            RedPowerLogic.torch = (IIcon)map.getAtlasSprite("redstone_torch_off");
+            RedPowerLogic.torchOn = (IIcon)map.getAtlasSprite("redstone_torch_on");
+            RedPowerLogic.lever = (IIcon)map.getAtlasSprite("lever");
+            RedPowerLogic.cobblestone = (IIcon)map.getAtlasSprite("cobblestone");
+        }
+    }
+    
+    static {
+        RedPowerLogic.logicOne = new IIcon[232];
+        RedPowerLogic.logicTwo = new IIcon[256];
+        RedPowerLogic.logicSensor = new IIcon[23];
+    }
 }

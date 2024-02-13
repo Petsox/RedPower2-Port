@@ -1,27 +1,31 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.control;
 
-import com.eloraam.redpower.core.CoverLib;
-import com.eloraam.redpower.core.CreativeExtraTabs;
-import com.eloraam.redpower.wiring.MicroPlacementWire;
+import com.eloraam.redpower.wiring.*;
+import net.minecraft.creativetab.*;
+import java.util.*;
+import net.minecraft.item.*;
+import com.eloraam.redpower.core.*;
 
-import java.util.List;
-
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-
-public class MicroPlacementRibbon extends MicroPlacementWire {
-	
-	@Override
-	public String getMicroName(int hb, int lb) {
-		return hb != 12 && lb != 0 ? null : "tile.ribbon";
-	}
-	
-	@Override
-	public void addCreativeItems(int hb, CreativeTabs tab, List<ItemStack> itemList) {
-		if (tab == CreativeExtraTabs.tabWires) {
-			if (hb == 12) {
-				itemList.add(new ItemStack(CoverLib.blockCoverPlate, 1, 3072));
-			}
-		}
-	}
+public class MicroPlacementRibbon extends MicroPlacementWire
+{
+    @Override
+    public String getMicroName(final int hb, final int lb) {
+        return (hb != 12 && lb != 0) ? null : "tile.ribbon";
+    }
+    
+    @Override
+    public void addCreativeItems(final int hb, final CreativeTabs tab, final List<ItemStack> items) {
+        if (tab == CreativeExtraTabs.tabWires || tab == CreativeTabs.tabAllSearch) {
+            switch (hb) {
+                case 12: {
+                    items.add(new ItemStack(CoverLib.blockCoverPlate, 1, 3072));
+                    break;
+                }
+            }
+        }
+    }
 }

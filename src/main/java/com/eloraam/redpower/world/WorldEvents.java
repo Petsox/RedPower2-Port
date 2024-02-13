@@ -1,104 +1,93 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.eloraam.redpower.*;
+import cpw.mods.fml.common.eventhandler.*;
+import net.minecraftforge.event.entity.living.*;
+import net.minecraft.util.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.enchantment.*;
+import net.minecraft.init.*;
+import net.minecraft.item.*;
+import net.minecraft.nbt.*;
+import net.minecraft.entity.monster.*;
+import net.minecraft.entity.*;
+import net.minecraftforge.event.entity.player.*;
+import java.util.stream.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.inventory.*;
 
-import com.eloraam.redpower.RedPowerWorld;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.MachineLib;
-import com.eloraam.redpower.world.ItemSeedBag;
-
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.BonemealEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-
-public class WorldEvents {
-	
-	@SubscribeEvent
-	public void onBonemeal(BonemealEvent ev) {
-		if (ev.block == RedPowerWorld.blockCrops) {
-			int md = ev.world.getBlockMetadata(ev.x, ev.y, ev.z);
-			if (md == 4 || md == 5) {
-				return;
-			}
-			if (CoreLib.isClient(ev.world)) {
-				ev.setResult(Result.ALLOW);
-				return;
-			}
-			if (RedPowerWorld.blockCrops.fertilize(ev.world, ev.x, ev.y, ev.z)) {
-				ev.setResult(Result.ALLOW);
-			}
-		} else if(ev.block == RedPowerWorld.blockPlants && ev.world.getBlockMetadata(ev.x, ev.y, ev.z) >= 1) {
-			if(RedPowerWorld.blockPlants.growTree(ev.world, ev.x, ev.y, ev.z)) {
-				ev.setResult(Result.ALLOW);
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onDeath(LivingDeathEvent ev) {
-		if (ev.source instanceof EntityDamageSource) {
-			EntityDamageSource eds = (EntityDamageSource) ev.source;
-			Entity ent = eds.getEntity();
-			if (ent instanceof EntityPlayer) {
-				EntityPlayer epl = (EntityPlayer) ent;
-				ItemStack wpn = epl.getCurrentEquippedItem();
-				if (EnchantmentHelper.getEnchantmentLevel(RedPowerWorld.enchantVorpal.effectId, wpn) != 0) {
-					if (ev.entityLiving.getHealth() <= -20) {
-						if (ev.entityLiving instanceof EntitySkeleton) {
-							EntitySkeleton ist = (EntitySkeleton) ev.entityLiving;
-							if (ist.getSkeletonType() == 1) {
-								return;
-							}
-							ev.entityLiving.entityDropItem(new ItemStack(Items.skull, 1, 0), 0.0F);
-						} else if (ev.entityLiving instanceof EntityZombie) {
-							ev.entityLiving.entityDropItem(new ItemStack(Items.skull, 1, 2), 0.0F);
-						} else if (ev.entityLiving instanceof EntityPlayer) {
-							ItemStack ist1 = new ItemStack(Items.skull, 1, 3);
-							ist1.setTagCompound(new NBTTagCompound());
-							ist1.getTagCompound().setString("SkullOwner", ev.entityLiving.getCommandSenderName());
-							ev.entityLiving.entityDropItem(ist1, 0.0F);
-						} else if (ev.entityLiving instanceof EntityCreeper) {
-							ev.entityLiving.entityDropItem(new ItemStack(Items.skull, 1, 4), 0.0F);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onPickupItem(EntityItemPickupEvent ev) {
-		for (int i = 0; i < 9; ++i) {
-			ItemStack ist = ev.entityPlayer.inventory.getStackInSlot(i);
-			if (ist != null && ist.getItem() instanceof ItemSeedBag) {
-				IInventory inv = ItemSeedBag.getBagInventory(ist);
-				if (inv != null && ItemSeedBag.getPlant(inv) != null) {
-					ItemStack tpi = ev.item.getEntityItem();
-					List<Integer> list = new ArrayList<Integer>(inv.getSizeInventory());
-					for(int j = 0; j < inv.getSizeInventory(); j ++) {
-						list.add(j);
-					}
-					if (ItemSeedBag.canAdd(inv, tpi) && MachineLib.addToInventoryCore(inv, tpi, list, true)) {
-						ev.item.setDead();
-						ev.setResult(Result.ALLOW);
-						return;
-					}
-				}
-			}
-		}
-	}
+public class WorldEvents
+{
+    @SubscribeEvent
+    public void onBonemeal(final BonemealEvent ev) {
+        if (ev.block == RedPowerWorld.blockCrops) {
+            final int md = ev.world.getBlockMetadata(ev.x, ev.y, ev.z);
+            if (md == 4 || md == 5) {
+                return;
+            }
+            if (ev.world.isRemote) {
+                ev.setResult(Event.Result.ALLOW);
+                return;
+            }
+            if (RedPowerWorld.blockCrops.fertilize(ev.world, ev.x, ev.y, ev.z)) {
+                ev.setResult(Event.Result.ALLOW);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onDeath(final LivingDeathEvent ev) {
+        if (ev.source instanceof EntityDamageSource) {
+            final EntityDamageSource eds = (EntityDamageSource)ev.source;
+            final Entity ent = eds.getEntity();
+            if (ent instanceof EntityPlayer) {
+                final EntityPlayer epl = (EntityPlayer)ent;
+                final ItemStack wpn = epl.getCurrentEquippedItem();
+                if (EnchantmentHelper.getEnchantmentLevel(RedPowerWorld.enchantVorpal.effectId, wpn) != 0 && ev.entityLiving.getHealth() <= -20.0f) {
+                    if (ev.entityLiving instanceof EntitySkeleton) {
+                        final EntitySkeleton ist = (EntitySkeleton)ev.entityLiving;
+                        if (ist.getSkeletonType() == 1) {
+                            return;
+                        }
+                        ev.entityLiving.entityDropItem(new ItemStack(Items.skull, 1, 0), 0.0f);
+                    }
+                    else if (ev.entityLiving instanceof EntityZombie) {
+                        ev.entityLiving.entityDropItem(new ItemStack(Items.skull, 1, 2), 0.0f);
+                    }
+                    else if (ev.entityLiving instanceof EntityPlayer) {
+                        final ItemStack ist2 = new ItemStack(Items.skull, 1, 3);
+                        ist2.setTagCompound(new NBTTagCompound());
+                        ist2.getTagCompound().setString("SkullOwner", ev.entityLiving.getCommandSenderName());
+                        ev.entityLiving.entityDropItem(ist2, 0.0f);
+                    }
+                    else if (ev.entityLiving instanceof EntityCreeper) {
+                        ev.entityLiving.entityDropItem(new ItemStack(Items.skull, 1, 4), 0.0f);
+                    }
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onPickupItem(final EntityItemPickupEvent ev) {
+        for (int i = 0; i < 9; ++i) {
+            final ItemStack ist = ev.entityPlayer.inventory.getStackInSlot(i);
+            if (ist != null && ist.getItem() instanceof ItemSeedBag) {
+                final IInventory inv = ItemSeedBag.getBagInventory(ist, ev.entityPlayer);
+                if (inv != null && ItemSeedBag.getPlant(inv) != null) {
+                    final ItemStack tpi = ev.item.getEntityItem();
+                    final int[] slots = IntStream.range(0, inv.getSizeInventory()).toArray();
+                    if (ItemSeedBag.canAdd(inv, tpi) && MachineLib.addToInventoryCore(inv, tpi, slots, true)) {
+                        ev.item.setDead();
+                        ev.setResult(Event.Result.ALLOW);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }

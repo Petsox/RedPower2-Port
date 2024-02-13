@@ -1,257 +1,61 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.RedPowerMachine;
-import com.eloraam.redpower.base.BlockMicro;
-import com.eloraam.redpower.core.BlockExtended;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.CreativeExtraTabs;
-import com.eloraam.redpower.core.TileExtended;
-import com.eloraam.redpower.machine.TileIgniter;
-import com.eloraam.redpower.machine.TileMachine;
+import net.minecraft.block.material.*;
+import net.minecraftforge.common.util.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.world.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ibxm.Player;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-public class BlockMachine extends BlockExtended {
-
-    public IIcon bottomEletroIcon;
-
-    IIcon topBatteryIcon;
-    IIcon[] sideBatteryIcon = new IIcon[9];
-
-    public static IIcon baseTubeSideIcon;
-    public static IIcon baseTubeFaceIcon;
-
-    public static IIcon[] baseTubeSideIcons = new IIcon[4];
-    public static IIcon[] baseTubeFaceIcons = new IIcon[4];
-
-    public static IIcon baseTubeSideColorIcon;
-    public static IIcon baseTubeFaceColorIcon;
-
-    public static IIcon[] redstoneTubeSideIcons = new IIcon[4];
-    public static IIcon[] redstoneTubeFaceIcons = new IIcon[4];
-
-    public static IIcon restrictTubeSideIcon;
-    public static IIcon restrictTubeFaceIcon;
-
-    public static IIcon restrictTubeSideColorIcon;
-    public static IIcon restrictTubeFaceColorIcon;
-
-    public static IIcon magTubeSideIcon;
-    public static IIcon magTubeRingIcon;
-    public static IIcon magTubeFaceIcon;
-
-    public static IIcon magTubeSideNRIcon;
-    public static IIcon magTubeFaceNRIcon;
-
-    public static IIcon topThermoIcon;
-    public static IIcon frontThermoIcon;
-    public static IIcon sideThermoIcon;
-
-    public static IIcon topFilterIcon;
-    public static IIcon bottomFilterIcon;
-    public static IIcon sideFilterIcon;
-    public static IIcon sideFilterOnIcon;
-
+public class BlockMachine extends BlockExtended
+{
     public BlockMachine() {
         super(Material.rock);
-        this.setHardness(2.0F);
+        this.setHardness(2.0f);
         this.setCreativeTab(CreativeExtraTabs.tabMachine);
-        this.setBlockTextureName("redstone_block");
     }
-
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister reg) {
-        this.topBatteryIcon = reg.registerIcon("rpmachine:blockBatteryVert");
-        for (int i = 0; i < 9; i++) {
-            this.sideBatteryIcon[i] = reg.registerIcon("rpmachine:blockBatterySide" + i);
-        }
-        this.bottomEletroIcon = reg.registerIcon("rpmachine:blockElectroBottom");
-
-        baseTubeSideIcon = reg.registerIcon("rpmachine:blockTubeSide");
-        baseTubeFaceIcon = reg.registerIcon("rpmachine:blockTubeFace");
-
-        for (int i = 0; i < 4; i++) {
-            baseTubeSideIcons[i] = reg.registerIcon("rpmachine:blockTubeSide" + i);
-            baseTubeFaceIcons[i] = reg.registerIcon("rpmachine:blockTubeFace" + i);
-        }
-
-        baseTubeSideColorIcon = reg.registerIcon("rpmachine:blockTubeSideColor");
-        baseTubeFaceColorIcon = reg.registerIcon("rpmachine:blockTubeFaceColor");
-
-        for (int i = 0; i < 4; i++) {
-            redstoneTubeSideIcons[i] = reg.registerIcon("rpmachine:blockRedstoneTubeSide" + i);
-            redstoneTubeFaceIcons[i] = reg.registerIcon("rpmachine:blockRedstoneTubeFace" + i);
-        }
-
-        restrictTubeSideIcon = reg.registerIcon("rpmachine:blockRestrictionTubeSide");
-        restrictTubeFaceIcon = reg.registerIcon("rpmachine:blockRestrictionTubeFace");
-
-        restrictTubeSideColorIcon = reg.registerIcon("rpmachine:blockRestrictionTubeSideColor");
-        restrictTubeFaceColorIcon = reg.registerIcon("rpmachine:blockRestrictionTubeFaceColor");
-
-        magTubeSideIcon = reg.registerIcon("rpmachine:blockMagneticTubeSide");
-        magTubeRingIcon = reg.registerIcon("rpmachine:blockMagneticTubeRing");
-        magTubeFaceIcon = reg.registerIcon("rpmachine:blockMagneticTubeFace");
-
-        magTubeSideNRIcon = reg.registerIcon("rpmachine:blockMagneticTubeSideNR");
-        magTubeFaceNRIcon = reg.registerIcon("rpmachine:blockMagneticTubeFaceNR");
-
-        topThermoIcon = reg.registerIcon("rpmachine:blockThermopileTop");
-        sideThermoIcon = reg.registerIcon("rpmachine:blockThermopileSide");
-        frontThermoIcon = reg.registerIcon("rpmachine:blockThermopileFront");
-
-        topFilterIcon = reg.registerIcon("rpmachine:topFilterIcon");
-        bottomFilterIcon = reg.registerIcon("rpmachine:bottomFilterIcon");
-        sideFilterIcon = reg.registerIcon("rpmachine:sideFilterIcon");
-        sideFilterOnIcon = reg.registerIcon("rpmachine:sideFilterOnIcon");
-
-        this.blockIcon = reg.registerIcon(this.getTextureName());
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        int meta = world.getBlockMetadata(x, y, z);
-        TileExtended tile = (TileExtended) CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
-        if (tile != null) {
-            switch (meta) {
-                case 3: { //FILTER
-                    if(tile instanceof TileFilter) {
-                        TileFilter filter = (TileFilter) tile;
-                        int facing = CoreLib.getFacing(filter.Rotation);
-                        switch(ForgeDirection.getOrientation(side)) {
-                            default:
-                                return side == facing ? topFilterIcon : (side == ForgeDirection.getOrientation(facing).getOpposite().ordinal()? bottomFilterIcon : filter.Active ? sideFilterOnIcon : sideFilterIcon);
-                        }
-                    }
-                }
-                case 6: { //BATBOX
-                    if (tile instanceof TileBatteryBox) {
-                        TileBatteryBox battery = (TileBatteryBox) tile;
-                        switch (ForgeDirection.getOrientation(side)) {
-                            case UP:
-                                return this.topBatteryIcon;
-                            case DOWN:
-                                return this.bottomEletroIcon;
-                            default:
-                                return this.sideBatteryIcon[battery.getStorageForRender()];
-                        }
-                    }
-                }
-                case 11: { //THERMOPILE
-                    if (tile instanceof TileThermopile) {
-                        switch (ForgeDirection.getOrientation(side)) {
-                            case UP:
-                                return this.topThermoIcon;
-                            case DOWN:
-                                return this.topThermoIcon;
-                            default:
-                                if (side == ForgeDirection.SOUTH.ordinal() || side == ForgeDirection.NORTH.ordinal()) {
-                                    return this.frontThermoIcon;
-                                } else {
-                                    return this.sideThermoIcon;
-                                }
-                        }
-                    }
-                }
-            }
-        }
-        return this.blockIcon;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int side, int meta) {
-        switch (meta) {
-            case 3: { //FILTER
-                switch (ForgeDirection.getOrientation(side)) {
-                    case UP:
-                        return this.topFilterIcon;
-                    case DOWN:
-                        return this.bottomFilterIcon;
-                    default:
-                            return this.sideFilterIcon;
-                }
-            }
-            case 6: { //BATBOX
-                switch (ForgeDirection.getOrientation(side)) {
-                    case UP:
-                        return this.topBatteryIcon;
-                    case DOWN:
-                        return this.bottomEletroIcon;
-                    default:
-                        return this.sideBatteryIcon[0];
-                }
-            }
-            case 11: {
-                switch (ForgeDirection.getOrientation(side)) {
-                    case UP:
-                        return this.topThermoIcon;
-                    case DOWN:
-                        return this.topThermoIcon;
-                    default:
-                        return side == ForgeDirection.NORTH.ordinal() ? this.frontThermoIcon : this.sideThermoIcon;
-                }
-            }
-        }
-        return this.blockIcon;
-    }
-
-    @Override
+    
     public boolean isOpaqueCube() {
         return true;
     }
-
-    @Override
-    public boolean isACube() {
+    
+    public boolean isNormalCube() {
         return true;
     }
-
-    @Override
+    
     public boolean renderAsNormalBlock() {
         return true;
     }
-
-    public boolean isBlockNormalCube(World world, int i, int j, int k) {
+    
+    public boolean isBlockNormalCube() {
         return false;
     }
-
-    @Override
-    public boolean isSideSolid(IBlockAccess iba, int i, int j, int k, ForgeDirection side) {
+    
+    public boolean isSideSolid(final IBlockAccess iba, final int i, final int j, final int k, final ForgeDirection side) {
         return true;
     }
-
-    @Override
-    public int damageDropped(int i) {
+    
+    public int damageDropped(final int i) {
         return i;
     }
-
-    @Override
+    
     public boolean canProvidePower() {
         return true;
     }
-
-    @Override
-    public int isProvidingWeakPower(IBlockAccess iba, int i, int j, int k, int l) {
-        TileMachine tm = (TileMachine) CoreLib.getTileEntity(iba, i, j, k, TileMachine.class);
-        return tm == null ? 0 : tm.isPoweringTo(l) ? 1 : 0; // TODO: Something wrong...
+    
+    public int isProvidingWeakPower(final IBlockAccess iba, final int x, final int y, final int z, final int side) {
+        final TileMachine tm = (TileMachine)CoreLib.getTileEntity(iba, x, y, z, (Class)TileMachine.class);
+        return (tm != null && tm.isPoweringTo(side)) ? 1 : 0;
     }
-
-    @Override
-    public boolean isFireSource(World world, int x, int y, int z, ForgeDirection face) {
-        int md = world.getBlockMetadata(x, y, z);
+    
+    public boolean isFireSource(final World world, final int x, final int y, final int z, final ForgeDirection face) {
+        final int md = world.getBlockMetadata(x, y, z);
         if (md != 12) {
             return false;
-        } else {
-            TileIgniter tig = (TileIgniter) CoreLib.getTileEntity(world, x, y, z, TileIgniter.class);
-            return tig == null ? false : tig.isOnFire(face);
         }
+        final TileIgniter tig = (TileIgniter)CoreLib.getTileEntity((IBlockAccess)world, x, y, z, (Class)TileIgniter.class);
+        return tig != null && tig.isOnFire(face);
     }
 }

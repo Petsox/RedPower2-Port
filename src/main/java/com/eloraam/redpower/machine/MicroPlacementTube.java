@@ -1,89 +1,89 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.CoverLib;
-import com.eloraam.redpower.core.CreativeExtraTabs;
-import com.eloraam.redpower.core.IMicroPlacement;
-import com.eloraam.redpower.core.RedPowerLib;
-import com.eloraam.redpower.core.TileCovered;
-import com.eloraam.redpower.core.WorldCoord;
+import net.minecraft.item.*;
+import net.minecraft.block.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.entity.*;
+import net.minecraft.world.*;
+import net.minecraft.creativetab.*;
+import java.util.*;
+import com.eloraam.redpower.core.*;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-
-public class MicroPlacementTube implements IMicroPlacement {
-	
-	private void blockUsed(World world, WorldCoord wc, ItemStack ist) {
-		--ist.stackSize;
-		CoreLib.placeNoise(world, wc.x, wc.y, wc.z, Block.getBlockFromItem(ist.getItem()));
-		world.markBlockForUpdate(wc.x, wc.y, wc.z);
-		RedPowerLib.updateIndirectNeighbors(world, wc.x, wc.y, wc.z, Block.getBlockFromItem(ist.getItem()));
-	}
-	
-	private boolean initialPlace(ItemStack ist, EntityPlayer player, World world, WorldCoord wc, int l) {
-		int md = ist.getItemDamage() >> 8;
-		Block bid = Block.getBlockFromItem(ist.getItem());
-		if (!world.canPlaceEntityOnSide(world.getBlock(wc.x, wc.y, wc.z), wc.x, wc.y, wc.z, false, l, player, ist)) { //TODO: Replace block to itself
-			return false;
-		} else if (!world.setBlock(wc.x, wc.y, wc.z, bid, md, 3)) {
-			return true;
-		} else {
-			this.blockUsed(world, wc, ist);
-			return true;
-		}
-	}
-	
-	@Override
-	public boolean onPlaceMicro(ItemStack ist, EntityPlayer player, World world, WorldCoord wc, int l) {
-		wc.step(l);
-		Block bid = world.getBlock(wc.x, wc.y, wc.z);
-		if (bid != Block.getBlockFromItem(ist.getItem())) {
-			return this.initialPlace(ist, player, world, wc, l);
-		} else {
-			TileCovered tc = (TileCovered) CoreLib.getTileEntity(world, wc,
-					TileCovered.class);
-			if (tc == null) {
-				return false;
-			} else {
-				int eid = tc.getExtendedID();
-				if (eid != 7 && eid != 8 && eid != 9 && eid != 10 && eid != 11) {
-					if (!CoverLib.tryMakeCompatible(world, wc, Block.getBlockFromItem(ist.getItem()), ist.getItemDamage())) {
-						return false;
-					} else {
-						this.blockUsed(world, wc, ist);
-						return true;
-					}
-				} else {
-					return false;
-				}
-			}
-		}
-	}
-	
-	@Override
-	public String getMicroName(int hb, int lb) {
-		return hb == 7 ? "tile.rppipe" : (hb == 8 ? "tile.rptube" : (hb == 9 ? "tile.rprstube" : (hb == 10 ? "tile.rprtube" : (hb == 11 ? "tile.rpmtube" : null))));
-	}
-	
-	@Override
-	public void addCreativeItems(int hb, CreativeTabs tab, List<ItemStack> itemList) {
-		if (tab == CreativeExtraTabs.tabMachine) {
-			if (hb == 7) {
-				itemList.add(new ItemStack(CoverLib.blockCoverPlate, 1, 1792));
-			} else if (hb == 8) {
-				itemList.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2048));
-			} else if (hb == 9) {
-				itemList.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2304));
-			} else if (hb == 10) {
-				itemList.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2560));
-			} else if (hb == 11) {
-				itemList.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2816));
-			}
-		}
-	}
+public class MicroPlacementTube implements IMicroPlacement
+{
+    private void blockUsed(final World world, final WorldCoord wc, final ItemStack ist) {
+        --ist.stackSize;
+        CoreLib.placeNoise(world, wc.x, wc.y, wc.z, Block.getBlockFromItem(ist.getItem()));
+        world.markBlockForUpdate(wc.x, wc.y, wc.z);
+        RedPowerLib.updateIndirectNeighbors(world, wc.x, wc.y, wc.z, Block.getBlockFromItem(ist.getItem()));
+    }
+    
+    private boolean initialPlace(final ItemStack ist, final EntityPlayer player, final World world, final WorldCoord wc, final int l) {
+        final int md = ist.getItemDamage() >> 8;
+        final Block bid = Block.getBlockFromItem(ist.getItem());
+        if (!world.canPlaceEntityOnSide(world.getBlock(wc.x, wc.y, wc.z), wc.x, wc.y, wc.z, false, l, (Entity)player, ist)) {
+            return false;
+        }
+        if (!world.setBlock(wc.x, wc.y, wc.z, bid, md, 3)) {
+            return true;
+        }
+        this.blockUsed(world, wc, ist);
+        return true;
+    }
+    
+    public boolean onPlaceMicro(final ItemStack ist, final EntityPlayer player, final World world, final WorldCoord wc, final int size) {
+        wc.step(size);
+        final Block bid = world.getBlock(wc.x, wc.y, wc.z);
+        if (bid != Block.getBlockFromItem(ist.getItem())) {
+            return this.initialPlace(ist, player, world, wc, size);
+        }
+        final TileCovered tc = (TileCovered)CoreLib.getTileEntity((IBlockAccess)world, wc, (Class)TileCovered.class);
+        if (tc == null) {
+            return false;
+        }
+        final int eid = tc.getExtendedID();
+        if (eid == 7 || eid == 8 || eid == 9 || eid == 10 || eid == 11) {
+            return false;
+        }
+        if (!CoverLib.tryMakeCompatible(world, wc, Block.getBlockFromItem(ist.getItem()), ist.getItemDamage())) {
+            return false;
+        }
+        this.blockUsed(world, wc, ist);
+        return true;
+    }
+    
+    public String getMicroName(final int hb, final int lb) {
+        return (hb == 7) ? "tile.rppipe" : ((hb == 8) ? "tile.rptube" : ((hb == 9) ? "tile.rprstube" : ((hb == 10) ? "tile.rprtube" : ((hb == 11) ? "tile.rpmtube" : null))));
+    }
+    
+    public void addCreativeItems(final int hb, final CreativeTabs tab, final List<ItemStack> items) {
+        if (tab == CreativeExtraTabs.tabMachine || tab == CreativeTabs.tabAllSearch) {
+            switch (hb) {
+                case 7: {
+                    items.add(new ItemStack(CoverLib.blockCoverPlate, 1, 1792));
+                    break;
+                }
+                case 8: {
+                    items.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2048));
+                    break;
+                }
+                case 9: {
+                    items.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2304));
+                    break;
+                }
+                case 10: {
+                    items.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2560));
+                    break;
+                }
+                case 11: {
+                    items.add(new ItemStack(CoverLib.blockCoverPlate, 1, 2816));
+                    break;
+                }
+            }
+        }
+    }
 }

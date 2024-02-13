@@ -1,54 +1,50 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.*;
+import net.minecraft.util.*;
+import net.minecraft.block.material.*;
+import net.minecraft.creativetab.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.relauncher.*;
+import java.util.*;
+import net.minecraft.item.*;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-
-public class BlockStorage extends Block {
-	
-	private IIcon[] icons = new IIcon[6];
-	
-	public BlockStorage() {
-		super(Material.iron);
-		this.setHardness(5.0F);
-		this.setResistance(10.0F);
-		this.setStepSound(soundTypeMetal);
-		this.setCreativeTab(CreativeTabs.tabBlock);
-	}
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-    public void registerBlockIcons(IIconRegister register) {
-		for(int i = 0; i < icons.length; i++) {
-			this.icons[i] = register.registerIcon("rpworld:blockStorage"+i);
-		}
+public class BlockStorage extends Block
+{
+    private IIcon[] icons;
+    
+    public BlockStorage() {
+        super(Material.iron);
+        this.icons = new IIcon[8];
+        this.setHardness(5.0f);
+        this.setResistance(10.0f);
+        this.setStepSound(BlockStorage.soundTypeMetal);
+        this.setCreativeTab(CreativeTabs.tabBlock);
     }
-	
-	@Override
-	public IIcon getIcon(int side, int meta) {
-		return icons[meta];
-	}
-	
-	@Override
-	public int damageDropped(int i) {
-		return i;
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-		for (int i = 0; i <= 5; ++i) {
-			list.add(new ItemStack(this, 1, i));
-		}	
-	}
+    
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(final IIconRegister register) {
+        for (int i = 0; i < this.icons.length; ++i) {
+            this.icons[i] = register.registerIcon("rpworld:storage/" + i);
+        }
+    }
+    
+    public IIcon getIcon(final int side, final int meta) {
+        return this.icons[meta];
+    }
+    
+    public int damageDropped(final int meta) {
+        return meta;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(final Item item, final CreativeTabs tab, final List items) {
+        for (int i = 0; i < 8; ++i) {
+            items.add(new ItemStack((Block)this, 1, i));
+        }
+    }
 }

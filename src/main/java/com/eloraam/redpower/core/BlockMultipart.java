@@ -1,169 +1,151 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import java.util.List;
+import net.minecraft.block.material.*;
+import net.minecraft.block.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.world.*;
+import java.util.*;
+import net.minecraft.entity.*;
+import net.minecraft.util.*;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
-public class BlockMultipart extends BlockExtended {
-	
-	public BlockMultipart(Material m) {
-		super(m);
-	}
-	
-	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, Block block) {
-		TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-		if (tl == null) {
-			world.setBlockToAir(i, j, k);
-		} else {
-			tl.onBlockNeighborChange(block);
-		}
-	}
-	
-	@Override
-	public boolean removedByPlayer(World world, EntityPlayer player, int i, int j, int k) {
-		if (CoreLib.isClient(world)) {
-			return true;
-		} else {
-			MovingObjectPosition pos = CoreLib.retraceBlock(world, player, i, j, k);
-			if (pos == null) {
-				return false;
-			} else if (pos.typeOfHit != MovingObjectType.BLOCK) {
-				return false;
-			} else {
-				TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-				if (tl == null) {
-					return false;
-				} else {
-					tl.onHarvestPart(player, pos.subHit);
-					return false;
-				}
-			}
-		}
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float xp, float yp, float zp) {
-		MovingObjectPosition pos = CoreLib.retraceBlock(world, player, i, j, k);
-		if (pos == null) {
-			return false;
-		} else if (pos.typeOfHit != MovingObjectType.BLOCK) {
-			return false;
-		} else {
-			TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-			return tl == null ? false : tl.onPartActivateSide(player, pos.subHit, pos.sideHit);
-		}
-	}
-	
-	@Override
-	public float getPlayerRelativeBlockHardness(EntityPlayer player, World world, int x, int y, int z) {
-		MovingObjectPosition pos = CoreLib.retraceBlock(world, player, x, y, z);
-		if (pos == null) {
-			return 0.0F;
-		} else if (pos.typeOfHit != MovingObjectType.BLOCK) {
-			return 0.0F;
-		} else {
-			TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(player.worldObj, x, y, z, TileMultipart.class);
-			return tl == null ? 0.0F : tl.getPartStrength(player, pos.subHit);
-		}
-	}
-	
-	public void onBlockDestroyedByExplosion(World world, int i, int j, int k) {
-		TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-		if (tl != null) {
-			tl.breakBlock();
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB box, List list, Entity ent) {
-		TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-		if (tl != null) {
-			int pm = tl.getSolidPartsMask();
-			
-			while (pm > 0) {
-				int pt = Integer.numberOfTrailingZeros(pm);
-				pm &= ~(1 << pt);
-				tl.setPartBounds(this, pt);
-				super.addCollisionBoxesToList(world, i, j, k, box, list, ent);
-			}
-		}
-	}
-	
-	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
-		TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-		if (tl == null) {
-			return null;
-		} else {
-			int pm = tl.getPartsMask();
-			MovingObjectPosition p1 = null;
-			int cpt = -1;
-			double d1 = 0.0D;
-			
-			while (pm > 0) {
-				int pt = Integer.numberOfTrailingZeros(pm);
-				pm &= ~(1 << pt);
-				tl.setPartBounds(this, pt);
-				MovingObjectPosition p2 = super.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
-				if (p2 != null) {
-					double d2 = p2.hitVec.squareDistanceTo(vec3d);
-					if (p1 == null || d2 < d1) {
-						d1 = d2;
-						p1 = p2;
-						cpt = pt;
-					}
-				}
-			}
-			
-			if (p1 == null) {
-				return null;
-			} else {
-				tl.setPartBounds(this, cpt);
-				p1.subHit = cpt;
-				return p1;
-			}
-		}
-	}
-	
-	public static void removeMultipart(World world, int i, int j, int k) {
-		world.setBlockToAir(i, j, k);
-	}
-	
-	public static void removeMultipartWithNotify(World world, int i, int j, int k) {
-		world.setBlockToAir(i, j, k);
-	}
-	
-	protected MovingObjectPosition traceCurrentBlock(World world, int i, int j, int k, Vec3 src, Vec3 dest) {
-		return super.collisionRayTrace(world, i, j, k, src, dest);
-	}
-	
-	public void setPartBounds(World world, int i, int j, int k, int part) {
-		TileMultipart tl = (TileMultipart) CoreLib.getTileEntity(world, i, j, k, TileMultipart.class);
-		if (tl == null) {
-			this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		} else {
-			tl.setPartBounds(this, part);
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void computeCollidingBoxes(World world, int i, int j, int k, AxisAlignedBB box, List list, TileMultipart tl) {
-		int pm = tl.getSolidPartsMask();
-		while (pm > 0) {
-			int pt = Integer.numberOfTrailingZeros(pm);
-			pm &= ~(1 << pt);
-			tl.setPartBounds(this, pt);
-			super.addCollisionBoxesToList(world, i, j, k, box, list, (Entity) null);
-		}
-	}
+public class BlockMultipart extends BlockExtended
+{
+    public BlockMultipart(final Material material) {
+        super(material);
+    }
+    
+    public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final Block block) {
+        final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+        if (tl == null) {
+            world.setBlockToAir(x, y, z);
+        }
+        else {
+            tl.onBlockNeighborChange(block);
+        }
+    }
+    
+    public boolean removedByPlayer(final World world, final EntityPlayer player, final int x, final int y, final int z, final boolean willHarvest) {
+        if (!world.isRemote) {
+            final MovingObjectPosition mop = CoreLib.retraceBlock(world, (EntityLivingBase)player, x, y, z);
+            if (mop != null && mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+                if (tl != null) {
+                    tl.onHarvestPart(player, mop.subHit, willHarvest);
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean removedByPlayer(final World world, final EntityPlayer player, final int x, final int y, final int z) {
+        return false;
+    }
+    
+    public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float xp, final float yp, final float zp) {
+        final MovingObjectPosition pos = CoreLib.retraceBlock(world, (EntityLivingBase)player, x, y, z);
+        if (pos == null) {
+            return false;
+        }
+        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
+            return false;
+        }
+        final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+        return tl != null && tl.onPartActivateSide(player, pos.subHit, pos.sideHit);
+    }
+    
+    public float getPlayerRelativeBlockHardness(final EntityPlayer player, final World world, final int x, final int y, final int z) {
+        final MovingObjectPosition pos = CoreLib.retraceBlock(world, (EntityLivingBase)player, x, y, z);
+        if (pos == null) {
+            return 0.0f;
+        }
+        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
+            return 0.0f;
+        }
+        final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)player.worldObj, x, y, z, TileMultipart.class);
+        return (tl == null) ? 0.0f : tl.getPartStrength(player, pos.subHit);
+    }
+    
+    public void onBlockDestroyedByExplosion(final World world, final int x, final int y, final int z, final Explosion explosion) {
+        final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+        if (tl != null) {
+            tl.breakBlock();
+        }
+    }
+    
+    public void addCollisionBoxesToList(final World world, final int x, final int y, final int z, final AxisAlignedBB box, final List list, final Entity ent) {
+        final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+        if (tl != null) {
+            int pm = tl.getSolidPartsMask();
+            while (pm > 0) {
+                final int pt = Integer.numberOfTrailingZeros(pm);
+                pm &= ~(1 << pt);
+                tl.setPartBounds(this, pt);
+                super.addCollisionBoxesToList(world, x, y, z, box, list, ent);
+            }
+        }
+    }
+    
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+        return super.getSelectedBoundingBoxFromPool(world, x, y, z);
+    }
+    
+    public MovingObjectPosition collisionRayTrace(final World world, final int x, final int y, final int z, final Vec3 start, final Vec3 end) {
+        final TileMultipart multipart = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+        if (multipart == null) {
+            return null;
+        }
+        int pm = multipart.getPartsMask();
+        MovingObjectPosition result = null;
+        int cpt = -1;
+        double distance = 0.0;
+        while (pm > 0) {
+            final int pt = Integer.numberOfTrailingZeros(pm);
+            pm &= ~(1 << pt);
+            multipart.setPartBounds(this, pt);
+            final MovingObjectPosition mop = super.collisionRayTrace(world, x, y, z, start, end);
+            if (mop != null) {
+                final double max = mop.hitVec.squareDistanceTo(start);
+                if (result != null && max >= distance) {
+                    continue;
+                }
+                distance = max;
+                result = mop;
+                cpt = pt;
+            }
+        }
+        if (result == null) {
+            return null;
+        }
+        multipart.setPartBounds(this, cpt);
+        result.subHit = cpt;
+        return result;
+    }
+    
+    protected MovingObjectPosition traceCurrentBlock(final World world, final int x, final int y, final int z, final Vec3 src, final Vec3 dest) {
+        return super.collisionRayTrace(world, x, y, z, src, dest);
+    }
+    
+    public void setPartBounds(final World world, final int x, final int y, final int z, final int part) {
+        final TileMultipart tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileMultipart.class);
+        if (tl == null) {
+            this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+        }
+        else {
+            tl.setPartBounds(this, part);
+        }
+    }
+    
+    public void computeCollidingBoxes(final World world, final int x, final int y, final int z, final AxisAlignedBB box, final List list, final TileMultipart tl) {
+        int pm = tl.getSolidPartsMask();
+        while (pm > 0) {
+            final int pt = Integer.numberOfTrailingZeros(pm);
+            pm &= ~(1 << pt);
+            tl.setPartBounds(this, pt);
+            super.addCollisionBoxesToList(world, x, y, z, box, list, (Entity)null);
+        }
+    }
 }

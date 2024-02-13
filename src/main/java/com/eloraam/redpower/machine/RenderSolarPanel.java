@@ -1,69 +1,65 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.machine;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.core.RenderCustomBlock;
-import com.eloraam.redpower.machine.TileMachinePanel;
+import cpw.mods.fml.relauncher.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import net.minecraft.client.renderer.*;
+import org.lwjgl.opengl.*;
+import com.eloraam.redpower.*;
+import net.minecraft.world.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-public class RenderSolarPanel extends RenderCustomBlock {
-	
-	protected RenderContext context = new RenderContext();
-	
-	public RenderSolarPanel(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int i, int j, int k, int md) {
-		TileMachinePanel tm = (TileMachinePanel) CoreLib.getTileEntity(iba, i, j, k, TileMachinePanel.class);
-		if (tm != null) {
-			this.context.setDefaults();
-			this.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-			this.context.setPos(i, j, k);
-			this.context.readGlobalLights(iba, i, j, k);
-			IIcon topIcon = getIcon(ForgeDirection.UP.ordinal(), md);
-			IIcon bottomIcon = getIcon(ForgeDirection.UP.ordinal(), md);
-			IIcon sideIcon = getIcon(ForgeDirection.UNKNOWN.ordinal(), md);
-			this.context.setIcon(bottomIcon, topIcon, sideIcon, sideIcon, sideIcon, sideIcon);
-			this.context.setSize(0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D);
-			this.context.setupBox();
-			this.context.transform();
-			//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-			this.context.renderGlobFaces(62);
-			//RenderLib.unbindTexture();
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		super.block.setBlockBoundsForItemRender();
-		this.context.setDefaults();
-		this.context.setPos(-0.5D, -0.5D, -0.5D);
-		this.context.useNormal = true;
-		//RenderLib.bindTexture("/eloraam/machine/machine1.png");
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		IIcon topIcon = getIcon(ForgeDirection.UP.ordinal(), md);
-		IIcon bottomIcon = getIcon(ForgeDirection.UP.ordinal(), md);
-		IIcon sideIcon = getIcon(ForgeDirection.UNKNOWN.ordinal(), md);
-		this.context.setIcon(bottomIcon, topIcon, sideIcon, sideIcon, sideIcon, sideIcon);
-		this.context.renderBox(62, 0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D);
-		tessellator.draw();
-		//RenderLib.unbindTexture();
-		this.context.useNormal = false;
-	}
+@SideOnly(Side.CLIENT)
+public class RenderSolarPanel extends RenderCustomBlock
+{
+    protected RenderContext context;
+    
+    public RenderSolarPanel(final Block block) {
+        super(block);
+        this.context = new RenderContext();
+    }
+    
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileSolarPanel solarPanel = (TileSolarPanel)tile;
+        final World world = solarPanel.getWorldObj();
+        final Tessellator tess = Tessellator.instance;
+        GL11.glDisable(2896);
+        this.context.bindBlockTexture();
+        this.context.setDefaults();
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        this.context.setPos(x, y, z);
+        this.context.readGlobalLights((IBlockAccess)world, solarPanel.xCoord, solarPanel.yCoord, solarPanel.zCoord);
+        this.context.setIcon(RedPowerMachine.electronicsBottom, RedPowerMachine.solarPanelTop, RedPowerMachine.solarPanelSide, RedPowerMachine.solarPanelSide, RedPowerMachine.solarPanelSide, RedPowerMachine.solarPanelSide);
+        this.context.setSize(0.0, 0.0, 0.0, 1.0, 0.25, 1.0);
+        this.context.setupBox();
+        this.context.transform();
+        tess.startDrawingQuads();
+        this.context.renderGlobFaces(62);
+        tess.draw();
+        GL11.glEnable(2896);
+    }
+    
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.5, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.0, 0.0);
+        }
+        this.context.useNormal = true;
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        this.context.setIcon(RedPowerMachine.electronicsBottom, RedPowerMachine.solarPanelTop, RedPowerMachine.solarPanelSide, RedPowerMachine.solarPanelSide, RedPowerMachine.solarPanelSide, RedPowerMachine.solarPanelSide);
+        this.context.renderBox(62, 0.0, 0.0, 0.0, 1.0, 0.25, 1.0);
+        tess.draw();
+        this.context.useNormal = false;
+    }
 }

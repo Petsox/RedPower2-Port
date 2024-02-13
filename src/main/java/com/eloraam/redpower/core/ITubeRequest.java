@@ -1,8 +1,10 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.TubeItem;
-
-public interface ITubeRequest {
-
-   boolean requestTubeItem(TubeItem var1, boolean var2);
+public interface ITubeRequest
+{
+    boolean requestTubeItem(final TubeItem p0, final boolean p1);
 }

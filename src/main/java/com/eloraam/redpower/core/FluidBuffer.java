@@ -1,81 +1,79 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.tileentity.*;
+import net.minecraftforge.fluids.*;
+import net.minecraft.nbt.*;
 
-import java.util.ArrayList;
-
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-
-public abstract class FluidBuffer {
-	
-	public int Type = 0;
-	public int Level = 0;
-	public int Delta = 0;
-	private int lastTick = 0;
-	
-	public abstract TileEntity getParent();
-	
-	public abstract void onChange();
-	
-	public int getMaxLevel() {
-		return 1000;
-	}
-	
-	public int getLevel() {
-		long lt = this.getParent().getWorldObj().getWorldTime();
-		if ((lt & 65535L) == this.lastTick) {
-			return this.Level;
-		} else {
-			this.lastTick = (int) (lt & 65535L);
-			this.Level += this.Delta;
-			this.Delta = 0;
-			if (this.Level == 0) {
-				this.Type = 0;
-			}
-			
-			return this.Level;
-		}
-	}
-	
-	public void addLevel(int type, int lvl) {
-		this.Type = type;
-		this.Delta += lvl;
-		this.onChange();
-	}
-	
-	public Fluid getFluidClass() {
-		return this.Type != 0 && this.Level != 0 ? FluidRegistry.getFluid(this.Type) : null;
-	}
-	
-	public void readFromNBT(NBTTagCompound tag, String name) {
-		NBTTagCompound t2 = tag.getCompoundTag(name);
-		this.Type = t2.getInteger("type");
-		this.Level = t2.getInteger("lvl");
-		this.Delta = t2.getInteger("del");
-		this.lastTick = t2.getInteger("ltk");
-	}
-	
-	public void writeToNBT(NBTTagCompound tag, String name) {
-		NBTTagCompound t2 = new NBTTagCompound();
-		t2.setInteger("type", (short) this.Type);
-		t2.setInteger("lvl", (short) this.Level);
-		t2.setInteger("del", (short) this.Delta);
-		t2.setShort("lck", (short) this.lastTick);
-		tag.setTag(name, t2);
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void writeToPacket(ArrayList data) {
-		data.add((int)this.Type);
-		data.add((int)this.Level);
-	}
-	
-	public void readFromPacket(ByteBuf buffer) {
-		this.Type = buffer.readInt();
-		this.Level = buffer.readInt();
-	}
+public abstract class FluidBuffer
+{
+    public Fluid Type;
+    public int Level;
+    public int Delta;
+    private int lastTick;
+    
+    public abstract TileEntity getParent();
+    
+    public abstract void onChange();
+    
+    public int getMaxLevel() {
+        return 1000;
+    }
+    
+    public int getLevel() {
+        final long lt = this.getParent().getWorldObj().getWorldTime();
+        if ((lt & 0xFFFFL) == this.lastTick) {
+            return this.Level;
+        }
+        this.lastTick = (int)(lt & 0xFFFFL);
+        this.Level += this.Delta;
+        this.Delta = 0;
+        if (this.Level == 0) {
+            this.Type = null;
+        }
+        return this.Level;
+    }
+    
+    public void addLevel(final Fluid type, final int lvl) {
+        if (type != null) {
+            this.Type = type;
+            this.Delta += lvl;
+            this.onChange();
+        }
+    }
+    
+    public Fluid getFluidClass() {
+        return this.Type;
+    }
+    
+    public void readFromNBT(final NBTTagCompound tag, final String name) {
+        final NBTTagCompound t2 = tag.getCompoundTag(name);
+        this.Type = FluidRegistry.getFluid(t2.getString("type"));
+        this.Level = t2.getShort("lvl");
+        this.Delta = t2.getShort("del");
+        this.lastTick = t2.getShort("ltk");
+    }
+    
+    public void writeToNBT(final NBTTagCompound tag, final String name) {
+        final NBTTagCompound t2 = new NBTTagCompound();
+        final String n = FluidRegistry.getFluidName(this.Type);
+        t2.setString("type", (n == null || n.isEmpty()) ? "null" : n);
+        t2.setShort("lvl", (short)this.Level);
+        t2.setShort("del", (short)this.Delta);
+        t2.setShort("ltk", (short)this.lastTick);
+        tag.setTag(name, (NBTBase)t2);
+    }
+    
+    public void writeToPacket(final NBTTagCompound tag) {
+        tag.setInteger("type", (this.Type == null) ? -1 : FluidRegistry.getFluidID(this.Type));
+        tag.setInteger("lvl", this.Level);
+    }
+    
+    public void readFromPacket(final NBTTagCompound buffer) {
+        this.Type = FluidRegistry.getFluid(buffer.getInteger("type"));
+        this.Level = buffer.getInteger("lvl");
+    }
 }

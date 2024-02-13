@@ -1,241 +1,217 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.core.Config;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.CoverLib;
-import com.eloraam.redpower.core.CraftLib;
-import com.eloraam.redpower.core.RedPowerLib;
-import com.eloraam.redpower.core.TileCovered;
-import com.eloraam.redpower.wiring.MicroPlacementJacket;
-import com.eloraam.redpower.wiring.MicroPlacementWire;
-import com.eloraam.redpower.wiring.TileBluewire;
-import com.eloraam.redpower.wiring.TileCable;
-import com.eloraam.redpower.wiring.TileInsulatedWire;
-import com.eloraam.redpower.wiring.TileRedwire;
-import com.eloraam.redpower.wiring.WiringProxy;
+import com.eloraam.redpower.machine.RenderFrame;
+import net.minecraft.util.*;
+import cpw.mods.fml.relauncher.*;
+import cpw.mods.fml.common.*;
+import net.minecraftforge.common.*;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.registry.*;
+import net.minecraft.item.*;
+import net.minecraft.block.*;
+import net.minecraft.init.*;
+import com.eloraam.redpower.core.*;
+import java.util.function.*;
+import com.eloraam.redpower.wiring.*;
+import cpw.mods.fml.client.registry.*;
+import net.minecraft.client.renderer.tileentity.*;
+import net.minecraftforge.client.event.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.common.eventhandler.*;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-
-@Mod(modid = "RedPowerWiring", name = "RedPower Wiring", version = "2.0pr6", certificateFingerprint = "28f7f8a775e597088f3a418ea29290b6a1d23c7b", dependencies = "required-after:RedPowerBase")
-public class RedPowerWiring {
-	
-	@Instance("RedPowerWiring")
-	public static RedPowerWiring instance;
-	@SidedProxy(clientSide = "com.eloraam.redpower.wiring.WiringProxyClient", serverSide = "com.eloraam.redpower.wiring.WiringProxy")
-	public static WiringProxy proxy;
-	
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-	}
-	
-	@EventHandler
-	public void load(FMLInitializationEvent event) {
-		initJacketRecipes();
-		setupWires();
-		proxy.registerRenderers();
-	}
-	
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-	}
-	
-	private static void initJacketRecipes() {
-		CoverLib.addMaterialHandler(new CoverLib.IMaterialHandler() {
-			@Override
-			public void addMaterial(int n) {
-				if (!CoverLib.isTransparent(n)) {
-					String name = CoverLib.getName(n);
-					String desc = CoverLib.getDesc(n);
-					Config.addName("tile.rparmwire." + name + ".name", desc + " Jacketed Wire");
-					Config.addName("tile.rparmcable." + name + ".name", desc + " Jacketed Cable");
-					Config.addName("tile.rparmbwire." + name + ".name", desc + " Jacketed Bluewire");
-					GameRegistry
-							.addRecipe(
-									new ItemStack(RedPowerBase.blockMicro, 4, 16384 + n),
-									new Object[] { "SSS", "SRS", "SSS", Character
-											.valueOf('S'), new ItemStack(
-											RedPowerBase.blockMicro, 1, n), Character
-											.valueOf('R'), RedPowerBase.itemIngotRed });
-					GameRegistry
-							.addRecipe(
-									new ItemStack(RedPowerBase.blockMicro, 1, 16640 + n),
-									new Object[] { "SSS", "SCS", "SSS", Character
-											.valueOf('S'), new ItemStack(
-											RedPowerBase.blockMicro, 1, n), Character
-											.valueOf('C'), new ItemStack(
-											RedPowerBase.blockMicro, 1, 768) });
-					GameRegistry
-							.addRecipe(
-									new ItemStack(RedPowerBase.blockMicro, 4,
-											16896 + n),
-									new Object[] { "SSS", "SBS", "SSS", Character
-											.valueOf('S'), new ItemStack(
-											RedPowerBase.blockMicro, 1, n), Character
-											.valueOf('B'), RedPowerBase.itemIngotBlue });
-					CraftLib.addAlloyResult(CoreLib.copyStack(
-							RedPowerBase.itemIngotRed, 1),
-							new Object[] { new ItemStack(
-									RedPowerBase.blockMicro, 4, 16384 + n) });
-					CraftLib.addAlloyResult(CoreLib.copyStack(
-							RedPowerBase.itemIngotRed, 5),
-							new Object[] { new ItemStack(
-									RedPowerBase.blockMicro, 8, 16640 + n) });
-					CraftLib.addAlloyResult(CoreLib.copyStack(
-							RedPowerBase.itemIngotBlue, 1),
-							new Object[] { new ItemStack(
-									RedPowerBase.blockMicro, 4, 16896 + n) });
-				}
-			}
-		});
-	}
-	
-	public static void setupWires() {
-		GameRegistry.registerTileEntity(TileRedwire.class, "Redwire");
-		GameRegistry.registerTileEntity(TileInsulatedWire.class, "InsRedwire");
-		GameRegistry.registerTileEntity(TileCable.class, "RedCable");
-		GameRegistry.registerTileEntity(TileCovered.class, "Covers");
-		GameRegistry.registerTileEntity(TileBluewire.class, "Bluewire");
-		MicroPlacementWire imp = new MicroPlacementWire();
-		RedPowerBase.blockMicro.registerPlacement(1, imp);
-		RedPowerBase.blockMicro.registerPlacement(2, imp);
-		RedPowerBase.blockMicro.registerPlacement(3, imp);
-		RedPowerBase.blockMicro.registerPlacement(5, imp);
-		MicroPlacementJacket var3 = new MicroPlacementJacket();
-		RedPowerBase.blockMicro.registerPlacement(64, var3);
-		RedPowerBase.blockMicro.registerPlacement(65, var3);
-		RedPowerBase.blockMicro.registerPlacement(66, var3);
-		RedPowerBase.blockMicro.addTileEntityMapping(1, TileRedwire.class);
-		RedPowerBase.blockMicro.addTileEntityMapping(2, TileInsulatedWire.class);
-		RedPowerBase.blockMicro.addTileEntityMapping(3, TileCable.class);
-		RedPowerBase.blockMicro.addTileEntityMapping(5, TileBluewire.class);
-		GameRegistry
-				.addRecipe(
-						new ItemStack(RedPowerBase.blockMicro, 12, 256),
-						new Object[] { "R", "R", "R", Character.valueOf('R'), RedPowerBase.itemIngotRed });
-		CraftLib.addAlloyResult(RedPowerBase.itemIngotRed,
-				new Object[] { new ItemStack(RedPowerBase.blockMicro, 4, 256) });
-		CraftLib.addAlloyResult(
-				CoreLib.copyStack(RedPowerBase.itemIngotRed, 5),
-				new Object[] { new ItemStack(RedPowerBase.blockMicro, 8, 768) });
-		GameRegistry
-				.addRecipe(
-						new ItemStack(RedPowerBase.blockMicro, 12, 1280),
-						new Object[] { "WBW", "WBW", "WBW", Character
-								.valueOf('B'), RedPowerBase.itemIngotBlue, Character
-								.valueOf('W'), Blocks.wool });
-		CraftLib.addAlloyResult(
-				RedPowerBase.itemIngotBlue,
-				new Object[] { new ItemStack(RedPowerBase.blockMicro, 4, 1280) });
-		GameRegistry.addShapelessRecipe(new ItemStack(RedPowerBase.blockMicro,
-				1, 1281), new Object[] { new ItemStack(RedPowerBase.blockMicro,
-				1, 1280), Blocks.wool });
-		CraftLib.addAlloyResult(
-				RedPowerBase.itemIngotBlue,
-				new Object[] { new ItemStack(RedPowerBase.blockMicro, 4, 1281) });
-		
-		int i;
-		int j;
-		for (i = 0; i < 16; ++i) {
-			Config.addName("tile.rpinsulated." + CoreLib.rawColorNames[i]
-					+ ".name", CoreLib.enColorNames[i] + " Insulated Wire");
-			Config.addName(
-					"tile.rpcable." + CoreLib.rawColorNames[i] + ".name",
-					CoreLib.enColorNames[i] + " Bundled Cable");
-			GameRegistry
-					.addRecipe(
-							new ItemStack(RedPowerBase.blockMicro, 12, 512 + i),
-							new Object[] { "WRW", "WRW", "WRW", Character
-									.valueOf('R'), RedPowerBase.itemIngotRed, Character
-									.valueOf('W'), new ItemStack(Blocks.wool,
-									1, i) });
-			
-			for (j = 0; j < 16; ++j) {
-				if (i != j) {
-					GameRegistry
-							.addShapelessRecipe(
-									new ItemStack(RedPowerBase.blockMicro, 1,
-											512 + i),
-									new Object[] { new ItemStack(
-											RedPowerBase.blockMicro, 1, 512 + j), new ItemStack(
-											Items.dye, 1, 15 - i) });
-					GameRegistry
-							.addShapelessRecipe(
-									new ItemStack(RedPowerBase.blockMicro, 1,
-											769 + i),
-									new Object[] { new ItemStack(
-											RedPowerBase.blockMicro, 1, 769 + j), new ItemStack(
-											Items.dye, 1, 15 - i) });
-				}
-			}
-			
-			CraftLib.addAlloyResult(RedPowerBase.itemIngotRed,
-					new Object[] { new ItemStack(RedPowerBase.blockMicro, 4,
-							512 + i) });
-			GameRegistry
-					.addRecipe(
-							new ItemStack(RedPowerBase.blockMicro, 2, 768),
-							new Object[] { "SWS", "WWW", "SWS", Character
-									.valueOf('W'), new ItemStack(
-									RedPowerBase.blockMicro, 1, 512 + i), Character
-									.valueOf('S'), Items.string });
-			GameRegistry
-					.addShapelessRecipe(new ItemStack(RedPowerBase.blockMicro,
-							1, 769 + i), new Object[] { new ItemStack(
-							RedPowerBase.blockMicro, 1, 768), new ItemStack(
-							Items.dye, 1, 15 - i), Items.paper });
-			CraftLib.addAlloyResult(CoreLib.copyStack(
-					RedPowerBase.itemIngotRed, 5),
-					new Object[] { new ItemStack(RedPowerBase.blockMicro, 8,
-							769 + i) });
-		}
-		
-		for (i = 0; i < 16; ++i) {
-			if (i != 11) {
-				CraftLib.addShapelessOreRecipe(new ItemStack(
-						RedPowerBase.blockMicro, 1, 523),
-						new Object[] { new ItemStack(RedPowerBase.blockMicro,
-								1, 512 + i), "dyeBlue" });
-				CraftLib.addShapelessOreRecipe(new ItemStack(
-						RedPowerBase.blockMicro, 1, 780),
-						new Object[] { new ItemStack(RedPowerBase.blockMicro,
-								1, 769 + i), "dyeBlue" });
-			}
-		}
-		
-		CraftLib.addShapelessOreRecipe(new ItemStack(RedPowerBase.blockMicro,
-				1, 780), new Object[] { new ItemStack(RedPowerBase.blockMicro,
-				1, 768), "dyeBlue", Items.paper });
-		RedPowerLib.addCompatibleMapping(0, 1);
-		
-		for (i = 0; i < 16; ++i) {
-			RedPowerLib.addCompatibleMapping(0, 2 + i);
-			RedPowerLib.addCompatibleMapping(1, 2 + i);
-			RedPowerLib.addCompatibleMapping(65, 2 + i);
-			
-			for (j = 0; j < 16; ++j) {
-				RedPowerLib.addCompatibleMapping(19 + j, 2 + i);
-			}
-			
-			RedPowerLib.addCompatibleMapping(18, 2 + i);
-			RedPowerLib.addCompatibleMapping(18, 19 + i);
-		}
-		
-		RedPowerLib.addCompatibleMapping(0, 65);
-		RedPowerLib.addCompatibleMapping(1, 65);
-		RedPowerLib.addCompatibleMapping(64, 65);
-		RedPowerLib.addCompatibleMapping(64, 67);
-		RedPowerLib.addCompatibleMapping(65, 67);
-		RedPowerLib.addCompatibleMapping(66, 67);
-	}
+@Mod(modid = "RedPowerWiring", name = "RedPower Wiring", version = "2.0pr6", dependencies = "required-after:RedPowerBase")
+public class RedPowerWiring
+{
+    @Mod.Instance("RedPowerWiring")
+    public static RedPowerWiring instance;
+    @SideOnly(Side.CLIENT)
+    public static IIcon redwireTop;
+    @SideOnly(Side.CLIENT)
+    public static IIcon redwireFace;
+    @SideOnly(Side.CLIENT)
+    public static IIcon bundledTop;
+    @SideOnly(Side.CLIENT)
+    public static IIcon bundledFace;
+    @SideOnly(Side.CLIENT)
+    public static IIcon powerTop;
+    @SideOnly(Side.CLIENT)
+    public static IIcon powerFace;
+    @SideOnly(Side.CLIENT)
+    public static IIcon highPowerTop;
+    @SideOnly(Side.CLIENT)
+    public static IIcon highPowerFace;
+    @SideOnly(Side.CLIENT)
+    public static IIcon jumboSides;
+    @SideOnly(Side.CLIENT)
+    public static IIcon jumboTop;
+    @SideOnly(Side.CLIENT)
+    public static IIcon jumboCent;
+    @SideOnly(Side.CLIENT)
+    public static IIcon jumboCentSide;
+    @SideOnly(Side.CLIENT)
+    public static IIcon jumboEnd;
+    @SideOnly(Side.CLIENT)
+    public static IIcon jumboCorners;
+    @SideOnly(Side.CLIENT)
+    public static IIcon redwireCableOff;
+    @SideOnly(Side.CLIENT)
+    public static IIcon redwireCableOn;
+    @SideOnly(Side.CLIENT)
+    public static IIcon bluewireCable;
+    @SideOnly(Side.CLIENT)
+    public static IIcon bundledCable;
+    public static IIcon[] insulatedTop;
+    public static IIcon[] insulatedFaceOff;
+    public static IIcon[] insulatedFaceOn;
+    public static IIcon[] bundledColTop;
+    public static IIcon[] bundledColFace;
+    
+    @Mod.EventHandler
+    public void preInit(final FMLPreInitializationEvent event) {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            MinecraftForge.EVENT_BUS.register((Object)RedPowerWiring.instance);
+        }
+    }
+    
+    @Mod.EventHandler
+    public void load(final FMLInitializationEvent event) {
+        initJacketRecipes();
+        setupWires();
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            this.registerRenderers();
+        }
+    }
+    
+    @Mod.EventHandler
+    public void postInit(final FMLPostInitializationEvent event) {
+    }
+    
+    private static void initJacketRecipes() {
+        CoverLib.addMaterialHandler(material -> {
+            if (!CoverLib.isTransparent(material)) {
+                GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 4, 16384 + material), new Object[] { "SSS", "SRS", "SSS", 'S', new ItemStack((Block)RedPowerBase.blockMicro, 1, material), 'R', RedPowerBase.itemIngotRed });
+                GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 16640 + material), new Object[] { "SSS", "SCS", "SSS", 'S', new ItemStack((Block)RedPowerBase.blockMicro, 1, material), 'C', new ItemStack((Block)RedPowerBase.blockMicro, 1, 768) });
+                GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 4, 16896 + material), new Object[] { "SSS", "SBS", "SSS", 'S', new ItemStack((Block)RedPowerBase.blockMicro, 1, material), 'B', RedPowerBase.itemIngotBlue });
+                CraftLib.addAlloyResult(CoreLib.copyStack(RedPowerBase.itemIngotRed, 1), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 4, 16384 + material) });
+                CraftLib.addAlloyResult(CoreLib.copyStack(RedPowerBase.itemIngotRed, 5), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 8, 16640 + material) });
+                CraftLib.addAlloyResult(CoreLib.copyStack(RedPowerBase.itemIngotBlue, 1), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 4, 16896 + material) });
+            }
+        });
+    }
+    
+    public static void setupWires() {
+        GameRegistry.registerTileEntity((Class)TileRedwire.class, "Redwire");
+        GameRegistry.registerTileEntity((Class)TileInsulatedWire.class, "InsRedwire");
+        GameRegistry.registerTileEntity((Class)TileCable.class, "RedCable");
+        GameRegistry.registerTileEntity((Class)TileCovered.class, "Covers");
+        GameRegistry.registerTileEntity((Class)TileBluewire.class, "Bluewire");
+        final MicroPlacementWire wre = new MicroPlacementWire();
+        RedPowerBase.blockMicro.registerPlacement(1, (IMicroPlacement)wre);
+        RedPowerBase.blockMicro.registerPlacement(2, (IMicroPlacement)wre);
+        RedPowerBase.blockMicro.registerPlacement(3, (IMicroPlacement)wre);
+        RedPowerBase.blockMicro.registerPlacement(5, (IMicroPlacement)wre);
+        final MicroPlacementJacket jkt = new MicroPlacementJacket();
+        RedPowerBase.blockMicro.registerPlacement(64, (IMicroPlacement)jkt);
+        RedPowerBase.blockMicro.registerPlacement(65, (IMicroPlacement)jkt);
+        RedPowerBase.blockMicro.registerPlacement(66, (IMicroPlacement)jkt);
+        RedPowerBase.blockMicro.addTileEntityMapping(1, (Supplier)TileRedwire::new);
+        RedPowerBase.blockMicro.addTileEntityMapping(2, (Supplier)TileInsulatedWire::new);
+        RedPowerBase.blockMicro.addTileEntityMapping(3, (Supplier)TileCable::new);
+        RedPowerBase.blockMicro.addTileEntityMapping(5, (Supplier)TileBluewire::new);
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 12, 256), new Object[] { "R", "R", "R", 'R', RedPowerBase.itemIngotRed });
+        CraftLib.addAlloyResult(RedPowerBase.itemIngotRed, new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 4, 256) });
+        CraftLib.addAlloyResult(CoreLib.copyStack(RedPowerBase.itemIngotRed, 5), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 8, 768) });
+        GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 12, 1280), new Object[] { "WBW", "WBW", "WBW", 'B', RedPowerBase.itemIngotBlue, 'W', Blocks.wool });
+        CraftLib.addAlloyResult(RedPowerBase.itemIngotBlue, new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 4, 1280) });
+        GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 1281), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 1280), Blocks.wool });
+        CraftLib.addAlloyResult(RedPowerBase.itemIngotBlue, new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 4, 1281) });
+        for (int color = 0; color < 16; ++color) {
+            GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 12, 512 + color), new Object[] { "WRW", "WRW", "WRW", 'R', RedPowerBase.itemIngotRed, 'W', new ItemStack(Blocks.wool, 1, color) });
+            for (int j = 0; j < 16; ++j) {
+                if (color != j) {
+                    GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 512 + color), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 512 + j), new ItemStack(Items.dye, 1, 15 - color) });
+                    GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 769 + color), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 769 + j), new ItemStack(Items.dye, 1, 15 - color) });
+                }
+            }
+            CraftLib.addAlloyResult(RedPowerBase.itemIngotRed, new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 4, 512 + color) });
+            GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 2, 768), new Object[] { "SWS", "WWW", "SWS", 'W', new ItemStack((Block)RedPowerBase.blockMicro, 1, 512 + color), 'S', Items.string });
+            GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 769 + color), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 768), new ItemStack(Items.dye, 1, 15 - color), Items.paper });
+            CraftLib.addAlloyResult(CoreLib.copyStack(RedPowerBase.itemIngotRed, 5), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 8, 769 + color) });
+        }
+        for (int i = 0; i < 16; ++i) {
+            if (i != 11) {
+                CraftLib.addShapelessOreRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 523), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 512 + i), "dyeBlue" });
+                CraftLib.addShapelessOreRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 780), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 769 + i), "dyeBlue" });
+            }
+        }
+        CraftLib.addShapelessOreRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 780), new Object[] { new ItemStack((Block)RedPowerBase.blockMicro, 1, 768), "dyeBlue", Items.paper });
+        RedPowerLib.addCompatibleMapping(0, 1);
+        for (int i = 0; i < 16; ++i) {
+            RedPowerLib.addCompatibleMapping(0, 2 + i);
+            RedPowerLib.addCompatibleMapping(1, 2 + i);
+            RedPowerLib.addCompatibleMapping(65, 2 + i);
+            for (int j = 0; j < 16; ++j) {
+                RedPowerLib.addCompatibleMapping(19 + j, 2 + i);
+            }
+            RedPowerLib.addCompatibleMapping(18, 2 + i);
+            RedPowerLib.addCompatibleMapping(18, 19 + i);
+        }
+        RedPowerLib.addCompatibleMapping(0, 65);
+        RedPowerLib.addCompatibleMapping(1, 65);
+        RedPowerLib.addCompatibleMapping(64, 65);
+        RedPowerLib.addCompatibleMapping(64, 67);
+        RedPowerLib.addCompatibleMapping(65, 67);
+        RedPowerLib.addCompatibleMapping(66, 67);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void registerRenderers() {
+        RenderLib.setDefaultRenderer((Block)RedPowerBase.blockMicro, 8, (Function<Block, ? extends RenderCustomBlock>) RenderRedwire::new);
+        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileWiring.class, (TileEntitySpecialRenderer)new RenderRedwire((Block)RedPowerBase.blockMicro));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onTextureStitch(final TextureStitchEvent.Pre evt) {
+        final TextureMap map = evt.map;
+        if (map.getTextureType() == 0) {
+            RedPowerWiring.redwireTop = map.registerIcon("rpwiring:redwireTop");
+            RedPowerWiring.redwireFace = map.registerIcon("rpwiring:redwireFace");
+            RedPowerWiring.bundledTop = map.registerIcon("rpwiring:bundledTop");
+            RedPowerWiring.bundledFace = map.registerIcon("rpwiring:bundledFace");
+            RedPowerWiring.powerTop = map.registerIcon("rpwiring:powerTop");
+            RedPowerWiring.powerFace = map.registerIcon("rpwiring:powerFace");
+            RedPowerWiring.highPowerTop = map.registerIcon("rpwiring:highPowerTop");
+            RedPowerWiring.highPowerFace = map.registerIcon("rpwiring:highPowerFace");
+            RedPowerWiring.jumboSides = map.registerIcon("rpwiring:jumboSides");
+            RedPowerWiring.jumboTop = map.registerIcon("rpwiring:jumboTop");
+            RedPowerWiring.jumboCent = map.registerIcon("rpwiring:jumboCent");
+            RedPowerWiring.jumboCentSide = map.registerIcon("rpwiring:jumboCentSide");
+            RedPowerWiring.jumboEnd = map.registerIcon("rpwiring:jumboEnd");
+            RedPowerWiring.jumboCorners = map.registerIcon("rpwiring:jumboCorners");
+            RedPowerWiring.redwireCableOff = map.registerIcon("rpwiring:redwireCableOff");
+            RedPowerWiring.redwireCableOn = map.registerIcon("rpwiring:redwireCableOn");
+            RedPowerWiring.bluewireCable = map.registerIcon("rpwiring:bluewireCable");
+            RedPowerWiring.bundledCable = map.registerIcon("rpwiring:bundledCable");
+            for (int col = 0; col < 16; ++col) {
+                RedPowerWiring.insulatedTop[col] = map.registerIcon("rpwiring:insulatedTop/" + col);
+                RedPowerWiring.insulatedFaceOff[col] = map.registerIcon("rpwiring:insulatedFaceOff/" + col);
+                RedPowerWiring.insulatedFaceOn[col] = map.registerIcon("rpwiring:insulatedFaceOn/" + col);
+                RedPowerWiring.bundledColTop[col] = map.registerIcon("rpwiring:bundledColTop/" + col);
+                RedPowerWiring.bundledColFace[col] = map.registerIcon("rpwiring:bundledColFace/" + col);
+            }
+        }
+    }
+    
+    static {
+        RedPowerWiring.insulatedTop = new IIcon[16];
+        RedPowerWiring.insulatedFaceOff = new IIcon[16];
+        RedPowerWiring.insulatedFaceOn = new IIcon[16];
+        RedPowerWiring.bundledColTop = new IIcon[16];
+        RedPowerWiring.bundledColFace = new IIcon[16];
+    }
 }

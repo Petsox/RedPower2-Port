@@ -1,49 +1,45 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentDamage;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.DamageSource;
+import net.minecraft.entity.*;
+import net.minecraft.util.*;
+import net.minecraft.enchantment.*;
 
-public class EnchantmentVorpal extends EnchantmentDamage {
-	
-	public EnchantmentVorpal(int i, int j) {
-		super(i, j, 0 /*all mobs*/);
-	}
-	
-	@Override
-	public int getMinEnchantability(int i) {
-		return 20 + 10 * (i - 1);
-	}
-	
-	@Override
-	public int getMaxEnchantability(int i) {
-		return this.getMinEnchantability(i) + 50;
-	}
-	
-	@Override
-	public int getMaxLevel() {
-		return 4;
-	}
-	
-	@Override //TODO Костыль
-	public void func_151368_a(EntityLivingBase attacker, Entity target, int damage) {
+public class EnchantmentVorpal extends EnchantmentDamage
+{
+    public EnchantmentVorpal(final int i, final int j) {
+        super(i, j, 0);
+    }
+    
+    public int getMinEnchantability(final int i) {
+        return 20 + 10 * (i - 1);
+    }
+    
+    public int getMaxEnchantability(final int i) {
+        return this.getMinEnchantability(i) + 50;
+    }
+    
+    public int getMaxLevel() {
+        return 4;
+    }
+    
+    public void func_151368_a(final EntityLivingBase attacker, final Entity target, final int damage) {
         if (target instanceof EntityLivingBase) {
-            EntityLivingBase entitylivingbase1 = (EntityLivingBase)target;
-            if(target.worldObj.rand.nextInt(100) < 2 * damage * damage) {
-            	entitylivingbase1.attackEntityFrom(DamageSource.magic, 100);
+            final EntityLivingBase targetLiving = (EntityLivingBase)target;
+            if (target.worldObj.rand.nextInt(100) < 2 * damage * damage) {
+                targetLiving.attackEntityFrom(DamageSource.magic, 100.0f);
             }
         }
     }
-	
-	@Override
-	public String getName() {
-		return "enchantment.damage.vorpal";
-	}
-	
-	@Override
-	public boolean canApplyTogether(Enchantment enchantment) {
-		return enchantment != this;
-	}
+    
+    public String getName() {
+        return "enchantment.damage.vorpal";
+    }
+    
+    public boolean canApplyTogether(final Enchantment enchantment) {
+        return enchantment != this;
+    }
 }

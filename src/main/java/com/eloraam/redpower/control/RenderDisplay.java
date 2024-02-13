@@ -1,62 +1,69 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.control;
 
-import com.eloraam.redpower.RedPowerControl;
-import com.eloraam.redpower.control.TileDisplay;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.RenderContext;
-import com.eloraam.redpower.core.RenderCustomBlock;
+import cpw.mods.fml.relauncher.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.block.*;
+import net.minecraft.tileentity.*;
+import org.lwjgl.opengl.*;
+import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.*;
+import net.minecraft.world.*;
+import net.minecraftforge.client.*;
+import net.minecraft.item.*;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-public class RenderDisplay extends RenderCustomBlock {
-	
-	RenderContext context = new RenderContext();
-	
-	public RenderDisplay(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	public void randomDisplayTick(World world, int i, int j, int k,
-			Random random) {
-	}
-	
-	@Override
-	public void renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iba, int x, int y, int z, int md) {
-		TileDisplay disp = (TileDisplay) CoreLib.getTileEntity(iba, x, y, z, TileDisplay.class);
-		if (disp != null) {
-			this.context.setTexRotation(renderblocks, CoreLib.getFacing(disp.Rotation), false);
-			renderblocks.renderStandardBlock(block, x, y, z);
-			renderblocks.setRenderBoundsFromBlock(block);
-			this.context.resetTexRotation(renderblocks);
-		}
-	}
-	
-	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, int md) {
-		Tessellator tessellator = Tessellator.instance;
-		super.block.setBlockBoundsForItemRender();
-		this.context.setDefaults();
-		this.context.useNormal = true;
-		this.context.setPos(-0.5D, -0.5D, -0.5D);
-		IIcon topIcon = RedPowerControl.blockPeripheral.getIcon(ForgeDirection.UP.ordinal(), md);
-		IIcon bottomIcon = RedPowerControl.blockPeripheral.getIcon(ForgeDirection.DOWN.ordinal(), md);
-		IIcon frontIcon = RedPowerControl.blockPeripheral.getIcon(ForgeDirection.NORTH.ordinal(), md);
-		IIcon backIcon = RedPowerControl.blockPeripheral.getIcon(ForgeDirection.SOUTH.ordinal(), md);
-		IIcon sideIcon = RedPowerControl.blockPeripheral.getIcon(ForgeDirection.UNKNOWN.ordinal(), md);
-		this.context.setIcon(bottomIcon, topIcon, sideIcon, sideIcon, backIcon, frontIcon);
-		this.context.setLocalLights(0.5F, 1.0F, 0.8F, 0.8F, 0.6F, 0.6F);
-		tessellator.startDrawingQuads();
-		this.context.renderBox(62, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-		tessellator.draw();
-		this.context.useNormal = false;
-	}
+@SideOnly(Side.CLIENT)
+public class RenderDisplay extends RenderCustomBlock
+{
+    private RenderContext context;
+    
+    public RenderDisplay(final Block block) {
+        super(block);
+        this.context = new RenderContext();
+    }
+    
+    public void renderTileEntityAt(final TileEntity tile, final double x, final double y, final double z, final float partialTicks) {
+        final TileDisplay display = (TileDisplay)tile;
+        final World world = display.getWorldObj();
+        GL11.glDisable(2896);
+        final Tessellator tess = Tessellator.instance;
+        this.context.bindBlockTexture();
+        this.context.setDefaults();
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        this.context.setPos(x, y, z);
+        this.context.readGlobalLights((IBlockAccess)world, display.xCoord, display.yCoord, display.zCoord);
+        this.context.setIcon(RedPowerControl.peripheralBottom, RedPowerControl.peripheralTop, RedPowerControl.peripheralSide, RedPowerControl.peripheralSide, RedPowerControl.displayFront, RedPowerControl.peripheralBack);
+        this.context.setSize(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        this.context.setupBox();
+        this.context.transform();
+        this.context.rotateTextures(display.Rotation);
+        tess.startDrawingQuads();
+        this.context.renderGlobFaces(63);
+        tess.draw();
+        GL11.glEnable(2896);
+    }
+    
+    @Override
+    public void renderItem(final IItemRenderer.ItemRenderType type, final ItemStack item, final Object... data) {
+        final Tessellator tess = Tessellator.instance;
+        this.block.setBlockBoundsForItemRender();
+        this.context.setDefaults();
+        this.context.useNormal = true;
+        if (type == IItemRenderer.ItemRenderType.INVENTORY) {
+            this.context.setPos(-0.5, -0.5, -0.5);
+        }
+        else {
+            this.context.setPos(0.0, 0.0, 0.0);
+        }
+        this.context.setOrientation(0, 3);
+        this.context.setIcon(RedPowerControl.peripheralBottom, RedPowerControl.peripheralTop, RedPowerControl.peripheralSide, RedPowerControl.peripheralSide, RedPowerControl.displayFront, RedPowerControl.peripheralBack);
+        this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
+        tess.startDrawingQuads();
+        this.context.renderBox(63, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        tess.draw();
+        this.context.useNormal = false;
+    }
 }

@@ -1,54 +1,44 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.RedPowerWorld;
-import com.eloraam.redpower.core.ItemPartialCraft;
+import com.eloraam.redpower.core.*;
+import net.minecraft.creativetab.*;
+import net.minecraft.item.*;
+import net.minecraft.world.*;
+import net.minecraft.entity.player.*;
+import com.eloraam.redpower.*;
+import net.minecraft.entity.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
-
-public class ItemPaintCan extends ItemPartialCraft {
-	
-	int color;
-	private IIcon[] icons = new IIcon[16];
-	
-	public ItemPaintCan(int col) {
-		this.color = col;
-		this.setMaxDamage(15);
-		this.setCreativeTab(CreativeTabs.tabTools);
-	}
-	
-	@SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int meta) {
-        return this.icons[meta];
+public class ItemPaintCan extends ItemPartialCraft
+{
+    int color;
+    
+    public ItemPaintCan(final int col) {
+        this.color = col;
+        this.setMaxDamage(15);
+        this.setCreativeTab(CreativeTabs.tabTools);
+        this.setTextureName("rpworld:paintCan/" + col);
     }
-	
-	@SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister registerer) {
-        for(int i = 0; i < 16; i ++) {
-        	this.icons[i] = registerer.registerIcon("rpworld:itemPaintBrush"+i);
+    
+    public ItemStack onItemRightClick(final ItemStack ist, final World world, final EntityPlayer player) {
+        int n = 0;
+        while (n < 9) {
+            final ItemStack isl = player.inventory.getStackInSlot(n);
+            if (isl != null && isl.getItem() == RedPowerWorld.itemBrushDry && isl.stackSize == 1) {
+                player.inventory.setInventorySlotContents(n, new ItemStack(RedPowerWorld.itemBrushPaint[this.color]));
+                ist.damageItem(1, (EntityLivingBase)player);
+                if (ist.stackSize == 0) {
+                    return new ItemStack(RedPowerWorld.itemPaintCanEmpty);
+                }
+                return ist;
+            }
+            else {
+                ++n;
+            }
         }
+        return ist;
     }
-	
-	@Override
-	public ItemStack onItemRightClick(ItemStack ist, World world, EntityPlayer player) {
-		for (int n = 0; n < 9; ++n) {
-			ItemStack isl = player.inventory.getStackInSlot(n);
-			if (isl != null && isl.getItem() == RedPowerWorld.itemBrushDry && isl.stackSize == 1) {
-				player.inventory.setInventorySlotContents(n, new ItemStack(
-						RedPowerWorld.itemBrushPaint[this.color]));
-				ist.damageItem(1, player);
-				if (ist.stackSize == 0) {
-					return new ItemStack(RedPowerWorld.itemPaintCanEmpty);
-				}
-				return ist;
-			}
-		}
-		return ist;
-	}
 }

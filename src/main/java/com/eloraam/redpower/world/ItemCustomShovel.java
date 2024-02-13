@@ -1,24 +1,19 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.world;
 
-import com.eloraam.redpower.RedPowerBase;
-import com.eloraam.redpower.RedPowerWorld;
+import net.minecraft.item.*;
+import com.eloraam.redpower.*;
 
-import net.minecraft.item.ItemSpade;
-import net.minecraft.item.ItemStack;
-
-public class ItemCustomShovel extends ItemSpade {
-	
-	public ItemCustomShovel(ToolMaterial mat) {
-		super(mat);
-	}
-	
-	@Override
-	public boolean getIsRepairable(ItemStack ist1, ItemStack ist2) {
-		return this.toolMaterial == RedPowerWorld.toolMaterialRuby
-				&& ist2.isItemEqual(RedPowerBase.itemRuby) ? true : (this.toolMaterial == RedPowerWorld.toolMaterialSapphire
-				&& ist2.isItemEqual(RedPowerBase.itemSapphire) ? true : (this.toolMaterial == RedPowerWorld.toolMaterialGreenSapphire
-				&& ist2.isItemEqual(RedPowerBase.itemGreenSapphire) ? true : super
-				.getIsRepairable(ist1, ist2)));
-	}
-
+public class ItemCustomShovel extends ItemSpade
+{
+    public ItemCustomShovel(final Item.ToolMaterial mat) {
+        super(mat);
+    }
+    
+    public boolean getIsRepairable(final ItemStack ist1, final ItemStack ist2) {
+        return (this.toolMaterial == RedPowerWorld.toolMaterialRuby && ist2.isItemEqual(RedPowerBase.itemRuby)) || (this.toolMaterial == RedPowerWorld.toolMaterialSapphire && ist2.isItemEqual(RedPowerBase.itemSapphire)) || (this.toolMaterial == RedPowerWorld.toolMaterialGreenSapphire && ist2.isItemEqual(RedPowerBase.itemGreenSapphire)) || super.getIsRepairable(ist1, ist2);
+    }
 }

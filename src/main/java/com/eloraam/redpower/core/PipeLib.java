@@ -1,329 +1,243 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.FluidBuffer;
-import com.eloraam.redpower.core.IPipeConnectable;
-import com.eloraam.redpower.core.WorldCoord;
+import net.minecraftforge.common.util.*;
+import net.minecraft.tileentity.*;
+import net.minecraft.world.*;
+import net.minecraft.block.material.*;
+import net.minecraft.block.*;
+import net.minecraftforge.fluids.*;
 
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.IFluidHandler;
-
-public class PipeLib {
-	
-	private static boolean isConSide(IBlockAccess iba, int i, int j, int k, int side) {
-		TileEntity te = iba.getTileEntity(i, j, k);
-		if (te instanceof IPipeConnectable) {
-			IPipeConnectable itc1 = (IPipeConnectable) te;
-			int ilt1 = itc1.getPipeConnectableSides();
-			return (ilt1 & 1 << side) > 0;
-		} else if (te instanceof IFluidHandler) {
-			IFluidHandler itc = (IFluidHandler) te;
-			FluidTankInfo[] info = itc.getTankInfo(ForgeDirection.getOrientation(side));
-			return info != null && info[0] != null && info[0].capacity > 0;
-		} else {
-			return false;
-		}
-	}
-	
-	public static int getConnections(IBlockAccess iba, int i, int j, int k) {
-		IPipeConnectable itc = (IPipeConnectable) CoreLib.getTileEntity(iba, i, j, k, IPipeConnectable.class);
-		if (itc == null) {
-			return 0;
-		} else {
-			int trs = 0;
-			int sides = itc.getPipeConnectableSides();
-			if ((sides & 1) > 0 && isConSide(iba, i, j - 1, k, 1)) {
-				trs |= 1;
-			}
-			
-			if ((sides & 2) > 0 && isConSide(iba, i, j + 1, k, 0)) {
-				trs |= 2;
-			}
-			
-			if ((sides & 4) > 0 && isConSide(iba, i, j, k - 1, 3)) {
-				trs |= 4;
-			}
-			
-			if ((sides & 8) > 0 && isConSide(iba, i, j, k + 1, 2)) {
-				trs |= 8;
-			}
-			
-			if ((sides & 16) > 0 && isConSide(iba, i - 1, j, k, 5)) {
-				trs |= 16;
-			}
-			
-			if ((sides & 32) > 0 && isConSide(iba, i + 1, j, k, 4)) {
-				trs |= 32;
-			}
-			return trs;
-		}
-	}
-	
-	public static int getFlanges(IBlockAccess iba, WorldCoord wci, int sides) {
-		int tr = 0;
-		
-		for (int i = 0; i < 6; ++i) {
-			if ((sides & 1 << i) != 0) {
-				WorldCoord wc = wci.copy();
-				wc.step(i);
-				TileEntity te = iba.getTileEntity(wc.x, wc.y, wc.z);
-				if (te != null) {
-					if (te instanceof IPipeConnectable) {
-						IPipeConnectable itc = (IPipeConnectable) te;
-						if ((itc.getPipeFlangeSides() & 1 << (i ^ 1)) > 0) {
-							tr |= 1 << i;
-						}
-					} //TODO: ��� �������������...
-					
-					if (te instanceof IFluidHandler) {
-						IFluidHandler itc = (IFluidHandler) te;
-						FluidTankInfo[] info = itc.getTankInfo(ForgeDirection.getOrientation(i ^ 1));
-
-						if (info != null && info[0] != null && info[0].capacity > 0) {
-							tr |= 1 << i;
-						}
-					}
-				}
-			}
-		}
-		
-		return tr;
-	}
-	
-	public static int getPressure(World world, WorldCoord wc, int dir) {
-		TileEntity te = world.getTileEntity(wc.x, wc.y, wc.z);
-		if (te == null) {
-			return 0;
-		} else if (te instanceof IPipeConnectable) {
-			IPipeConnectable itc1 = (IPipeConnectable) te;
-			return itc1.getPipePressure(dir);
-		}/* else if (te instanceof IFluidHandler) {
-			IFluidHandler itc = (IFluidHandler) te;
-			FluidTankInfo[] info = itc.getTankInfo(ForgeDirection.getOrientation(side));
-			//return info != null && info[0] != null && info[0].capacity > 0;
-			
-			if (info == null) {
-				return null;
-			} else {
-				int p = ilt.getTankPressure();
-				return p > 0 ? Integer.valueOf(100) : (p < 0 ? Integer.valueOf(-100) : Integer.valueOf(0));
-			}
-		}*/ else {
-			return 0;
-		}
-	}
-	
-	/*public static void registerVanillaFluid(Block blockStill, BlockLiquid blockMoving) {
-		if (blockStill != null) {
-			FluidClassVanilla fluid = new FluidClassVanilla(blockStill,
-					blockStill, blockMoving, blockStill.getTextureFile(),
-					bl.getBlockTextureFromSide(0));
-			fluidByItem.put(Arrays.asList(new Integer[] { Integer
-					.valueOf(blockStill), Integer.valueOf(0) }), fluid);
-			fluidByBlock.put(Integer.valueOf(blockStill), fluid);
-			fluidByBlock.put(Integer.valueOf(blockMoving), fluid);
-			fluidByID.put(Integer.valueOf(blockStill), fluid);
-		}
-	}*/
-	
-	/*public static void registerForgeFluid(String name, LiquidStack stack) {
-		System.out.printf("Fluid registration: %s\n", new Object[] { name });
-		Item it = Item.itemsList[stack.itemID];
-		if (it != null) {
-			int id = stack.itemID + (stack.itemMeta << 16);
-			FluidClassItem_DPR fluid = new FluidClassItem_DPR(id, stack.itemID,
-					stack.itemMeta, it.getTextureFile(),
-					CoreProxy.instance.getItemIcon(it, stack.itemMeta));
-			fluidByID.put(Integer.valueOf(id), fluid);
-			fluidByItem.put(Arrays.asList(new Integer[] { Integer
-					.valueOf(stack.itemID), Integer.valueOf(stack.itemMeta) }),
-					fluid);
-		}
-	}*/
-	
-	/*public static void registerFluids() {
-		LiquidDictionary hack = new LiquidDictionary() {
-		};
-		Iterator i$ = LiquidDictionary.getLiquids().entrySet().iterator();
-		
-		while (i$.hasNext()) {
-			Entry entry = (Entry) i$.next();
-			registerForgeFluid((String) entry.getKey(),
-					(LiquidStack) entry.getValue());
-		}
-		
-	}*/
-	
-	public static int getFluidId(World world, WorldCoord wc) {
-		Block bid = world.getBlock(wc.x, wc.y, wc.z);
-		if(bid instanceof IFluidBlock) {
-			IFluidBlock fcl = (IFluidBlock)bid;
-			return fcl.getFluid().getID();
-		}
-		return 0;
-	}
-	
-	/*public static FluidClass_DPR getLiquidClass(int liquidID) {
-		return (FluidClass_DPR) fluidByID.get(Integer.valueOf(liquidID));
-	}*/
-	
-	/*public static FluidClass_DPR getLiquidClass(LiquidStack ls) {
-		return (FluidClass_DPR) fluidByItem.get(Arrays
-				.asList(new Integer[] { Integer.valueOf(ls.itemID), Integer
-						.valueOf(ls.itemMeta) }));
-	}*/
-	
-	public static void movePipeLiquid(World world, IPipeConnectable src, WorldCoord wsrc, int sides) {
-		for (int i = 0; i < 6; ++i) {
-			if ((sides & 1 << i) != 0) {
-				WorldCoord wc = wsrc.coordStep(i);
-				TileEntity te = world.getTileEntity(wc.x, wc.y, wc.z);
-				if (te != null) {
-					int p2;
-					int l2;
-					if (te instanceof IPipeConnectable) {
-						IPipeConnectable itc = (IPipeConnectable) te;
-						int ilt = src.getPipePressure(i);
-						p2 = itc.getPipePressure(i ^ 1);
-						if (ilt < p2) {
-							continue;
-						}
-						
-						FluidBuffer p1 = src.getPipeBuffer(i);
-						if (p1 == null) {
-							continue;
-						}
-						
-						int f1 = p1.getLevel();
-						f1 += p1.Delta;
-						if (p1.Type == 0 || f1 <= 0) {
-							continue;
-						}
-						
-						FluidBuffer l1 = itc.getPipeBuffer(i ^ 1);
-						if (l1 == null) {
-							continue;
-						}
-						
-						l2 = l1.getLevel();
-						if (l1.Type != 0 && l1.Type != p1.Type) {
-							continue;
-						}
-						
-						int ls = Math.max(ilt > p2 ? 25 : 0, (f1 - l2) / 2);
-						ls = Math.min(Math.min(ls, l1.getMaxLevel() - l2), f1);
-						if (ls <= 0) {
-							continue;
-						}
-						
-						p1.addLevel(p1.Type, -ls);
-						l1.addLevel(p1.Type, ls);
-					}
-					
-					if (te instanceof IFluidHandler) {
-						IFluidHandler fluidHandler = (IFluidHandler) te;
-						for(FluidTankInfo info : fluidHandler.getTankInfo(ForgeDirection.getOrientation(i ^ 1))) {
-							int capacity = info.capacity;
-							p2 = info.fluid.amount >= capacity ? 100 : -100; //TODO: ����������
-							int srcPressure = src.getPipePressure(i);
-							FluidBuffer buff = src.getPipeBuffer(i);
-							if(buff != null) {
-								int level = buff.getLevel();
-								level += buff.Delta;
-								l2 = 0;
-								FluidStack fStack = info.fluid;
-								if(fStack != null && fStack.amount > 0) {
-									if(fStack.getFluid() != null) {
-										l2 = fStack.amount;
-										if(buff.Type != 0 && buff.Type != fStack.getFluidID()) {
-											break; //TODO: Don't understand, but may work
-											//continue;
-										}
-									} else {
-										break;  //TODO: Don't understand, but may work
-										//continue;
-									}
-								}
-								
-								//
-								int qty;
-								if (srcPressure < p2 && l2 > 0) {
-									qty = Math.max(25, (l2 - level) / 2);
-									qty = Math.min(Math.min(qty, buff.getMaxLevel() - level), l2);
-									if (qty > 0) {
-										FluidStack drStack = fluidHandler.drain(ForgeDirection.getOrientation(i), new FluidStack(fStack.getFluid(), qty), true);
-										//LiquidStack ls2 = var19.drain(qty, true);
-										buff.addLevel(drStack.getFluidID(), drStack.amount);
-									}
-								} else if (srcPressure > p2 && buff.Type != 0 && level > 0) {
-									qty = Math.max(25, (level - l2) / 2);
-									qty = Math.min(Math.min(qty, info.capacity - l2), level);
-									if (qty > 0) {
-										//fc = getLiquidClass(var21.Type);
-										qty = fluidHandler.fill(ForgeDirection.getOrientation(i), new FluidStack(fStack.getFluid(), qty), true);
-										buff.addLevel(buff.Type, -qty);
-									}
-								}
-							}
-						}/*
-						ILiquidTank var19 = var18.getTank(, (LiquidStack) null);
-						if (var19 != null) {
-							p2 = var19.getTankPressure();
-							p2 = p2 > 0 ? 100 : (p2 < 0 ? -100 : 0);
-							int var20 = src.getPipePressure(i);
-							FluidBuffer var21 = src.getPipeBuffer(i);
-							if (var21 != null) {
-								int var22 = var21.getLevel();
-								var22 += var21.Delta;
-								l2 = 0;
-								LiquidStack var23 = var19.getLiquid();
-								//FluidClass_DPR fc = null;
-								if (var23 != null && var23.amount > 0) {
-									fc = getLiquidClass(var23);
-									if (fc == null) {
-										continue;
-									}
-									
-									l2 = var19.getLiquid().amount;
-									if (var21.Type != 0 && var21.Type != fc.getFluidId()) {
-										continue;
-									}
-								}
-								
-								int qty;
-								if (var20 < p2 && l2 > 0) {
-									qty = Math.max(25, (l2 - var22) / 2);
-									qty = Math.min(
-											Math.min(qty, var21.getMaxLevel()
-													- var22), l2);
-									if (qty > 0) {
-										LiquidStack ls2 = var19
-												.drain(qty, true);
-										var21.addLevel(fc.getFluidId(),
-												ls2.amount);
-									}
-								} else if (var20 > p2 && var21.Type != 0 && var22 > 0) {
-									qty = Math.max(25, (var22 - l2) / 2);
-									qty = Math.min(Math.min(qty, var19.getCapacity()- l2), var22);
-									if (qty > 0) {
-										fc = getLiquidClass(var21.Type);
-										qty = var19.fill(fc.getLiquidStack(qty), true);
-										var21.addLevel(var21.Type, -qty);
-									}
-								}
-							}
-						}*/
-					}
-				}
-			}
-		}
-	}	
+public class PipeLib
+{
+    private static boolean isConSide(final IBlockAccess iba, final int x, final int y, final int z, final int side) {
+        final TileEntity te = iba.getTileEntity(x, y, z);
+        if (te instanceof IPipeConnectable) {
+            final IPipeConnectable itc1 = (IPipeConnectable)te;
+            final int ilt1 = itc1.getPipeConnectableSides();
+            return (ilt1 & 1 << side) > 0;
+        }
+        if (te instanceof IFluidHandler) {
+            final IFluidHandler itc2 = (IFluidHandler)te;
+            final FluidTankInfo[] info = itc2.getTankInfo(ForgeDirection.getOrientation(side));
+            if (info != null) {
+                for (final FluidTankInfo i : info) {
+                    if (i != null && i.capacity > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    public static int getConnections(final IBlockAccess iba, final int x, final int y, final int z) {
+        final IPipeConnectable itc = (IPipeConnectable)CoreLib.getTileEntity(iba, x, y, z, (Class)IPipeConnectable.class);
+        if (itc == null) {
+            return 0;
+        }
+        int trs = 0;
+        final int sides = itc.getPipeConnectableSides();
+        if ((sides & 0x1) > 0 && isConSide(iba, x, y - 1, z, 1)) {
+            trs |= 0x1;
+        }
+        if ((sides & 0x2) > 0 && isConSide(iba, x, y + 1, z, 0)) {
+            trs |= 0x2;
+        }
+        if ((sides & 0x4) > 0 && isConSide(iba, x, y, z - 1, 3)) {
+            trs |= 0x4;
+        }
+        if ((sides & 0x8) > 0 && isConSide(iba, x, y, z + 1, 2)) {
+            trs |= 0x8;
+        }
+        if ((sides & 0x10) > 0 && isConSide(iba, x - 1, y, z, 5)) {
+            trs |= 0x10;
+        }
+        if ((sides & 0x20) > 0 && isConSide(iba, x + 1, y, z, 4)) {
+            trs |= 0x20;
+        }
+        return trs;
+    }
+    
+    public static int getFlanges(final IBlockAccess iba, final WorldCoord wci, final int sides) {
+        int tr = 0;
+        for (int i = 0; i < 6; ++i) {
+            if ((sides & 1 << i) != 0x0) {
+                final WorldCoord wc = wci.copy();
+                wc.step(i);
+                final TileEntity te = iba.getTileEntity(wc.x, wc.y, wc.z);
+                if (te != null) {
+                    if (te instanceof IPipeConnectable) {
+                        final IPipeConnectable itc = (IPipeConnectable)te;
+                        if ((itc.getPipeFlangeSides() & 1 << (i ^ 0x1)) > 0) {
+                            tr |= 1 << i;
+                        }
+                    }
+                    else if (te instanceof IFluidHandler) {
+                        final IFluidHandler itc2 = (IFluidHandler)te;
+                        final FluidTankInfo[] info = itc2.getTankInfo(ForgeDirection.getOrientation(i ^ 0x1));
+                        if (info != null) {
+                            for (final FluidTankInfo inf : info) {
+                                if (inf != null && inf.capacity > 0) {
+                                    tr |= 1 << i;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return tr;
+    }
+    
+    public static Integer getPressure(final World world, final WorldCoord wc, final int side) {
+        final TileEntity te = world.getTileEntity(wc.x, wc.y, wc.z);
+        if (te != null) {
+            if (te instanceof IPipeConnectable) {
+                final IPipeConnectable itc = (IPipeConnectable)te;
+                return itc.getPipePressure(side);
+            }
+            if (te instanceof IFluidHandler) {
+                final IFluidHandler ifh = (IFluidHandler)te;
+                final FluidTankInfo[] info = ifh.getTankInfo(ForgeDirection.getOrientation(side));
+                if (info != null) {
+                    for (final FluidTankInfo i : info) {
+                        if (i.fluid != null) {
+                            return (int)(i.fluid.amount / (double)i.capacity * 100.0);
+                        }
+                    }
+                    for (final FluidTankInfo i : info) {
+                        if (i.capacity > 0) {
+                            return -100;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static Fluid getFluid(final World world, final WorldCoord wc) {
+        final Block bl = world.getBlock(wc.x, wc.y, wc.z);
+        if (bl instanceof IFluidBlock) {
+            final IFluidBlock fcl = (IFluidBlock)bl;
+            return fcl.getFluid();
+        }
+        if (bl instanceof BlockLiquid) {
+            final BlockLiquid blq = (BlockLiquid)bl;
+            if (blq.getMaterial() == Material.water) {
+                return FluidRegistry.WATER;
+            }
+            if (blq.getMaterial() == Material.lava) {
+                return FluidRegistry.LAVA;
+            }
+        }
+        return null;
+    }
+    
+    public static int getFluidAmount(final World world, final WorldCoord wc) {
+        final Block bl = world.getBlock(wc.x, wc.y, wc.z);
+        if (bl instanceof IFluidBlock) {
+            final IFluidBlock fcl = (IFluidBlock)bl;
+            final float fp = fcl.getFilledPercentage(world, wc.x, wc.y, wc.z);
+            return (int)(fcl.getFluid().getDensity() * fp);
+        }
+        if (bl instanceof BlockLiquid) {
+            final BlockLiquid blq = (BlockLiquid)bl;
+            if (blq.getMaterial() == Material.water || blq.getMaterial() == Material.lava) {
+                return 1000;
+            }
+        }
+        return 0;
+    }
+    
+    public static void movePipeLiquid(final World world, final IPipeConnectable src, final WorldCoord wsrc, final int sides) {
+        for (int side = 0; side < 6; ++side) {
+            if ((sides & 1 << side) != 0x0) {
+                final WorldCoord wc = wsrc.coordStep(side);
+                final TileEntity te = world.getTileEntity(wc.x, wc.y, wc.z);
+                if (te != null) {
+                    if (te instanceof IPipeConnectable) {
+                        final IPipeConnectable itc = (IPipeConnectable)te;
+                        final int srcPressure = src.getPipePressure(side);
+                        final int dstPressure = itc.getPipePressure(side ^ 0x1);
+                        if (srcPressure >= dstPressure) {
+                            final FluidBuffer srcBuffer = src.getPipeBuffer(side);
+                            if (srcBuffer != null) {
+                                final Fluid srcType = srcBuffer.Type;
+                                final int srcLevel = srcBuffer.getLevel() + srcBuffer.Delta;
+                                if (srcType != null) {
+                                    if (srcLevel > 0) {
+                                        final FluidBuffer dstBuffer = itc.getPipeBuffer(side ^ 0x1);
+                                        if (dstBuffer != null) {
+                                            final Fluid dstType = dstBuffer.Type;
+                                            final int dstLevel = dstBuffer.getLevel();
+                                            if (dstType == null || dstType == srcType) {
+                                                int ls = Math.max((srcPressure > dstPressure) ? 25 : 0, (srcLevel - dstLevel) / 2);
+                                                ls = Math.min(Math.min(ls, dstBuffer.getMaxLevel() - dstLevel), srcLevel);
+                                                if (ls > 0) {
+                                                    srcBuffer.addLevel(srcType, -ls);
+                                                    dstBuffer.addLevel(srcType, ls);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (te instanceof IFluidHandler) {
+                        final IFluidHandler ifh = (IFluidHandler)te;
+                        final FluidBuffer srcBuffer2 = src.getPipeBuffer(side);
+                        if (srcBuffer2 != null) {
+                            final FluidTankInfo[] info = ifh.getTankInfo(ForgeDirection.getOrientation(side ^ 0x1));
+                            if (info != null) {
+                                for (final FluidTankInfo i : info) {
+                                    final Fluid bType = srcBuffer2.Type;
+                                    final int srcLevel2 = srcBuffer2.getLevel() + srcBuffer2.Delta;
+                                    final int srcPressure2 = src.getPipePressure(side);
+                                    Label_0652: {
+                                        if (i.capacity > 0) {
+                                            if (i.fluid != null) {
+                                                if (i.fluid.getFluid() != bType) {
+                                                    if (bType != null) {
+                                                        break Label_0652;
+                                                    }
+                                                }
+                                            }
+                                            else if (bType == null) {
+                                                break Label_0652;
+                                            }
+                                            final int dstLevel2 = (i.fluid == null) ? 0 : i.fluid.amount;
+                                            final int dstPressure2 = (dstLevel2 <= 0) ? -100 : ((int)(dstLevel2 / (double)i.capacity * 100.0));
+                                            if (srcPressure2 < dstPressure2 && dstLevel2 > 0) {
+                                                final int qty = Math.min(Math.min(Math.max(25, (dstLevel2 - srcLevel2) / 2), srcBuffer2.getMaxLevel() - srcLevel2), dstLevel2);
+                                                if (qty > 0) {
+                                                    final FluidStack drStack = ifh.drain(ForgeDirection.getOrientation(side ^ 0x1), qty, true);
+                                                    if (drStack != null) {
+                                                        srcBuffer2.addLevel(drStack.getFluid(), drStack.amount);
+                                                    }
+                                                }
+                                            }
+                                            else if (srcPressure2 > dstPressure2 && srcLevel2 > 0) {
+                                                int qty = Math.min(Math.min(Math.max(25, (srcLevel2 - dstLevel2) / 2), i.capacity - dstLevel2), srcLevel2);
+                                                if (qty > 0) {
+                                                    qty = ifh.fill(ForgeDirection.getOrientation(side ^ 0x1), new FluidStack(bType, qty), true);
+                                                    srcBuffer2.addLevel(bType, -qty);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

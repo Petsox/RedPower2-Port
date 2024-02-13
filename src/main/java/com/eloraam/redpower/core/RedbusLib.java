@@ -1,55 +1,46 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.IRedbusConnectable;
-import com.eloraam.redpower.core.IWiring;
-import com.eloraam.redpower.core.RedbusLib;
-import com.eloraam.redpower.core.WirePathfinder;
-import com.eloraam.redpower.core.WorldCoord;
+import net.minecraft.world.*;
 
-import net.minecraft.world.IBlockAccess;
-
-public class RedbusLib {
-
-   public static IRedbusConnectable getAddr(IBlockAccess iba, WorldCoord pos, int addr) {
-      RedbusLib.RedbusPathfinder pf = new RedbusLib.RedbusPathfinder(iba, addr);
-      pf.addSearchBlocks(pos, 16777215, 0);
-
-      while(pf.iterate()) {
-         ;
-      }
-
-      return pf.result;
-   }
-
-   private static class RedbusPathfinder extends WirePathfinder {
-
-      public IRedbusConnectable result = null;
-      IBlockAccess iba;
-      int addr;
-
-
-      public RedbusPathfinder(IBlockAccess ib, int ad) {
-         this.iba = ib;
-         this.addr = ad;
-         this.init();
-      }
-
-      @Override
-	public boolean step(WorldCoord wc) {
-         IRedbusConnectable irb = (IRedbusConnectable)CoreLib.getTileEntity(this.iba, wc, IRedbusConnectable.class);
-         if(irb != null && irb.rbGetAddr() == this.addr) {
-            this.result = irb;
-            return false;
-         } else {
-            IWiring iw = (IWiring)CoreLib.getTileEntity(this.iba, wc, IWiring.class);
-            if(iw == null) {
-               return true;
-            } else {
-               this.addSearchBlocks(wc, iw.getConnectionMask(), iw.getExtConnectionMask());
-               return true;
+public class RedbusLib
+{
+    public static IRedbusConnectable getAddr(final IBlockAccess iba, final WorldCoord pos, final int addr) {
+        final RedbusPathfinder pf = new RedbusPathfinder(iba, addr);
+        pf.addSearchBlocks(pos, 16777215, 0);
+        while (pf.iterate()) {}
+        return pf.result;
+    }
+    
+    private static class RedbusPathfinder extends WirePathfinder
+    {
+        public IRedbusConnectable result;
+        IBlockAccess iba;
+        int addr;
+        
+        public RedbusPathfinder(final IBlockAccess ib, final int ad) {
+            this.result = null;
+            this.iba = ib;
+            this.addr = ad;
+            this.init();
+        }
+        
+        @Override
+        public boolean step(final WorldCoord wc) {
+            final IRedbusConnectable irb = (IRedbusConnectable)CoreLib.getTileEntity(this.iba, wc, (Class)IRedbusConnectable.class);
+            if (irb != null && irb.rbGetAddr() == this.addr) {
+                this.result = irb;
+                return false;
             }
-         }
-      }
-   }
+            final IWiring iw = (IWiring)CoreLib.getTileEntity(this.iba, wc, (Class)IWiring.class);
+            if (iw == null) {
+                return true;
+            }
+            this.addSearchBlocks(wc, iw.getConnectionMask(), iw.getExtConnectionMask());
+            return true;
+        }
+    }
 }

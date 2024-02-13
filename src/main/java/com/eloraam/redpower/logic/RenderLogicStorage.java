@@ -1,120 +1,115 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.logic;
 
-import com.eloraam.redpower.core.MathLib;
-import com.eloraam.redpower.core.Quat;
-import com.eloraam.redpower.core.RenderLib;
-import com.eloraam.redpower.core.Vector3;
-import com.eloraam.redpower.logic.RenderLogic;
-import com.eloraam.redpower.logic.TileLogic;
-import com.eloraam.redpower.logic.TileLogicStorage;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.block.*;
+import net.minecraft.world.*;
+import com.eloraam.redpower.core.*;
+import net.minecraft.client.renderer.*;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.world.IBlockAccess;
-
-public class RenderLogicStorage extends RenderLogic {
-	
-	private static RenderLogic.TorchPos[] torchMapCounter = new RenderLogic.TorchPos[] { new RenderLogic.TorchPos(
-			0.0D, 0.125D, 0.188D, 1.0D), new RenderLogic.TorchPos(0.3D, -0.3D,
-			0.0D, 0.6000000238418579D), new RenderLogic.TorchPos(-0.3D, -0.3D,
-			0.0D, 0.6000000238418579D) };
-	
-	public RenderLogicStorage(Block bl) {
-		super(bl);
-	}
-	
-	@Override
-	protected int getTorchState(TileLogic tl) {
-		TileLogicStorage tls = (TileLogicStorage) tl;
-		int md = tl.getExtendedMetadata();
-		switch (md) {
-			case 0:
-				TileLogicStorage.LogicStorageCounter lsc = (TileLogicStorage.LogicStorageCounter) tls
-						.getLogicStorage(TileLogicStorage.LogicStorageCounter.class);
-				return 1 | (lsc.Count == lsc.CountMax ? 2 : 0)
-						| (lsc.Count == 0 ? 4 : 0);
-			default:
-				return 0;
-		}
-	}
-	
-	@Override
-	protected int getInvTorchState(int md) {
-		switch (md) {
-			case 768:
-				return 5;
-			default:
-				return 0;
-		}
-	}
-	
-	@Override
-	protected RenderLogic.TorchPos[] getTorchVectors(TileLogic tl) {
-		int md = tl.getExtendedMetadata();
-		switch (md) {
-			case 0:
-				return torchMapCounter;
-			default:
-				return null;
-		}
-	}
-	
-	@Override
-	protected RenderLogic.TorchPos[] getInvTorchVectors(int md) {
-		switch (md) {
-			case 768:
-				return torchMapCounter;
-			default:
-				return null;
-		}
-	}
-	
-	@Override
-	protected void renderWorldPart(IBlockAccess iba, TileLogic tl) {
-		int md = tl.getExtendedMetadata();
-		TileLogicStorage tls = (TileLogicStorage) tl;
-		switch (md) {
-			case 0:
-				int tx = 224 + (tl.Deadmap > 0 ? 4 : 0) + (tl.PowerState & 1) + ((tl.PowerState & 4) >> 1);
-				this.renderWafer(tx);
-				if (md == 0) {
-					TileLogicStorage.LogicStorageCounter lsc = (TileLogicStorage.LogicStorageCounter) tls.getLogicStorage(TileLogicStorage.LogicStorageCounter.class);
-					if (lsc.CountMax == 0) {
-						lsc.CountMax = 1;
-					}
-					float dir = 0.58F + 0.34F * ((float) lsc.Count / (float) lsc.CountMax);
-					Vector3 pos = new Vector3(0.0D, -0.1D, 0.188D);
-					super.context.basis.rotate(pos);
-					pos.add(super.context.globalOrigin);
-					pos.add(0.5D, 0.5D, 0.5D);
-					Quat q = Quat.aroundAxis(0.0D, 1.0D, 0.0D, (-dir) * 3.141592653589793D * 2.0D);
-					q.multiply(MathLib.orientQuat(tl.Rotation >> 2,tl.Rotation & 3));
-					RenderLib.renderPointer(pos, q);
-				}
-				return;
-			default:
-		}
-	}
-	
-	@Override
-	protected void renderInvPart(int md) {
-		switch (md) {
-			case 768:
-				this.renderInvWafer(224);
-			default:
-				if (md == 768) {
-					Tessellator tessellator = Tessellator.instance;
-					tessellator.startDrawingQuads();
-					tessellator.setNormal(0.0F, 0.0F, 1.0F);
-					Vector3 v = new Vector3(0.0D, -0.1D, 0.188D);
-					Quat q = Quat.aroundAxis(0.0D, 1.0D, 0.0D, 3.64424747816416D);
-					super.context.basis.rotate(v);
-					q.multiply(MathLib.orientQuat(0, 1));
-					RenderLib.renderPointer(v, q); //TODO:
-					tessellator.draw();
-				}
-				
-		}
-	}
-	
+@SideOnly(Side.CLIENT)
+public class RenderLogicStorage extends RenderLogic
+{
+    private static RenderLogic.TorchPos[] torchMapCounter;
+    
+    public RenderLogicStorage(final Block block) {
+        super(block);
+    }
+    
+    protected int getTorchState(final TileLogic tileLogic) {
+        final TileLogicStorage tls = (TileLogicStorage)tileLogic;
+        final int md = tileLogic.getExtendedMetadata();
+        switch (md) {
+            case 0: {
+                final TileLogicStorage.LogicStorageCounter lsc = (TileLogicStorage.LogicStorageCounter)tls.getLogicStorage(TileLogicStorage.LogicStorageCounter.class);
+                return 0x1 | ((lsc.Count == lsc.CountMax) ? 2 : 0) | ((lsc.Count == 0) ? 4 : 0);
+            }
+            default: {
+                return 0;
+            }
+        }
+    }
+    
+    protected int getInvTorchState(final int metadata) {
+        switch (metadata) {
+            case 768: {
+                return 5;
+            }
+            default: {
+                return 0;
+            }
+        }
+    }
+    
+    protected RenderLogic.TorchPos[] getTorchVectors(final TileLogic tileLogic) {
+        final int md = tileLogic.getExtendedMetadata();
+        switch (md) {
+            case 0: {
+                return RenderLogicStorage.torchMapCounter;
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    
+    protected RenderLogic.TorchPos[] getInvTorchVectors(final int metadata) {
+        switch (metadata) {
+            case 768: {
+                return RenderLogicStorage.torchMapCounter;
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    
+    protected void renderWorldPart(final IBlockAccess iba, final TileLogic tileLogic, final double x, final double y, final double z, final float partialTicks) {
+        final int md = tileLogic.getExtendedMetadata();
+        final TileLogicStorage tls = (TileLogicStorage)tileLogic;
+        switch (md) {
+            case 0: {
+                final int tx = 224 + ((tileLogic.Deadmap > 0) ? 4 : 0) + (tileLogic.PowerState & 0x1) + ((tileLogic.PowerState & 0x4) >> 1);
+                this.renderWafer(tx);
+                final TileLogicStorage.LogicStorageCounter lsc = (TileLogicStorage.LogicStorageCounter)tls.getLogicStorage(TileLogicStorage.LogicStorageCounter.class);
+                if (lsc.CountMax == 0) {
+                    lsc.CountMax = 1;
+                }
+                final float dir = 0.58f + 0.34f * (lsc.Count / (float)lsc.CountMax);
+                final Vector3 pos = new Vector3(0.0, -0.1, 0.188);
+                this.context.basis.rotate(pos);
+                pos.add(this.context.globalOrigin);
+                pos.add(0.5, 0.5, 0.5);
+                final Quat q = Quat.aroundAxis(0.0, 1.0, 0.0, -dir * 3.141592653589793 * 2.0);
+                q.multiply(MathLib.orientQuat(tileLogic.Rotation >> 2, tileLogic.Rotation & 0x3));
+                RenderLib.renderPointer(pos, q);
+                break;
+            }
+        }
+    }
+    
+    protected void renderInvPart(final int metadata) {
+        switch (metadata) {
+            case 768: {
+                this.renderInvWafer(224);
+                final Tessellator tess = Tessellator.instance;
+                tess.startDrawingQuads();
+                tess.setNormal(0.0f, 0.0f, 1.0f);
+                final Vector3 v = new Vector3(0.0, -0.1, 0.188);
+                final Quat q = Quat.aroundAxis(0.0, 1.0, 0.0, 3.64424747816416);
+                this.context.basis.rotate(v);
+                q.multiply(MathLib.orientQuat(0, 1));
+                RenderLib.renderPointer(v, q);
+                tess.draw();
+                break;
+            }
+        }
+    }
+    
+    static {
+        RenderLogicStorage.torchMapCounter = new RenderLogic.TorchPos[] { new RenderLogic.TorchPos(0.0, 0.125, 0.188, 1.0), new RenderLogic.TorchPos(0.3, -0.3, 0.0, 0.6000000238418579), new RenderLogic.TorchPos(-0.3, -0.3, 0.0, 0.6000000238418579) };
+    }
 }

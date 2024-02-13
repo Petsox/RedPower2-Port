@@ -1,578 +1,506 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.wiring;
 
-import com.eloraam.redpower.core.RedPowerLib;
-import com.eloraam.redpower.core.RenderCovers;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.util.*;
+import net.minecraft.block.*;
+import com.eloraam.redpower.core.*;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.IIcon;
-
-public abstract class RenderWiring extends RenderCovers {
-	
-	private float wireWidth;
-	private float wireHeight;
-	private IIcon[][] sidetex = new IIcon[7][6];
-	
-	public RenderWiring(Block bl) {
-		super(bl);
-	}
-	
-	public void setWireSize(float w, float h) {
-		this.wireWidth = w * 0.5F;
-		this.wireHeight = h;
-	}
-	
-	public void renderSideWire(int n) {
-		super.context.setLocalLights(0.5F, 1.0F, 0.7F, 0.7F, 0.7F, 0.7F);
-		switch (n) {
-			case 2:
-				super.context.setSize(0.0D, 0.0D, 0.5F - this.wireWidth,
-						0.5F - this.wireWidth, this.wireHeight,
-						0.5F + this.wireWidth);
-				super.context.calcBounds();
-				super.context.renderFaces(54);
-				break;
-			case 3:
-				super.context.setSize(0.5F + this.wireWidth, 0.0D,
-						0.5F - this.wireWidth, 1.0D, this.wireHeight,
-						0.5F + this.wireWidth);
-				super.context.calcBounds();
-				super.context.renderFaces(58);
-				break;
-			case 4:
-				super.context.setSize(0.5F - this.wireWidth, 0.0D, 0.0D,
-						0.5F + this.wireWidth, this.wireHeight,
-						0.5F - this.wireWidth);
-				super.context.calcBounds();
-				super.context.renderFaces(30);
-				break;
-			case 5:
-				super.context.setSize(0.5F - this.wireWidth, 0.0D,
-						0.5F + this.wireWidth, 0.5F + this.wireWidth,
-						this.wireHeight, 1.0D);
-				super.context.calcBounds();
-				super.context.renderFaces(46);
-		}
-		
-	}
-	
-	public void setSideTex(IIcon top, IIcon cent, IIcon cfix) {
-		int j;
-		for (j = 0; j < 6; ++j) {
-			this.sidetex[0][j] = j >> 1 == 0 ? cent : cfix;
-		}
-		
-		int i;
-		for (i = 1; i < 3; ++i) {
-			for (j = 0; j < 6; ++j) {
-				this.sidetex[i][j] = j >> 1 == i ? cent : top;
-			}
-		}
-		
-		for (i = 1; i < 3; ++i) {
-			for (j = 0; j < 6; ++j) {
-				this.sidetex[i + 2][j] = j >> 1 == i ? cent : cfix;
-			}
-		}
-		
-		for (i = 0; i < 6; ++i) {
-			this.sidetex[5][i] = top;
-			this.sidetex[6][i] = top;
-		}
-		
-		this.sidetex[5][4] = cent;
-		this.sidetex[5][5] = cent;
-		this.sidetex[6][2] = cent;
-		this.sidetex[6][3] = cent;
-		this.sidetex[5][0] = cent;
-		this.sidetex[6][0] = cent;
-		super.context.setIcon(this.sidetex);
-	}
-	
-	public void setSideTexJumbo(IIcon sides, IIcon top, IIcon cent, IIcon centside, IIcon end, IIcon corners) {
-		int j;
-		for (j = 0; j < 6; ++j) {
-			this.sidetex[0][j] = j >> 1 == 0 ? cent : centside;
-		}
-		
-		int i;
-		for (i = 1; i < 3; ++i) {
-			for (j = 0; j < 6; ++j) {
-				this.sidetex[i][j] = j >> 1 == 0 ? top : (j >> 1 == i ? end : sides);
-			}
-		}
-		
-		for (i = 1; i < 3; ++i) {
-			for (j = 0; j < 6; ++j) {
-				this.sidetex[i + 2][j] = j >> 1 == 0 ? top : (j >> 1 == i ? end : centside);
-			}
-		}
-		
-		for (i = 0; i < 6; ++i) {
-			this.sidetex[5][i] = top;
-			this.sidetex[6][i] = top;
-		}
-		
-		this.sidetex[5][4] = corners;
-		this.sidetex[5][5] = corners;
-		this.sidetex[6][2] = corners;
-		this.sidetex[6][3] = corners;
-		this.sidetex[5][0] = corners;
-		this.sidetex[6][0] = corners;
-		super.context.setIcon(this.sidetex);
-	}
-	
-	public void renderSideWires(int cs, int ucs, int fn) {
-		int fxl = 0;
-		int fzl = 0;
-		int fc = 62;
-		int fxs1 = 0;
-		int fxs2 = 0;
-		int fzs1 = 0;
-		int fzs2 = 0;
-		byte stb = 3;
-		float x1 = (ucs & 4) == 0 ? 0.0F : this.wireHeight;
-		float x2 = (ucs & 8) == 0 ? 1.0F : 1.0F - this.wireHeight;
-		float z1 = (ucs & 1) == 0 ? 0.0F : this.wireHeight;
-		float z2 = (ucs & 2) == 0 ? 1.0F : 1.0F - this.wireHeight;
-		super.context.setLocalLights(0.5F, 1.0F, 0.7F, 0.7F, 0.7F, 0.7F);
-		cs |= ucs;
-		if ((cs & 12) == 0) {
-			fzl |= 62;
-			fc = 0;
-			if ((cs & 1) == 0) {
-				z1 = 0.26F;
-			}
-			
-			if ((cs & 2) == 0) {
-				z2 = 0.74F;
-			}
-			
-			stb = 1;
-		} else if ((cs & 3) == 0) {
-			fxl |= 62;
-			fc = 0;
-			if ((cs & 4) == 0) {
-				x1 = 0.26F;
-			}
-			
-			if ((cs & 8) == 0) {
-				x2 = 0.74F;
-			}
-			
-			stb = 1;
-		} else {
-			if ((cs & 7) == 3) {
-				fzl |= 28;
-				fc &= -17;
-			} else {
-				if ((cs & 1) > 0) {
-					fzs1 |= 20;
-				}
-				
-				if ((cs & 2) > 0) {
-					fzs2 |= 24;
-				}
-			}
-			
-			if ((cs & 11) == 3) {
-				fzl |= 44;
-				fc &= -33;
-			} else {
-				if ((cs & 1) > 0) {
-					fzs1 |= 36;
-				}
-				
-				if ((cs & 2) > 0) {
-					fzs2 |= 40;
-				}
-			}
-			
-			if ((cs & 13) == 12) {
-				fxl |= 52;
-				fc &= -5;
-			} else {
-				if ((cs & 4) > 0) {
-					fxs1 |= 20;
-				}
-				
-				if ((cs & 8) > 0) {
-					fxs2 |= 36;
-				}
-			}
-			
-			if ((cs & 14) == 12) {
-				fxl |= 56;
-				fc &= -9;
-			} else {
-				if ((cs & 4) > 0) {
-					fxs1 |= 24;
-				}
-				
-				if ((cs & 8) > 0) {
-					fxs2 |= 40;
-				}
-			}
-			
-			if ((cs & 1) > 0) {
-				fzs1 |= 2;
-				fc &= -5;
-			}
-			
-			if ((cs & 2) > 0) {
-				fzs2 |= 2;
-				fc &= -9;
-			}
-			
-			if ((cs & 4) > 0) {
-				fxs1 |= 2;
-				fc &= -17;
-			}
-			
-			if ((cs & 8) > 0) {
-				fxs2 |= 2;
-				fc &= -33;
-			}
-			
-			if ((cs & 64) > 0) {
-				fxs1 |= 1;
-				fxs2 |= 1;
-				fzs1 |= 1;
-				fzs2 |= 1;
-				fc |= 1;
-			}
-		}
-		
-		int tmpf = ~((ucs & 12) << 2);
-		fxl &= tmpf;
-		fxs1 &= tmpf;
-		fxs2 &= tmpf;
-		tmpf = ~((ucs & 3) << 2);
-		fzl &= tmpf;
-		fzs1 &= tmpf;
-		fzs2 &= tmpf;
-		char fxf = '\u8b80';
-		int fzf = 217640;
-		int fcf = 220032;
-		switch (fn) {
-			case 1:
-			case 2:
-			case 4:
-				fxf = 7512;
-				fcf = 220488;
-			case 3:
-			default:
-				if (fxl > 0) {
-					super.context.setSize(x1, 0.0D, 0.5F - this.wireWidth, x2,
-							this.wireHeight, 0.5F + this.wireWidth);
-					super.context.calcBounds();
-					super.context.setTexFlags(fxf);
-					super.context.setIconIndex(stb + 1);
-					super.context.renderFaces(fxl);
-				}
-				
-				if (fzl > 0) {
-					super.context.setSize(0.5F - this.wireWidth, 0.0D, z1,
-							0.5F + this.wireWidth, this.wireHeight, z2);
-					super.context.calcBounds();
-					super.context.setTexFlags(fzf);
-					super.context.setIconIndex(stb);
-					super.context.renderFaces(fzl);
-				}
-				
-				if (fc > 0) {
-					super.context.setSize(0.5F - this.wireWidth, 0.0D,
-							0.5F - this.wireWidth, 0.5F + this.wireWidth,
-							this.wireHeight, 0.5F + this.wireWidth);
-					super.context.calcBounds();
-					super.context.setTexFlags(fcf);
-					super.context.setIconIndex(0);
-					super.context.renderFaces(fc);
-				}
-				
-				if (fxs1 > 0) {
-					super.context.setSize(x1, 0.0D, 0.5F - this.wireWidth,
-							0.5F - this.wireWidth, this.wireHeight,
-							0.5F + this.wireWidth);
-					super.context.calcBounds();
-					super.context.setTexFlags(fxf);
-					super.context.setIconIndex(stb + 1);
-					super.context.renderFaces(fxs1);
-				}
-				
-				if (fxs2 > 0) {
-					super.context.setSize(0.5F + this.wireWidth, 0.0D,
-							0.5F - this.wireWidth, x2, this.wireHeight,
-							0.5F + this.wireWidth);
-					super.context.calcBounds();
-					super.context.setTexFlags(fxf);
-					super.context.setIconIndex(stb + 1);
-					super.context.renderFaces(fxs2);
-				}
-				
-				if (fzs1 > 0) {
-					super.context.setSize(0.5F - this.wireWidth, 0.0D, z1,
-							0.5F + this.wireWidth, this.wireHeight,
-							0.5F - this.wireWidth);
-					super.context.calcBounds();
-					super.context.setTexFlags(fzf);
-					super.context.setIconIndex(stb);
-					super.context.renderFaces(fzs1);
-				}
-				
-				if (fzs2 > 0) {
-					super.context.setSize(0.5F - this.wireWidth, 0.0D,
-							0.5F + this.wireWidth, 0.5F + this.wireWidth,
-							this.wireHeight, z2);
-					super.context.calcBounds();
-					super.context.setTexFlags(fzf);
-					super.context.setIconIndex(stb);
-					super.context.renderFaces(fzs2);
-				}
-				
-				if (fn < 2) {
-					super.context.setTexFlags(0);
-				} else {
-					if ((ucs & 2) > 0) {
-						super.context.setSize(0.5F - this.wireWidth, 0.0D,
-								1.0F - this.wireHeight, 0.5F + this.wireWidth,
-								this.wireHeight, 1.0D);
-						super.context.calcBounds();
-						super.context.setTexFlags(73728);
-						super.context.setIconIndex(5);
-						super.context.renderFaces(48);
-					}
-					
-					if ((ucs & 4) > 0) {
-						super.context.setSize(0.0D, 0.0D,
-								0.5F - this.wireWidth, this.wireHeight,
-								this.wireHeight, 0.5F + this.wireWidth);
-						super.context.calcBounds();
-						if (fn != 2 && fn != 4) {
-							super.context.setTexFlags(1728);
-						} else {
-							super.context.setTexFlags(1152);
-						}
-						
-						super.context.setIconIndex(6);
-						super.context.renderFaces(12);
-					}
-					
-					if ((ucs & 8) > 0) {
-						super.context.setSize(1.0F - this.wireHeight, 0.0D,
-								0.5F - this.wireWidth, 1.0D, this.wireHeight,
-								0.5F + this.wireWidth);
-						super.context.calcBounds();
-						if (fn != 2 && fn != 4) {
-							super.context.setTexFlags(1152);
-						} else {
-							super.context.setTexFlags(1728);
-						}
-						
-						super.context.setIconIndex(6);
-						super.context.renderFaces(12);
-					}
-					
-					super.context.setTexFlags(0);
-				}
-		}
-	}
-	
-	public void renderEndCaps(int cs, int fn) {
-		if (cs != 0) {
-			super.context.setIconIndex(5);
-			if ((cs & 1) > 0) {
-				super.context.setSize(0.5F - this.wireWidth, 0.0D,
-						1.0F - this.wireHeight, 0.5F + this.wireWidth,
-						this.wireHeight, 1.0D);
-				super.context.setRelPos(0.0D, 0.0D, -1.0D);
-				super.context.setTexFlags('\u962c');
-				super.context.setLocalLights(0.7F, 1.0F, 0.7F, 1.0F, 0.7F, 0.7F);
-				super.context.calcBounds();
-				super.context.renderFaces(55);
-			}
-			
-			if ((cs & 2) > 0) {
-				super.context.setSize(0.5F - this.wireWidth, 0.0D, 0.0D, 0.5F + 
-						this.wireWidth, this.wireHeight, this.wireHeight);
-				super.context.setRelPos(0.0D, 0.0D, 1.0D);
-				super.context.setTexFlags('\u962c');
-				super.context.setLocalLights(0.7F, 1.0F, 0.7F, 1.0F, 0.7F, 0.7F);
-				super.context.calcBounds();
-				super.context.renderFaces(59);
-			}
-			
-			super.context.setIconIndex(6);
-			if ((cs & 4) > 0) {
-				super.context.setSize(1.0F - this.wireHeight, 0.0D,
-						0.5F - this.wireWidth, 1.0D, this.wireHeight,
-						0.5F + this.wireWidth);
-				super.context.setRelPos(-1.0D, 0.0D, 0.0D);
-				if (fn != 2 && fn != 4) {
-					super.context.setTexFlags(3);
-				} else {
-					super.context.setTexFlags('\ub25a');
-				}
-				
-				super.context
-						.setLocalLights(0.7F, 1.0F, 0.7F, 0.7F, 1.0F, 0.7F);
-				super.context.calcBounds();
-				super.context.renderFaces(31);
-			}
-			
-			if ((cs & 8) > 0) {
-				super.context
-						.setSize(0.0D, 0.0D, 0.5F - this.wireWidth,
-								this.wireHeight, this.wireHeight,
-								0.5F + this.wireWidth);
-				super.context.setRelPos(1.0D, 0.0D, 0.0D);
-				if (fn != 2 && fn != 4) {
-					super.context.setTexFlags(102977);
-				} else {
-					super.context.setTexFlags(24);
-				}
-				
-				super.context
-						.setLocalLights(0.7F, 1.0F, 0.7F, 0.7F, 0.7F, 1.0F);
-				super.context.calcBounds();
-				super.context.renderFaces(47);
-			}
-			
-			super.context.setRelPos(0.0D, 0.0D, 0.0D);
-		}
-	}
-	
-	public void renderWireBlock(int consides, int cons, int indcon, int indconex) {
-		int ucons = 0;
-		indcon &= ~indconex;
-		if ((consides & 1) > 0) {
-			ucons |= 0x111100;
-		}
-		
-		if ((consides & 2) > 0) {
-			ucons |= 0x222200;
-		}
-		
-		if ((consides & 4) > 0) {
-			ucons |= 0x440011;
-		}
-		
-		if ((consides & 8) > 0) {
-			ucons |= 0x880022;
-		}
-		
-		if ((consides & 16) > 0) {
-			ucons |= 0x4444;
-		}
-		
-		if ((consides & 32) > 0) {
-			ucons |= 0x8888;
-		}
-		
-		if ((consides & 1) > 0) {
-			super.context.setOrientation(0, 0);
-			this.renderSideWires(RedPowerLib.mapConToLocal(cons, 0), RedPowerLib.mapConToLocal(ucons, 0), 0);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 0), 0);
-		}
-		
-		if ((consides & 2) > 0) {
-			super.context.setOrientation(1, 0);
-			this.renderSideWires(RedPowerLib.mapConToLocal(cons, 1), RedPowerLib.mapConToLocal(ucons, 1), 1);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 1), 1);
-		}
-		
-		if ((consides & 4) > 0) {
-			super.context.setOrientation(2, 0);
-			this.renderSideWires(RedPowerLib.mapConToLocal(cons, 2), RedPowerLib.mapConToLocal(ucons, 2), 2);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 2) & 14, 2);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 2), 2);
-		}
-		
-		if ((consides & 8) > 0) {
-			super.context.setOrientation(3, 0);
-			this.renderSideWires(RedPowerLib.mapConToLocal(cons, 3), RedPowerLib.mapConToLocal(ucons, 3), 3);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 3) & 14, 3);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 3), 3);
-		}
-		
-		if ((consides & 16) > 0) {
-			super.context.setOrientation(4, 0);
-			this.renderSideWires(RedPowerLib.mapConToLocal(cons, 4), RedPowerLib.mapConToLocal(ucons, 4), 4);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 4) & 14, 4);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 4), 4);
-		}
-		
-		if ((consides & 32) > 0) {
-			super.context.setOrientation(5, 0);
-			this.renderSideWires(RedPowerLib.mapConToLocal(cons, 5), RedPowerLib.mapConToLocal(ucons, 5), 5);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 5) & 14, 5);
-			this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 5), 5);
-		}
-	}
-	
-	void setJacketIcons(int cons, IIcon[] tex, IIcon st) {
-		super.context.setIcon((cons & 1) > 0 ? st : tex[0],
-			(cons & 2) > 0 ? st : tex[1], (cons & 4) > 0 ? st : tex[2],
-			(cons & 8) > 0 ? st : tex[3], (cons & 16) > 0 ? st : tex[4],
-			(cons & 32) > 0 ? st : tex[5]);
-	}
-	
-	public void renderCenterBlock(int cons, IIcon[] icon, IIcon sidtex) {
-		if (cons == 0) {
-			this.setJacketIcons(3, icon, sidtex);
-			super.context.renderBox(63, 0.25D, 0.25D, 0.25D, 0.75D, 0.75D, 0.75D);
-		} else if (cons == 3) {
-			this.setJacketIcons(3, icon, sidtex);
-			super.context.renderBox(63, 0.25D, 0.0D, 0.25D, 0.75D, 1.0D, 0.75D);
-		} else if (cons == 12) {
-			this.setJacketIcons(12, icon, sidtex);
-			super.context.renderBox(63, 0.25D, 0.25D, 0.0D, 0.75D, 0.75D, 1.0D);
-		} else if (cons == 48) {
-			this.setJacketIcons(48, icon, sidtex);
-			super.context.renderBox(63, 0.0D, 0.25D, 0.25D, 1.0D, 0.75D, 0.75D);
-		} else {
-			if (Integer.bitCount(cons) > 1) {
-				super.context.setIcon(icon);
-			} else {
-				int rc = cons;
-				if (cons == 0) {
-					rc = 3;
-				}
-				rc = (rc & 21) << 1 | (rc & 42) >> 1;
-				this.setJacketIcons(rc, icon, sidtex);
-			}
-			
-			super.context.renderBox(63 ^ cons, 0.25D, 0.25D, 0.25D, 0.75D, 0.75D, 0.75D);
-			if ((cons & 1) > 0) {
-				this.setJacketIcons(1, icon, sidtex);
-				super.context.renderBox(61, 0.25D, 0.0D, 0.25D, 0.75D, 0.25D, 0.75D);
-			}
-			
-			if ((cons & 2) > 0) {
-				this.setJacketIcons(2, icon, sidtex);
-				super.context.renderBox(62, 0.25D, 0.75D, 0.25D, 0.75D, 1.0D, 0.75D);
-			}
-			
-			if ((cons & 4) > 0) {
-				this.setJacketIcons(4, icon, sidtex);
-				super.context.renderBox(55, 0.25D, 0.25D, 0.0D, 0.75D, 0.75D, 0.25D);
-			}
-			
-			if ((cons & 8) > 0) {
-				this.setJacketIcons(8, icon, sidtex);
-				super.context.renderBox(59, 0.25D, 0.25D, 0.75D, 0.75D, 0.75D, 1.0D);
-			}
-			
-			if ((cons & 16) > 0) {
-				this.setJacketIcons(16, icon, sidtex);
-				super.context.renderBox(31, 0.0D, 0.25D, 0.25D, 0.25D, 0.75D, 0.75D);
-			}
-			
-			if ((cons & 32) > 0) {
-				this.setJacketIcons(32, icon, sidtex);
-				super.context.renderBox(47, 0.75D, 0.25D, 0.25D, 1.0D, 0.75D, 0.75D);
-			}
-			
-			//super.context.clearTexFiles(); //TODO:
-		}
-	}
+@SideOnly(Side.CLIENT)
+public abstract class RenderWiring extends RenderCovers
+{
+    private float wireWidth;
+    private float wireHeight;
+    private IIcon[][] sidetex;
+    
+    public RenderWiring(final Block block) {
+        super(block);
+        this.sidetex = new IIcon[7][6];
+    }
+    
+    public void setWireSize(final float w, final float h) {
+        this.wireWidth = w * 0.5f;
+        this.wireHeight = h;
+    }
+    
+    public void renderSideWire(final int n) {
+        this.context.setLocalLights(0.5f, 1.0f, 0.7f, 0.7f, 0.7f, 0.7f);
+        switch (n) {
+            case 2: {
+                this.context.setSize(0.0, 0.0, (double)(0.5f - this.wireWidth), (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.calcBounds();
+                this.context.renderFaces(54);
+                break;
+            }
+            case 3: {
+                this.context.setSize((double)(0.5f + this.wireWidth), 0.0, (double)(0.5f - this.wireWidth), 1.0, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.calcBounds();
+                this.context.renderFaces(58);
+                break;
+            }
+            case 4: {
+                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, 0.0, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)(0.5f - this.wireWidth));
+                this.context.calcBounds();
+                this.context.renderFaces(30);
+                break;
+            }
+            case 5: {
+                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(0.5f + this.wireWidth), (double)(0.5f + this.wireWidth), (double)this.wireHeight, 1.0);
+                this.context.calcBounds();
+                this.context.renderFaces(46);
+                break;
+            }
+        }
+    }
+    
+    public void setSideIcon(final IIcon top, final IIcon cent, final IIcon cfix) {
+        for (int j = 0; j < 6; ++j) {
+            this.sidetex[0][j] = ((j >> 1 == 0) ? cent : cfix);
+        }
+        for (int i = 1; i < 3; ++i) {
+            for (int k = 0; k < 6; ++k) {
+                this.sidetex[i][k] = ((k >> 1 == i) ? cent : top);
+            }
+        }
+        for (int i = 1; i < 3; ++i) {
+            for (int k = 0; k < 6; ++k) {
+                this.sidetex[i + 2][k] = ((k >> 1 == i) ? cent : cfix);
+            }
+        }
+        for (int i = 0; i < 6; ++i) {
+            this.sidetex[5][i] = top;
+            this.sidetex[6][i] = top;
+        }
+        this.sidetex[5][4] = cent;
+        this.sidetex[5][5] = cent;
+        this.sidetex[6][2] = cent;
+        this.sidetex[6][3] = cent;
+        this.sidetex[5][0] = cent;
+        this.sidetex[6][0] = cent;
+        this.context.setIcon(this.sidetex);
+    }
+    
+    public void setSideIconJumbo(final IIcon sides, final IIcon top, final IIcon cent, final IIcon centside, final IIcon end, final IIcon corners) {
+        for (int j = 0; j < 6; ++j) {
+            this.sidetex[0][j] = ((j >> 1 == 0) ? cent : centside);
+        }
+        for (int i = 1; i < 3; ++i) {
+            for (int k = 0; k < 6; ++k) {
+                this.sidetex[i][k] = ((k >> 1 == 0) ? top : ((k >> 1 == i) ? end : sides));
+            }
+        }
+        for (int i = 1; i < 3; ++i) {
+            for (int k = 0; k < 6; ++k) {
+                this.sidetex[i + 2][k] = ((k >> 1 == 0) ? top : ((k >> 1 == i) ? end : centside));
+            }
+        }
+        for (int i = 0; i < 6; ++i) {
+            this.sidetex[5][i] = top;
+            this.sidetex[6][i] = top;
+        }
+        this.sidetex[5][4] = corners;
+        this.sidetex[5][5] = corners;
+        this.sidetex[6][2] = corners;
+        this.sidetex[6][3] = corners;
+        this.sidetex[5][0] = corners;
+        this.sidetex[6][0] = corners;
+        this.context.setIcon(this.sidetex);
+    }
+    
+    public void renderSideWires(int cs, final int ucs, final int fn) {
+        int fxl = 0;
+        int fzl = 0;
+        int fc = 62;
+        int fxs1 = 0;
+        int fxs2 = 0;
+        int fzs1 = 0;
+        int fzs2 = 0;
+        byte stb = 3;
+        float x1 = ((ucs & 0x4) == 0x0) ? 0.0f : this.wireHeight;
+        float x2 = ((ucs & 0x8) == 0x0) ? 1.0f : (1.0f - this.wireHeight);
+        float z1 = ((ucs & 0x1) == 0x0) ? 0.0f : this.wireHeight;
+        float z2 = ((ucs & 0x2) == 0x0) ? 1.0f : (1.0f - this.wireHeight);
+        this.context.setLocalLights(0.5f, 1.0f, 0.7f, 0.7f, 0.7f, 0.7f);
+        cs |= ucs;
+        if ((cs & 0xC) == 0x0) {
+            fzl |= 0x3E;
+            fc = 0;
+            if ((cs & 0x1) == 0x0) {
+                z1 = 0.26f;
+            }
+            if ((cs & 0x2) == 0x0) {
+                z2 = 0.74f;
+            }
+            stb = 1;
+        }
+        else if ((cs & 0x3) == 0x0) {
+            fxl |= 0x3E;
+            fc = 0;
+            if ((cs & 0x4) == 0x0) {
+                x1 = 0.26f;
+            }
+            if ((cs & 0x8) == 0x0) {
+                x2 = 0.74f;
+            }
+            stb = 1;
+        }
+        else {
+            if ((cs & 0x7) == 0x3) {
+                fzl |= 0x1C;
+                fc &= 0xFFFFFFEF;
+            }
+            else {
+                if ((cs & 0x1) > 0) {
+                    fzs1 |= 0x14;
+                }
+                if ((cs & 0x2) > 0) {
+                    fzs2 |= 0x18;
+                }
+            }
+            if ((cs & 0xB) == 0x3) {
+                fzl |= 0x2C;
+                fc &= 0xFFFFFFDF;
+            }
+            else {
+                if ((cs & 0x1) > 0) {
+                    fzs1 |= 0x24;
+                }
+                if ((cs & 0x2) > 0) {
+                    fzs2 |= 0x28;
+                }
+            }
+            if ((cs & 0xD) == 0xC) {
+                fxl |= 0x34;
+                fc &= 0xFFFFFFFB;
+            }
+            else {
+                if ((cs & 0x4) > 0) {
+                    fxs1 |= 0x14;
+                }
+                if ((cs & 0x8) > 0) {
+                    fxs2 |= 0x24;
+                }
+            }
+            if ((cs & 0xE) == 0xC) {
+                fxl |= 0x38;
+                fc &= 0xFFFFFFF7;
+            }
+            else {
+                if ((cs & 0x4) > 0) {
+                    fxs1 |= 0x18;
+                }
+                if ((cs & 0x8) > 0) {
+                    fxs2 |= 0x28;
+                }
+            }
+            if ((cs & 0x1) > 0) {
+                fzs1 |= 0x2;
+                fc &= 0xFFFFFFFB;
+            }
+            if ((cs & 0x2) > 0) {
+                fzs2 |= 0x2;
+                fc &= 0xFFFFFFF7;
+            }
+            if ((cs & 0x4) > 0) {
+                fxs1 |= 0x2;
+                fc &= 0xFFFFFFEF;
+            }
+            if ((cs & 0x8) > 0) {
+                fxs2 |= 0x2;
+                fc &= 0xFFFFFFDF;
+            }
+            if ((cs & 0x40) > 0) {
+                fxs1 |= 0x1;
+                fxs2 |= 0x1;
+                fzs1 |= 0x1;
+                fzs2 |= 0x1;
+                fc |= 0x1;
+            }
+        }
+        int tmpf = ~((ucs & 0xC) << 2);
+        fxl &= tmpf;
+        fxs1 &= tmpf;
+        fxs2 &= tmpf;
+        tmpf = ~((ucs & 0x3) << 2);
+        fzl &= tmpf;
+        fzs1 &= tmpf;
+        fzs2 &= tmpf;
+        char fxf = '\u8b80';
+        final int fzf = 217640;
+        int fcf = 220032;
+        switch (fn) {
+            case 1:
+            case 2:
+            case 4: {
+                fxf = '\u1d58';
+                fcf = 220488;
+                break;
+            }
+        }
+        if (fxl > 0) {
+            this.context.setSize((double)x1, 0.0, (double)(0.5f - this.wireWidth), (double)x2, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.calcBounds();
+            this.context.setTexFlags((int)fxf);
+            this.context.setIconIndex(stb + 1);
+            this.context.renderFaces(fxl);
+        }
+        if (fzl > 0) {
+            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)z1, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)z2);
+            this.context.calcBounds();
+            this.context.setTexFlags(fzf);
+            this.context.setIconIndex((int)stb);
+            this.context.renderFaces(fzl);
+        }
+        if (fc > 0) {
+            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(0.5f - this.wireWidth), (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.calcBounds();
+            this.context.setTexFlags(fcf);
+            this.context.setIconIndex(0);
+            this.context.renderFaces(fc);
+        }
+        if (fxs1 > 0) {
+            this.context.setSize((double)x1, 0.0, (double)(0.5f - this.wireWidth), (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.calcBounds();
+            this.context.setTexFlags((int)fxf);
+            this.context.setIconIndex(stb + 1);
+            this.context.renderFaces(fxs1);
+        }
+        if (fxs2 > 0) {
+            this.context.setSize((double)(0.5f + this.wireWidth), 0.0, (double)(0.5f - this.wireWidth), (double)x2, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.calcBounds();
+            this.context.setTexFlags((int)fxf);
+            this.context.setIconIndex(stb + 1);
+            this.context.renderFaces(fxs2);
+        }
+        if (fzs1 > 0) {
+            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)z1, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)(0.5f - this.wireWidth));
+            this.context.calcBounds();
+            this.context.setTexFlags(fzf);
+            this.context.setIconIndex((int)stb);
+            this.context.renderFaces(fzs1);
+        }
+        if (fzs2 > 0) {
+            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(0.5f + this.wireWidth), (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)z2);
+            this.context.calcBounds();
+            this.context.setTexFlags(fzf);
+            this.context.setIconIndex((int)stb);
+            this.context.renderFaces(fzs2);
+        }
+        if (fn < 2) {
+            this.context.setTexFlags(0);
+        }
+        else {
+            if ((ucs & 0x2) > 0) {
+                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(1.0f - this.wireHeight), (double)(0.5f + this.wireWidth), (double)this.wireHeight, 1.0);
+                this.context.calcBounds();
+                this.context.setTexFlags(73728);
+                this.context.setIconIndex(5);
+                this.context.renderFaces(48);
+            }
+            if ((ucs & 0x4) > 0) {
+                this.context.setSize(0.0, 0.0, (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.calcBounds();
+                if (fn != 2 && fn != 4) {
+                    this.context.setTexFlags(1728);
+                }
+                else {
+                    this.context.setTexFlags(1152);
+                }
+                this.context.setIconIndex(6);
+                this.context.renderFaces(12);
+            }
+            if ((ucs & 0x8) > 0) {
+                this.context.setSize((double)(1.0f - this.wireHeight), 0.0, (double)(0.5f - this.wireWidth), 1.0, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.calcBounds();
+                if (fn != 2 && fn != 4) {
+                    this.context.setTexFlags(1152);
+                }
+                else {
+                    this.context.setTexFlags(1728);
+                }
+                this.context.setIconIndex(6);
+                this.context.renderFaces(12);
+            }
+            this.context.setTexFlags(0);
+        }
+    }
+    
+    public void renderEndCaps(final int cs, final int fn) {
+        if (cs != 0) {
+            this.context.setIconIndex(5);
+            if ((cs & 0x1) > 0) {
+                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(1.0f - this.wireHeight), (double)(0.5f + this.wireWidth), (double)this.wireHeight, 1.0);
+                this.context.setRelPos(0.0, 0.0, -1.0);
+                this.context.setTexFlags(38444);
+                this.context.setLocalLights(0.7f, 1.0f, 0.7f, 1.0f, 0.7f, 0.7f);
+                this.context.calcBounds();
+                this.context.renderFaces(55);
+            }
+            if ((cs & 0x2) > 0) {
+                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, 0.0, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)this.wireHeight);
+                this.context.setRelPos(0.0, 0.0, 1.0);
+                this.context.setTexFlags(38444);
+                this.context.setLocalLights(0.7f, 1.0f, 0.7f, 1.0f, 0.7f, 0.7f);
+                this.context.calcBounds();
+                this.context.renderFaces(59);
+            }
+            this.context.setIconIndex(6);
+            if ((cs & 0x4) > 0) {
+                this.context.setSize((double)(1.0f - this.wireHeight), 0.0, (double)(0.5f - this.wireWidth), 1.0, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setRelPos(-1.0, 0.0, 0.0);
+                if (fn != 2 && fn != 4) {
+                    this.context.setTexFlags(3);
+                }
+                else {
+                    this.context.setTexFlags(45658);
+                }
+                this.context.setLocalLights(0.7f, 1.0f, 0.7f, 0.7f, 1.0f, 0.7f);
+                this.context.calcBounds();
+                this.context.renderFaces(31);
+            }
+            if ((cs & 0x8) > 0) {
+                this.context.setSize(0.0, 0.0, (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setRelPos(1.0, 0.0, 0.0);
+                if (fn != 2 && fn != 4) {
+                    this.context.setTexFlags(102977);
+                }
+                else {
+                    this.context.setTexFlags(24);
+                }
+                this.context.setLocalLights(0.7f, 1.0f, 0.7f, 0.7f, 0.7f, 1.0f);
+                this.context.calcBounds();
+                this.context.renderFaces(47);
+            }
+            this.context.setRelPos(0.0, 0.0, 0.0);
+        }
+    }
+    
+    public void renderWireBlock(final int consides, final int cons, int indcon, final int indconex) {
+        int ucons = 0;
+        indcon &= ~indconex;
+        if ((consides & 0x1) > 0) {
+            ucons |= 0x111100;
+        }
+        if ((consides & 0x2) > 0) {
+            ucons |= 0x222200;
+        }
+        if ((consides & 0x4) > 0) {
+            ucons |= 0x440011;
+        }
+        if ((consides & 0x8) > 0) {
+            ucons |= 0x880022;
+        }
+        if ((consides & 0x10) > 0) {
+            ucons |= 0x4444;
+        }
+        if ((consides & 0x20) > 0) {
+            ucons |= 0x8888;
+        }
+        if ((consides & 0x1) > 0) {
+            this.context.setOrientation(0, 0);
+            this.renderSideWires(RedPowerLib.mapConToLocal(cons, 0), RedPowerLib.mapConToLocal(ucons, 0), 0);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 0), 0);
+        }
+        if ((consides & 0x2) > 0) {
+            this.context.setOrientation(1, 0);
+            this.renderSideWires(RedPowerLib.mapConToLocal(cons, 1), RedPowerLib.mapConToLocal(ucons, 1), 1);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 1), 1);
+        }
+        if ((consides & 0x4) > 0) {
+            this.context.setOrientation(2, 0);
+            this.renderSideWires(RedPowerLib.mapConToLocal(cons, 2), RedPowerLib.mapConToLocal(ucons, 2), 2);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 2) & 0xE, 2);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 2), 2);
+        }
+        if ((consides & 0x8) > 0) {
+            this.context.setOrientation(3, 0);
+            this.renderSideWires(RedPowerLib.mapConToLocal(cons, 3), RedPowerLib.mapConToLocal(ucons, 3), 3);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 3) & 0xE, 3);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 3), 3);
+        }
+        if ((consides & 0x10) > 0) {
+            this.context.setOrientation(4, 0);
+            this.renderSideWires(RedPowerLib.mapConToLocal(cons, 4), RedPowerLib.mapConToLocal(ucons, 4), 4);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 4) & 0xE, 4);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 4), 4);
+        }
+        if ((consides & 0x20) > 0) {
+            this.context.setOrientation(5, 0);
+            this.renderSideWires(RedPowerLib.mapConToLocal(cons, 5), RedPowerLib.mapConToLocal(ucons, 5), 5);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indcon, 5) & 0xE, 5);
+            this.renderEndCaps(RedPowerLib.mapConToLocal(indconex, 5), 5);
+        }
+    }
+    
+    void setJacketIcons(final int cons, final IIcon[] tex, final IIcon st) {
+        this.context.setIcon(((cons & 0x1) > 0) ? st : tex[0], ((cons & 0x2) > 0) ? st : tex[1], ((cons & 0x4) > 0) ? st : tex[2], ((cons & 0x8) > 0) ? st : tex[3], ((cons & 0x10) > 0) ? st : tex[4], ((cons & 0x20) > 0) ? st : tex[5]);
+    }
+    
+    public void renderCenterBlock(final int cons, final IIcon[] icon, final IIcon sidtex) {
+        switch (cons) {
+            case 0: {
+                this.setJacketIcons(3, icon, sidtex);
+                this.context.renderBox(63, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
+                break;
+            }
+            case 3: {
+                this.setJacketIcons(3, icon, sidtex);
+                this.context.renderBox(63, 0.25, 0.0, 0.25, 0.75, 1.0, 0.75);
+                break;
+            }
+            case 12: {
+                this.setJacketIcons(12, icon, sidtex);
+                this.context.renderBox(63, 0.25, 0.25, 0.0, 0.75, 0.75, 1.0);
+                break;
+            }
+            case 48: {
+                this.setJacketIcons(48, icon, sidtex);
+                this.context.renderBox(63, 0.0, 0.25, 0.25, 1.0, 0.75, 0.75);
+                break;
+            }
+            default: {
+                if (Integer.bitCount(cons) > 1) {
+                    this.context.setIcon(icon);
+                }
+                else {
+                    int rc;
+                    if ((rc = cons) == 0) {
+                        rc = 3;
+                    }
+                    rc = ((rc & 0x15) << 1 | (rc & 0x2A) >> 1);
+                    this.setJacketIcons(rc, icon, sidtex);
+                }
+                this.context.renderBox(0x3F ^ cons, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
+                if ((cons & 0x1) > 0) {
+                    this.setJacketIcons(1, icon, sidtex);
+                    this.context.renderBox(61, 0.25, 0.0, 0.25, 0.75, 0.25, 0.75);
+                }
+                if ((cons & 0x2) > 0) {
+                    this.setJacketIcons(2, icon, sidtex);
+                    this.context.renderBox(62, 0.25, 0.75, 0.25, 0.75, 1.0, 0.75);
+                }
+                if ((cons & 0x4) > 0) {
+                    this.setJacketIcons(4, icon, sidtex);
+                    this.context.renderBox(55, 0.25, 0.25, 0.0, 0.75, 0.75, 0.25);
+                }
+                if ((cons & 0x8) > 0) {
+                    this.setJacketIcons(8, icon, sidtex);
+                    this.context.renderBox(59, 0.25, 0.25, 0.75, 0.75, 0.75, 1.0);
+                }
+                if ((cons & 0x10) > 0) {
+                    this.setJacketIcons(16, icon, sidtex);
+                    this.context.renderBox(31, 0.0, 0.25, 0.25, 0.25, 0.75, 0.75);
+                }
+                if ((cons & 0x20) > 0) {
+                    this.setJacketIcons(32, icon, sidtex);
+                    this.context.renderBox(47, 0.75, 0.25, 0.25, 1.0, 0.75, 0.75);
+                    break;
+                }
+                break;
+            }
+        }
+    }
 }

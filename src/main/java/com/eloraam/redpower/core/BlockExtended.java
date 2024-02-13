@@ -1,222 +1,206 @@
+//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
+
+//Decompiled by Procyon!
+
 package com.eloraam.redpower.core;
 
-import com.eloraam.redpower.RedPowerCore;
-import com.eloraam.redpower.core.CoreLib;
-import com.eloraam.redpower.core.ItemExtended;
-import com.eloraam.redpower.core.RenderCustomBlock;
-import com.eloraam.redpower.core.RenderLib;
-import com.eloraam.redpower.core.TileExtended;
+import java.util.function.*;
+import net.minecraft.block.material.*;
+import net.minecraft.client.renderer.texture.*;
+import cpw.mods.fml.relauncher.*;
+import net.minecraft.world.*;
+import net.minecraft.item.*;
+import net.minecraft.init.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.enchantment.*;
+import net.minecraft.block.*;
+import java.util.*;
+import net.minecraft.entity.*;
+import com.eloraam.redpower.*;
+import net.minecraft.tileentity.*;
+import net.minecraft.util.*;
+import net.minecraft.client.particle.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockPistonBase;
-import net.minecraft.block.material.Material;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-public class BlockExtended extends BlockContainer {
-	
-	@SuppressWarnings("rawtypes")
-	private Class[] tileEntityMap = new Class[16];
-	
-	public BlockExtended(Material m) {
-		super(m);
-	}
-	
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
-	
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-	
-	public boolean isACube() {
-		return false;
-	}
-	
-	@Override
-	public int damageDropped(int i) {
-		return i;
-	}
-	
-	public float getHardness() {
-		return super.blockHardness;
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public ArrayList getDrops(World world, int i, int j, int k, int md, int fortune) {
-		ArrayList ist = new ArrayList();
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		if (tl == null) {
-			return ist;
-		} else {
-			tl.addHarvestContents(ist);
-			return ist;
-		}
-	}
-	
-	@Override
-	public Item getItemDropped(int i, Random random, int j) { //TODO: VERY VERY WRONG MAYBE
-		return Item.getItemFromBlock(Blocks.air);
-	}
-	
-	@Override
-	public void harvestBlock(World world, EntityPlayer player, int x, int y, int z, int l) {
-		this.removedByPlayer(world, player, x, y, z);
-	}
-	
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public boolean removedByPlayer(World world, EntityPlayer player, int i, int j, int k) {
-		if (CoreLib.isClient(world)) {
-			return true;
-		} else {
-			Block bl = world.getBlock(i, j, k);
-			int md = world.getBlockMetadata(i, j, k);
-			if (bl == null) {
-				return false;
-			} else {
-				if (bl.canHarvestBlock(player, md) && !player.capabilities.isCreativeMode) {
-					ArrayList<ItemStack> il = this.getDrops(world, i, j, k, md, EnchantmentHelper.getFortuneModifier(player));
-					Iterator<ItemStack> iter = il.iterator();
-					while (iter.hasNext()) {
-						ItemStack it = (ItemStack) iter.next();
-						CoreLib.dropItem(world, i, j, k, it);
-					}
-				}
-				world.setBlockToAir(i, j, k);
-				return true;
-			}
-		}
-	}
-	
-	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, Block block) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		if (tl == null) {
-			world.setBlockToAir(i, j, k);
-		} else {
-			tl.onBlockNeighborChange(block);
-		}
-	}
-	
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase ent, ItemStack ist) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		//int side = MathHelper.floor_double((double)(ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-		int side = BlockPistonBase.determineOrientation(world, i, j, k, ent);
-		
-		if (tl != null) {
-			tl.onBlockPlaced(ist, side, ent); //TODO: For a while
-		}
-	}
-	
-	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int md) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		if (tl != null) {
-			tl.onBlockRemoval();
-			super.breakBlock(world, i, j, k, block, md);
-		}
-	}
-	
-	@Override
-	public int isProvidingStrongPower(IBlockAccess iba, int i, int j, int k, int l) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(iba, i, j, k, TileExtended.class);
-		return tl == null ? 0 : tl.isBlockStrongPoweringTo(l) ? 15 : 0; //TODO: I think that wrong
-	}
-	
-	@Override
-	public int isProvidingWeakPower(IBlockAccess iba, int i, int j, int k, int l) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(iba, i, j, k, TileExtended.class);
-		return tl == null ? 0 : tl.isBlockWeakPoweringTo(l) ? 1 : 0; //TODO: I think that wrong too
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float xp, float yp, float zp) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		return tl == null ? false : tl.onBlockActivated(player);
-	}
-	
-	@Override
-	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		if (tl != null) {
-			tl.onEntityCollidedWithBlock(entity);
-		}
-	}
-	
-	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
-		TileExtended tl = (TileExtended) CoreLib.getTileEntity(world, i, j, k, TileExtended.class);
-		if (tl != null) {
-			AxisAlignedBB bb = tl.getCollisionBoundingBox();
-			if (bb != null) {
-				return bb;
-			}
-		}
-		return super.getCollisionBoundingBoxFromPool(world, i, j, k);
-	}
-	
-	@Override
-	public int getRenderType() {
-		return RedPowerCore.customBlockModel;
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-		int md = world.getBlockMetadata(i, j, k);
-		RenderCustomBlock rend = RenderLib.getRenderer(this, md);
-		if (rend != null) {
-			rend.randomDisplayTick(world, i, j, k, random);
-		}
-	}
-	
-	/*
-	public TileEntity getBlockEntity() {
-		return null;
-	}*/
-	
-	@SuppressWarnings("rawtypes")
-	public void addTileEntityMapping(int md, Class cl) {
-		this.tileEntityMap[md] = cl;
-	}
-	
-	public void setBlockName(int md, String name) {
-		Item item = Item.getItemFromBlock(this);
-		((ItemExtended) item).setMetaName(md, "tile." + name);
-	}
-	
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public TileEntity createNewTileEntity(World world, int md) {
-		try {
-			return (TileEntity)this.tileEntityMap[md].getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-		} catch (Exception var5) {
-			var5.printStackTrace();
-			return null;
-		}
-	}
+public class BlockExtended extends BlockContainer
+{
+    private Supplier<? extends TileExtended>[] tileEntityMap;
+    
+    public BlockExtended(final Material m) {
+        super(m);
+        this.tileEntityMap = (Supplier<? extends TileExtended>[])new Supplier[16];
+    }
+    
+    public boolean isOpaqueCube() {
+        return false;
+    }
+    
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+    
+    public boolean isFullCube() {
+        return false;
+    }
+    
+    public int damageDropped(final int i) {
+        return i;
+    }
+    
+    public float getHardness() {
+        return super.blockHardness;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(final IIconRegister register) {
+    }
+    
+    public ArrayList getDrops(final World world, final int x, final int y, final int z, final int meta, final int fortune) {
+        final ArrayList<ItemStack> ist = new ArrayList<ItemStack>();
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        if (tl == null) {
+            return ist;
+        }
+        tl.addHarvestContents(ist);
+        return ist;
+    }
+    
+    public Item getItemDropped(final int i, final Random random, final int j) {
+        return Item.getItemFromBlock(Blocks.air);
+    }
+    
+    public void harvestBlock(final World world, final EntityPlayer player, final int x, final int y, final int z, final int side) {
+    }
+    
+    public boolean removedByPlayer(final World world, final EntityPlayer player, final int x, final int y, final int z, final boolean willHarvest) {
+        if (world.isRemote) {
+            return true;
+        }
+        final Block bl = world.getBlock(x, y, z);
+        final int md = world.getBlockMetadata(x, y, z);
+        if (bl != null) {
+            if (bl.canHarvestBlock(player, md) && willHarvest) {
+                final List<ItemStack> il = (List<ItemStack>)this.getDrops(world, x, y, z, md, EnchantmentHelper.getFortuneModifier((EntityLivingBase)player));
+                for (final ItemStack it : il) {
+                    CoreLib.dropItem(world, x, y, z, it);
+                }
+            }
+            world.setBlockToAir(x, y, z);
+            return true;
+        }
+        return false;
+    }
+    
+    public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final Block block) {
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        if (tl == null) {
+            world.setBlockToAir(x, y, z);
+        }
+        else {
+            tl.onBlockNeighborChange(block);
+        }
+    }
+    
+    public int onBlockPlaced(final World world, final int x, final int y, final int z, final int side, final float hitX, final float hitY, final float hitZ, final int meta) {
+        return super.onBlockPlaced(world, x, y, z, side, hitX, hitY, hitZ, meta);
+    }
+    
+    public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final int side, final EntityLivingBase ent, final ItemStack ist) {
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        if (tl != null) {
+            tl.onBlockPlaced(ist, side, ent);
+        }
+    }
+    
+    public void breakBlock(final World world, final int x, final int y, final int z, final Block block, final int md) {
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        if (tl != null) {
+            tl.onBlockRemoval();
+            super.breakBlock(world, x, y, z, block, md);
+        }
+    }
+    
+    public int isProvidingStrongPower(final IBlockAccess iba, final int x, final int y, final int z, final int side) {
+        final TileExtended tl = CoreLib.getTileEntity(iba, x, y, z, TileExtended.class);
+        return (tl == null || !tl.isBlockStrongPoweringTo(side)) ? 0 : 15;
+    }
+    
+    public int isProvidingWeakPower(final IBlockAccess iba, final int x, final int y, final int z, final int side) {
+        final TileExtended tl = CoreLib.getTileEntity(iba, x, y, z, TileExtended.class);
+        return (tl != null && tl.isBlockWeakPoweringTo(side)) ? 1 : 0;
+    }
+    
+    public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float xp, final float yp, final float zp) {
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        return tl != null && tl.onBlockActivated(player);
+    }
+    
+    public void onEntityCollidedWithBlock(final World world, final int x, final int y, final int z, final Entity entity) {
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        if (tl != null) {
+            tl.onEntityCollidedWithBlock(entity);
+        }
+    }
+    
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        if (tl != null) {
+            final AxisAlignedBB bb = tl.getCollisionBoundingBox();
+            if (bb != null) {
+                return bb;
+            }
+        }
+        this.setBlockBoundsBasedOnState((IBlockAccess)world, x, y, z);
+        return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+    }
+    
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+        this.setBlockBoundsBasedOnState((IBlockAccess)world, x, y, z);
+        return super.getSelectedBoundingBoxFromPool(world, x, y, z);
+    }
+    
+    public int getRenderType() {
+        return RedPowerCore.customBlockModel;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick(final World world, final int x, final int y, final int z, final Random random) {
+        final int md = world.getBlockMetadata(x, y, z);
+        final RenderCustomBlock rend = RenderLib.getRenderer((Block)this, md);
+        if (rend != null) {
+            rend.randomDisplayTick(world, x, y, z, random);
+        }
+    }
+    
+    public void addTileEntityMapping(final int md, final Supplier<? extends TileExtended> cl) {
+        this.tileEntityMap[md] = cl;
+    }
+    
+    public void setBlockName(final int md, final String name) {
+        final Item item = Item.getItemFromBlock((Block)this);
+        ((ItemExtended)item).setMetaName(md, "tile." + name);
+    }
+    
+    public TileEntity createNewTileEntity(final World world, final int md) {
+        if (this.tileEntityMap[md] != null) {
+            return (TileEntity)this.tileEntityMap[md].get();
+        }
+        return null;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public boolean addHitEffects(final World world, final MovingObjectPosition target, final EffectRenderer effectRenderer) {
+        final int x = target.blockX;
+        final int y = target.blockY;
+        final int z = target.blockZ;
+        final int meta = world.getBlockMetadata(x, y, z);
+        final int side = target.sideHit;
+        final RenderCustomBlock renderer = RenderLib.getRenderer((Block)this, meta);
+        return renderer != null && renderer.renderHit(effectRenderer, world, target, x, y, z, side, meta);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public boolean addDestroyEffects(final World world, final int x, final int y, final int z, final int meta, final EffectRenderer effectRenderer) {
+        final RenderCustomBlock renderer = RenderLib.getRenderer((Block)this, meta);
+        return renderer != null && renderer.renderDestroy(effectRenderer, world, x, y, z, meta);
+    }
 }
