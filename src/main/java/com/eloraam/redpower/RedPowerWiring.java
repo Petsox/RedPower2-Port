@@ -170,7 +170,7 @@ public class RedPowerWiring
     
     @SideOnly(Side.CLIENT)
     public void registerRenderers() {
-        RenderLib.setDefaultRenderer((Block)RedPowerBase.blockMicro, 8, (Function<Block, ? extends RenderCustomBlock>) RenderRedwire::new);
+        RenderLib.setDefaultRenderer(RedPowerBase.blockMicro, 8, RenderRedwire::new);
         ClientRegistry.bindTileEntitySpecialRenderer((Class)TileWiring.class, (TileEntitySpecialRenderer)new RenderRedwire((Block)RedPowerBase.blockMicro));
     }
     

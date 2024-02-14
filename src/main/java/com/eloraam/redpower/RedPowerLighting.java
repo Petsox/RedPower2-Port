@@ -4,7 +4,6 @@
 
 package com.eloraam.redpower;
 
-import com.eloraam.redpower.wiring.RenderRedwire;
 import net.minecraft.creativetab.*;
 import net.minecraft.util.*;
 import cpw.mods.fml.common.*;
@@ -38,7 +37,7 @@ public class RedPowerLighting
     @Mod.EventHandler
     public void preInit(final FMLPreInitializationEvent event) {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            MinecraftForge.EVENT_BUS.register((Object)RedPowerLighting.instance);
+            MinecraftForge.EVENT_BUS.register(RedPowerLighting.instance);
         }
     }
     
@@ -56,48 +55,50 @@ public class RedPowerLighting
     
     public static void setupLighting() {
         (RedPowerLighting.blockLamp = new BlockLamp()).setBlockName("rplamp");
-        GameRegistry.registerBlock((Block)RedPowerLighting.blockLamp, (Class)ItemLamp.class, "lampo");
-        GameRegistry.registerTileEntity((Class)TileLamp.class, "RPLamp");
-        RedPowerLighting.blockLamp.addTileEntityMapping(0, (Supplier)TileLamp::new);
+        GameRegistry.registerBlock(RedPowerLighting.blockLamp, ItemLamp.class, "lampo");
+        GameRegistry.registerTileEntity(TileLamp.class, "RPLamp");
+        RedPowerLighting.blockLamp.addTileEntityMapping(0, (Supplier<? extends TileExtended>)TileLamp::new);
         for (int color = 0; color < 16; ++color) {
             final String nm = "rplamp." + CoreLib.rawColorNames[color];
             RedPowerLighting.blockLamp.setBlockName(color, nm);
-            GameRegistry.addRecipe(new ItemStack((Block)RedPowerLighting.blockLamp, 1, color), new Object[] { "GLG", "GLG", "GRG", 'G', Blocks.glass_pane, 'L', new ItemStack((Item)RedPowerBase.itemLumar, 1, color), 'R', Items.redstone });
+            GameRegistry.addRecipe(new ItemStack(RedPowerLighting.blockLamp, 1, color), "GLG", "GLG", "GRG", 'G', Blocks.glass_pane, 'L', new ItemStack(RedPowerBase.itemLumar, 1, color), 'R', Items.redstone);
         }
         for (int color = 0; color < 16; ++color) {
             final String nm = "rpilamp." + CoreLib.rawColorNames[color];
             RedPowerLighting.blockLamp.setBlockName(color + 16, nm);
-            GameRegistry.addRecipe(new ItemStack((Block)RedPowerLighting.blockLamp, 1, 16 + color), new Object[] { "GLG", "GLG", "GRG", 'G', Blocks.glass_pane, 'L', new ItemStack((Item)RedPowerBase.itemLumar, 1, color), 'R', Blocks.redstone_torch });
+            GameRegistry.addRecipe(new ItemStack(RedPowerLighting.blockLamp, 1, 16 + color), "GLG", "GLG", "GRG", 'G', Blocks.glass_pane, 'L', new ItemStack(RedPowerBase.itemLumar, 1, color), 'R', Blocks.redstone_torch);
         }
-        GameRegistry.registerBlock((Block)(RedPowerLighting.blockShapedLamp = new BlockShapedLamp()), (Class)ItemLamp.class, "shlamp");
-        GameRegistry.registerTileEntity((Class)TileShapedLamp.class, "RPShLamp");
-        RedPowerLighting.blockShapedLamp.addTileEntityMapping(0, (Supplier)TileShapedLamp::new);
+        GameRegistry.registerBlock(RedPowerLighting.blockShapedLamp = new BlockShapedLamp(), ItemLamp.class, "shlamp");
+        GameRegistry.registerTileEntity(TileShapedLamp.class, "RPShLamp");
+        RedPowerLighting.blockShapedLamp.addTileEntityMapping(0, (Supplier<? extends TileExtended>)TileShapedLamp::new);
         for (int color = 0; color < 16; ++color) {
             final String nm = "rpshlamp." + CoreLib.rawColorNames[color];
             RedPowerLighting.blockShapedLamp.setBlockName(color, nm);
-            GameRegistry.addRecipe(new ItemStack((Block)RedPowerLighting.blockShapedLamp, 1, color), new Object[] { "GLG", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack((Item)RedPowerBase.itemLumar, 1, color), 'R', Items.redstone, 'S', Blocks.stone_slab });
+            GameRegistry.addRecipe(new ItemStack(RedPowerLighting.blockShapedLamp, 1, color), "GLG", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack(RedPowerBase.itemLumar, 1, color), 'R', Items.redstone, 'S', Blocks.stone_slab);
         }
         for (int color = 0; color < 16; ++color) {
             final String nm = "rpishlamp." + CoreLib.rawColorNames[color];
             RedPowerLighting.blockShapedLamp.setBlockName(color + 16, nm);
-            GameRegistry.addRecipe(new ItemStack((Block)RedPowerLighting.blockShapedLamp, 1, 16 + color), new Object[] { "GLG", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack((Item)RedPowerBase.itemLumar, 1, color), 'R', Blocks.redstone_torch, 'S', new ItemStack((Block)Blocks.stone_slab, 1, 0) });
+            GameRegistry.addRecipe(new ItemStack(RedPowerLighting.blockShapedLamp, 1, 16 + color), "GLG", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack(RedPowerBase.itemLumar, 1, color), 'R', Blocks.redstone_torch, 'S', new ItemStack(Blocks.stone_slab, 1, 0));
         }
         for (int color = 0; color < 16; ++color) {
             final String nm = "rpshlamp2." + CoreLib.rawColorNames[color];
             RedPowerLighting.blockShapedLamp.setBlockName(color + 32, nm);
-            GameRegistry.addRecipe(new ItemStack((Block)RedPowerLighting.blockShapedLamp, 1, 32 + color), new Object[] { "ILI", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack((Item)RedPowerBase.itemLumar, 1, color), 'R', Items.redstone, 'I', Blocks.iron_bars, 'S', new ItemStack((Block)Blocks.stone_slab, 1, 0) });
+            GameRegistry.addRecipe(new ItemStack(RedPowerLighting.blockShapedLamp, 1, 32 + color), "ILI", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack(RedPowerBase.itemLumar, 1, color), 'R', Items.redstone, 'I', Blocks.iron_bars, 'S', new ItemStack(Blocks.stone_slab, 1, 0));
         }
         for (int color = 0; color < 16; ++color) {
             final String nm = "rpishlamp2." + CoreLib.rawColorNames[color];
             RedPowerLighting.blockShapedLamp.setBlockName(color + 48, nm);
-            GameRegistry.addRecipe(new ItemStack((Block)RedPowerLighting.blockShapedLamp, 1, 48 + color), new Object[] { "ILI", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack((Item)RedPowerBase.itemLumar, 1, color), 'R', Blocks.redstone_torch, 'I', Blocks.iron_bars, 'S', Blocks.stone_slab });
+            GameRegistry.addRecipe(new ItemStack(RedPowerLighting.blockShapedLamp, 1, 48 + color), "ILI", "GLG", "SRS", 'G', Blocks.glass_pane, 'L', new ItemStack(RedPowerBase.itemLumar, 1, color), 'R', Blocks.redstone_torch, 'I', Blocks.iron_bars, 'S', Blocks.stone_slab);
         }
     }
     
     @SideOnly(Side.CLIENT)
     public void registerRenderers() {
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLamp.class, (TileEntitySpecialRenderer)new RenderLamp(RedPowerLighting.blockLamp));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileShapedLamp.class, (TileEntitySpecialRenderer)new RenderShapedLamp(RedPowerLighting.blockShapedLamp));
+        RenderLib.setDefaultRenderer(RedPowerLighting.blockLamp, 10, RenderLamp::new);
+        RenderLib.setDefaultRenderer(RedPowerLighting.blockShapedLamp, 10, RenderShapedLamp::new);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileLamp.class, new RenderLamp(RedPowerLighting.blockLamp));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileShapedLamp.class, new RenderShapedLamp(RedPowerLighting.blockShapedLamp));
     }
     
     @SideOnly(Side.CLIENT)
@@ -121,7 +122,7 @@ public class RedPowerLighting
     static {
         RedPowerLighting.tabLamp = new CreativeTabs(CreativeTabs.getNextID(), "RPLights") {
             public ItemStack getIconItemStack() {
-                return new ItemStack((Block)RedPowerLighting.blockLamp, 1, 16);
+                return new ItemStack(RedPowerLighting.blockLamp, 1, 16);
             }
             
             public Item getTabIconItem() {

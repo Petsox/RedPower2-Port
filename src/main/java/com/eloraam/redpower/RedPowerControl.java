@@ -142,13 +142,13 @@ public class RedPowerControl implements IGuiHandler
     
     @SideOnly(Side.CLIENT)
     public void registerRenderers() {
-        RenderLib.setRenderer((Block)RedPowerControl.blockBackplane, 0, (Function<Block, ? extends RenderCustomBlock>)RenderBackplane::new);
-        RenderLib.setRenderer((Block)RedPowerControl.blockBackplane, 1, (Function<Block, ? extends RenderCustomBlock>)RenderBackplane::new);
-        RenderLib.setRenderer((Block)RedPowerControl.blockPeripheral, 0, (Function<Block, ? extends RenderCustomBlock>)RenderDisplay::new);
-        RenderLib.setRenderer((Block)RedPowerControl.blockPeripheral, 1, (Function<Block, ? extends RenderCustomBlock>)RenderCPU::new);
-        RenderLib.setRenderer((Block)RedPowerControl.blockPeripheral, 2, (Function<Block, ? extends RenderCustomBlock>)RenderDiskDrive::new);
-        RenderLib.setRenderer(RedPowerControl.blockFlatPeripheral, 0, (Function<Block, ? extends RenderCustomBlock>)RenderIOExpander::new);
-        RenderLib.setHighRenderer(RedPowerBase.blockMicro, 12, (Function<Block, ? extends RenderCustomBlock>)RenderRibbon::new);
+        RenderLib.setRenderer(RedPowerControl.blockBackplane, 0, RenderBackplane::new);
+        RenderLib.setRenderer(RedPowerControl.blockBackplane, 1, RenderBackplane::new);
+        RenderLib.setRenderer(RedPowerControl.blockPeripheral, 0, RenderDisplay::new);
+        RenderLib.setRenderer(RedPowerControl.blockPeripheral, 1, RenderCPU::new);
+        RenderLib.setRenderer(RedPowerControl.blockPeripheral, 2, RenderDiskDrive::new);
+        RenderLib.setRenderer(RedPowerControl.blockFlatPeripheral, 0, RenderIOExpander::new);
+        RenderLib.setHighRenderer(RedPowerBase.blockMicro, 12, RenderRibbon::new);
         ClientRegistry.bindTileEntitySpecialRenderer(TileBackplane.class, new RenderBackplane(RedPowerControl.blockBackplane));
         ClientRegistry.bindTileEntitySpecialRenderer(TileRibbon.class, new RenderRibbon(RedPowerBase.blockMicro));
         ClientRegistry.bindTileEntitySpecialRenderer(TileIOExpander.class, new RenderIOExpander(RedPowerControl.blockPeripheral));

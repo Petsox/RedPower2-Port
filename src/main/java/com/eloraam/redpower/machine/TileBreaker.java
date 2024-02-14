@@ -95,10 +95,8 @@ public class TileBreaker extends TileMachine implements ITubeConnectable, IFrame
                         this.updateBlock();
                         final int md = super.worldObj.getBlockMetadata(wc.x, wc.y, wc.z);
                         final FakePlayer player = CoreLib.getRedpowerPlayer(this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.Rotation, this.Owner);
-                        if (CoreLib.hasBreakPermission((EntityPlayerMP)player, wc.x, wc.y, wc.z)) {
-                            this.buffer.addAll((Collection)bid.getDrops(super.worldObj, wc.x, wc.y, wc.z, md, 0));
-                            this.worldObj.setBlockToAir(wc.x, wc.y, wc.z);
-                        }
+                        this.buffer.addAll((Collection)bid.getDrops(super.worldObj, wc.x, wc.y, wc.z, md, 0));
+                        this.worldObj.setBlockToAir(wc.x, wc.y, wc.z);
                         this.drainBuffer();
                         if (!this.buffer.isEmpty()) {
                             this.scheduleTick(5);

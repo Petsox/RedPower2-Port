@@ -203,6 +203,11 @@ public class RedPowerLogic implements IGuiHandler
     
     @SideOnly(Side.CLIENT)
     public void registerRenderers() {
+        RenderLib.setHighRenderer(RedPowerLogic.blockLogic, 0, RenderLogicPointer::new);
+        RenderLib.setHighRenderer(RedPowerLogic.blockLogic, 1, RenderLogicSimple::new);
+        RenderLib.setHighRenderer(RedPowerLogic.blockLogic, 2, RenderLogicArray::new);
+        RenderLib.setHighRenderer(RedPowerLogic.blockLogic, 3, RenderLogicStorage::new);
+        RenderLib.setHighRenderer(RedPowerLogic.blockLogic, 4, RenderLogicAdv::new);
         ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicAdv.class, (TileEntitySpecialRenderer)new RenderLogicAdv((Block)RedPowerLogic.blockLogic));
         ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicSimple.class, (TileEntitySpecialRenderer)new RenderLogicSimple((Block)RedPowerLogic.blockLogic));
         ClientRegistry.bindTileEntitySpecialRenderer((Class)TileLogicArray.class, (TileEntitySpecialRenderer)new RenderLogicArray((Block)RedPowerLogic.blockLogic));

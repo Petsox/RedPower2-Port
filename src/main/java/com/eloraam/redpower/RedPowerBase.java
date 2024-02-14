@@ -398,6 +398,8 @@ public class RedPowerBase implements IGuiHandler
     
     @SideOnly(Side.CLIENT)
     public void registerRenderers() {
+        RenderLib.setRenderer(RedPowerBase.blockAppliance, 0, RenderAlloyFurnace::new);
+        RenderLib.setRenderer(RedPowerBase.blockAppliance, 3, RenderAdvBench::new);
         ClientRegistry.bindTileEntitySpecialRenderer((Class)TileAlloyFurnace.class, (TileEntitySpecialRenderer)new RenderAlloyFurnace((Block)RedPowerBase.blockAppliance));
         ClientRegistry.bindTileEntitySpecialRenderer((Class)TileAdvBench.class, (TileEntitySpecialRenderer)new RenderAdvBench((Block)RedPowerBase.blockAppliance));
     }
