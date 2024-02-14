@@ -24,29 +24,29 @@ public class RenderHighlight
     private final RenderContext context;
     private final CoverRenderer coverRenderer;
     private IIcon[] destroyIcons;
-    
+
     public RenderHighlight() {
         this.context = new RenderContext();
         this.coverRenderer = new CoverRenderer(this.context);
     }
-    
+
     @SubscribeEvent
     public void onTextureStitchEventPost(final TextureStitchEvent.Post evt) {
         if (evt.map.getTextureType() == 0) {
             CoverRenderer.reInitIcons();
         }
-        this.destroyIcons = ReflectionHelper.getPrivateValue(RenderGlobal.class, Minecraft.getMinecraft().renderGlobal, new String[] { "destroyBlockIcons", "destroyBlockIcons" });
+        this.destroyIcons = ReflectionHelper.getPrivateValue(RenderGlobal.class, Minecraft.getMinecraft().renderGlobal, new String[] { "destroyBlockIcons", "field_94141_F" });
     }
-    
+
     @SubscribeEvent
     public void highlightEvent(final DrawBlockHighlightEvent evt) {
         this.onBlockHighlight(evt.context, evt.player, evt.target, evt.subID, evt.currentItem, evt.partialTicks);
     }
-    
+
     public boolean onBlockHighlight(final RenderGlobal render, final EntityPlayer pl, final MovingObjectPosition mop, final int subID, final ItemStack ist, final float partialTicks) {
         final World world = pl.worldObj;
         final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
-        final Map<Integer, DestroyBlockProgress> damagedBlocks = ReflectionHelper.getPrivateValue(RenderGlobal.class, render, new String[] { "damagedBlocks", "damagedBlocks" });
+        final Map<Integer, DestroyBlockProgress> damagedBlocks = ReflectionHelper.getPrivateValue(RenderGlobal.class, render, new String[]{"field_72738_E", "damagedBlocks"});
         if (bl instanceof BlockMultipart) {
             final BlockMultipart bm = (BlockMultipart)bl;
             bm.setPartBounds(pl.worldObj, mop.blockX, mop.blockY, mop.blockZ, mop.subHit);
@@ -122,14 +122,14 @@ public class RenderHighlight
         }
         return true;
     }
-    
+
     private void setRawPos(final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
         final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
         final double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
         this.context.setPos(mop.blockX - dx, mop.blockY - dy, mop.blockZ - dz);
     }
-    
+
     private void setCollPos(final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
         this.setRawPos(player, mop, partialTicks);
         switch (mop.sideHit) {
@@ -159,7 +159,7 @@ public class RenderHighlight
             }
         }
     }
-    
+
     public void drawCornerBox(final World world, final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
         GL11.glEnable(3042);
         GL11.glBlendFunc(770, 771);
@@ -192,7 +192,7 @@ public class RenderHighlight
         GL11.glDisable(3042);
         this.context.setRelPos(0.0, 0.0, 0.0);
     }
-    
+
     public void drawSideBox(final World world, final EntityPlayer player, final MovingObjectPosition mop, final float partialTicks) {
         GL11.glEnable(3042);
         GL11.glBlendFunc(770, 771);
@@ -228,7 +228,7 @@ public class RenderHighlight
         GL11.glDisable(3042);
         this.context.setRelPos(0.0, 0.0, 0.0);
     }
-    
+
     public void drawBreaking(final World world, final RenderGlobal render, final BlockExtended bl, final EntityPlayer pl, final MovingObjectPosition mop, final float partialTicks, final int destroyStage) {
         GL11.glEnable(3042);
         GL11.glBlendFunc(774, 768);
@@ -251,7 +251,7 @@ public class RenderHighlight
         GL11.glPolygonOffset(0.0f, 0.0f);
         GL11.glDisable(32823);
     }
-    
+
     public void drawPreview(final EntityPlayer pl, final MovingObjectPosition mop, final float partialTicks, final int md) {
         this.setRawPos(pl, mop, partialTicks);
         this.context.bindBlockTexture();
