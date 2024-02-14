@@ -28,22 +28,17 @@ apply plugin: 'idea'
 sourceCompatibility = targetCompatibility = "1.8"
 compileJava { sourceCompatibility = targetCompatibility = "1.8" }
 
-ext.configFile = file "build.properties"
-
-configFile.withReader {
-    // Load config. It shall from now be referenced as simply config or project.config
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
-}
-
-version = "${config.project_version}"
-group = "${config.project_group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "${config.project_name}"
+version = "0.0.1"
+group= "com.eloraam.redpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "RedPower2"
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "run"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 repositories {
@@ -65,19 +60,22 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    implementation "codechicken:CodeChickenCore-1.7.10-1.0.7.46-dev"
     implementation "ic2:industrialcraft-2-2.2.828-experimental-dev"
     implementation "codechicken:CodeChickenLib-1.2.1"
     implementation "codechicken:NotEnoughItems-1.7.10-1.0.5.111-dev"
 }
 
-task releaseJars(type: Copy) {
-    from 'build/libs'
-    into 'output'
+runClient {
+    if( project.hasProperty('mcUsername') ) {
+        args "--username=${project.mcUsername}"
+    }
 }
 
-processResources {
-	// this will ensure that this task is redone when the versions change.
-	inputs.property "version", project.version
-	inputs.property "mcversion", project.minecraft.version
-
+idea
+{
+    module
+    {
+        inheritOutputDirs = true
+    }
 }
