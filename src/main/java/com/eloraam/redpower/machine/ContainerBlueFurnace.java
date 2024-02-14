@@ -33,13 +33,6 @@ public class ContainerBlueFurnace extends Container
         }
     }
     
-    public ItemStack slotClick(final int a, final int b, final int c, final EntityPlayer player) {
-        if (!this.canInteractWith(player)) {
-            return null;
-        }
-        return super.slotClick(a, b, c, player);
-    }
-    
     public boolean canInteractWith(final EntityPlayer player) {
         return this.tileFurnace.isUseableByPlayer(player);
     }

@@ -40,7 +40,7 @@ public class ContainerSeedBag extends Container
     }
     
     public boolean canInteractWith(final EntityPlayer player) {
-        return player.inventory.getCurrentItem() == this.itemBag;
+        return player.worldObj.isRemote || player.getHeldItem() == this.itemBag;
     }
     
     public ItemStack transferStackInSlot(final EntityPlayer player, final int slotId) {
@@ -77,7 +77,7 @@ public class ContainerSeedBag extends Container
         }
         return result;
     }
-    
+
     public ItemStack slotClick(final int slotId, final int dragModeOrBtn, final int mode, final EntityPlayer player) {
         if (!this.canInteractWith(player)) {
             return null;

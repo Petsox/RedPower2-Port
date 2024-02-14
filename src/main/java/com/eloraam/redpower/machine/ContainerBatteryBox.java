@@ -32,13 +32,6 @@ public class ContainerBatteryBox extends Container
     public boolean canInteractWith(final EntityPlayer player) {
         return player.worldObj.isRemote || this.tileBB.isUseableByPlayer(player);
     }
-    
-    public ItemStack slotClick(final int a, final int b, final int c, final EntityPlayer player) {
-        if (!this.canInteractWith(player)) {
-            return null;
-        }
-        return super.slotClick(a, b, c, player);
-    }
 
 
     @Override
