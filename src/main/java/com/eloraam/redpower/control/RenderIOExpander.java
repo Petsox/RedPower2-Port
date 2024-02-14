@@ -18,9 +18,9 @@ import net.minecraft.item.*;
 @SideOnly(Side.CLIENT)
 public class RenderIOExpander extends RenderCustomBlock
 {
-    private RenderContext context;
-    private RenderModel modelModem;
-    private ResourceLocation modelRes;
+    private final RenderContext context;
+    private final RenderModel modelModem;
+    private final ResourceLocation modelRes;
     
     public RenderIOExpander(final Block block) {
         super(block);
@@ -37,7 +37,7 @@ public class RenderIOExpander extends RenderCustomBlock
         this.context.setDefaults();
         this.context.setPos(x, y, z);
         this.context.setOrientation(0, iox.Rotation);
-        this.context.readGlobalLights((IBlockAccess)world, iox.xCoord, iox.yCoord, iox.zCoord);
+        this.context.readGlobalLights(world, iox.xCoord, iox.yCoord, iox.zCoord);
         this.context.setBrightness(this.getMixedBrightness(iox));
         this.context.bindTexture(this.modelRes);
         tess.startDrawingQuads();

@@ -32,7 +32,7 @@ public class TileAppliance extends TileExtended implements IFrameSupport
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerBase.blockAppliance;
+        return RedPowerBase.blockAppliance;
     }
     
     public int getLightValue() {
@@ -42,7 +42,7 @@ public class TileAppliance extends TileExtended implements IFrameSupport
     @Override
     public void writeFramePacket(final NBTTagCompound tag) {
         tag.setByte("rot", (byte)this.Rotation);
-        tag.setByte("ps", (byte)(byte)(this.Active ? 1 : 0));
+        tag.setByte("ps", (byte)(this.Active ? 1 : 0));
     }
     
     @Override
@@ -73,7 +73,7 @@ public class TileAppliance extends TileExtended implements IFrameSupport
     @Override
     public void writeToNBT(final NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setByte("ps", (byte)(byte)(this.Active ? 1 : 0));
+        data.setByte("ps", (byte)(this.Active ? 1 : 0));
         data.setByte("rot", (byte)this.Rotation);
     }
     
@@ -86,6 +86,6 @@ public class TileAppliance extends TileExtended implements IFrameSupport
     @Override
     protected void writeToPacket(final NBTTagCompound tag) {
         tag.setByte("rot", (byte)this.Rotation);
-        tag.setByte("ps", (byte)(byte)(this.Active ? 1 : 0));
+        tag.setByte("ps", (byte)(this.Active ? 1 : 0));
     }
 }

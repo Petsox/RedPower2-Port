@@ -122,7 +122,7 @@ public class TileIOExpander extends TileMultipart implements IRedbusConnectable,
     public void onBlockNeighborChange(final Block block) {
         boolean ch = false;
         for (int n = 0; n < 16; ++n) {
-            final int ps = RedPowerLib.getRotPowerState((IBlockAccess)super.worldObj, super.xCoord, super.yCoord, super.zCoord, 8, this.Rotation, n + 1);
+            final int ps = RedPowerLib.getRotPowerState(super.worldObj, super.xCoord, super.yCoord, super.zCoord, 8, this.Rotation, n + 1);
             if (ps == 0) {
                 if ((this.RBuf & 1 << n) > 0) {
                     this.RBuf &= ~(1 << n);
@@ -140,7 +140,7 @@ public class TileIOExpander extends TileMultipart implements IRedbusConnectable,
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerControl.blockFlatPeripheral;
+        return RedPowerControl.blockFlatPeripheral;
     }
     
     @Override

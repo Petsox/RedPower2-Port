@@ -21,8 +21,8 @@ import net.minecraft.client.renderer.*;
 @SideOnly(Side.CLIENT)
 public class RenderHighlight
 {
-    private RenderContext context;
-    private CoverRenderer coverRenderer;
+    private final RenderContext context;
+    private final CoverRenderer coverRenderer;
     private IIcon[] destroyIcons;
     
     public RenderHighlight() {
@@ -35,7 +35,7 @@ public class RenderHighlight
         if (evt.map.getTextureType() == 0) {
             CoverRenderer.reInitIcons();
         }
-        this.destroyIcons = (IIcon[])ReflectionHelper.getPrivateValue((Class)RenderGlobal.class, (Object)Minecraft.getMinecraft().renderGlobal, new String[] { "destroyBlockIcons", "destroyBlockIcons" });
+        this.destroyIcons = ReflectionHelper.getPrivateValue(RenderGlobal.class, Minecraft.getMinecraft().renderGlobal, new String[] { "destroyBlockIcons", "destroyBlockIcons" });
     }
     
     @SubscribeEvent
@@ -46,7 +46,7 @@ public class RenderHighlight
     public boolean onBlockHighlight(final RenderGlobal render, final EntityPlayer pl, final MovingObjectPosition mop, final int subID, final ItemStack ist, final float partialTicks) {
         final World world = pl.worldObj;
         final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
-        final Map<Integer, DestroyBlockProgress> damagedBlocks = (Map<Integer, DestroyBlockProgress>)ReflectionHelper.getPrivateValue((Class)RenderGlobal.class, (Object)render, new String[] { "damagedBlocks", "damagedBlocks" });
+        final Map<Integer, DestroyBlockProgress> damagedBlocks = ReflectionHelper.getPrivateValue(RenderGlobal.class, render, new String[] { "damagedBlocks", "damagedBlocks" });
         if (bl instanceof BlockMultipart) {
             final BlockMultipart bm = (BlockMultipart)bl;
             bm.setPartBounds(pl.worldObj, mop.blockX, mop.blockY, mop.blockZ, mop.subHit);
@@ -171,7 +171,7 @@ public class RenderHighlight
         final float var6 = 0.25f;
         final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
         if (bl != Blocks.air) {
-            this.context.setSize(0.0, (double)(-var5), 0.0, 1.0, (double)(-var5), 1.0);
+            this.context.setSize(0.0, -var5, 0.0, 1.0, -var5, 1.0);
             this.context.setupBox();
             this.context.vertices[4].set(0.0, -var5, 0.5);
             this.context.vertices[5].set(1.0, -var5, 0.5);
@@ -181,10 +181,10 @@ public class RenderHighlight
             this.setCollPos(player, mop, partialTicks);
             this.context.transformRotate();
             Tessellator.instance.startDrawing(3);
-            this.context.drawPoints(new int[] { 0, 1, 2, 3, 0 });
+            this.context.drawPoints(0, 1, 2, 3, 0);
             Tessellator.instance.draw();
             Tessellator.instance.startDrawing(1);
-            this.context.drawPoints(new int[] { 4, 5, 6, 7 });
+            this.context.drawPoints(4, 5, 6, 7);
             Tessellator.instance.draw();
         }
         GL11.glDepthMask(true);
@@ -204,7 +204,7 @@ public class RenderHighlight
         final float var6 = 0.25f;
         final Block bl = world.getBlock(mop.blockX, mop.blockY, mop.blockZ);
         if (bl != Blocks.air) {
-            this.context.setSize(0.0, (double)(-var5), 0.0, 1.0, (double)(-var5), 1.0);
+            this.context.setSize(0.0, -var5, 0.0, 1.0, -var5, 1.0);
             this.context.setupBox();
             this.context.vertices[4].set(1.0f - var6, -var5, var6);
             this.context.vertices[5].set(var6, -var5, var6);
@@ -214,13 +214,13 @@ public class RenderHighlight
             this.setCollPos(player, mop, partialTicks);
             this.context.transformRotate();
             Tessellator.instance.startDrawing(3);
-            this.context.drawPoints(new int[] { 0, 1, 2, 3, 0 });
+            this.context.drawPoints(0, 1, 2, 3, 0);
             Tessellator.instance.draw();
             Tessellator.instance.startDrawing(3);
-            this.context.drawPoints(new int[] { 4, 5, 6, 7, 4 });
+            this.context.drawPoints(4, 5, 6, 7, 4);
             Tessellator.instance.draw();
             Tessellator.instance.startDrawing(1);
-            this.context.drawPoints(new int[] { 0, 4, 1, 5, 2, 6, 3, 7 });
+            this.context.drawPoints(0, 4, 1, 5, 2, 6, 3, 7);
             Tessellator.instance.draw();
         }
         GL11.glDepthMask(true);

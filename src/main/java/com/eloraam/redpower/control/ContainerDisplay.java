@@ -15,8 +15,8 @@ import java.io.*;
 
 public class ContainerDisplay extends Container implements IHandleGuiEvent
 {
-    private TileDisplay tileDisplay;
-    private byte[] screen;
+    private final TileDisplay tileDisplay;
+    private final byte[] screen;
     private int cursx;
     private int cursy;
     private int cursmode;
@@ -102,7 +102,7 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
                 ic.sendProgressBarUpdate(this, 2, this.tileDisplay.cursMode);
             }
             if (drl != null) {
-                RedPowerCore.sendPacketToCrafting(ic, (IMessage)new PacketGuiEvent.GuiMessageEvent(2, super.windowId, drl));
+                RedPowerCore.sendPacketToCrafting(ic, new PacketGuiEvent.GuiMessageEvent(2, super.windowId, drl));
             }
         }
         this.cursx = this.tileDisplay.cursX;
@@ -253,7 +253,7 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
         }
         
         byte[] getByteArray() {
-            return (byte[])(this.changed ? this.bas.toByteArray() : null);
+            return this.changed ? this.bas.toByteArray() : null;
         }
     }
 }

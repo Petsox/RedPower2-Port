@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ContainerAlloyFurnace extends Container
 {
-    private TileAlloyFurnace tileFurnace;
+    private final TileAlloyFurnace tileFurnace;
     public int totalburn;
     public int burntime;
     public int cooktime;
@@ -23,18 +23,18 @@ public class ContainerAlloyFurnace extends Container
         this.tileFurnace = td;
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                this.addSlotToContainer(new Slot((IInventory)td, j + i * 3, 48 + j * 18, 17 + i * 18));
+                this.addSlotToContainer(new Slot(td, j + i * 3, 48 + j * 18, 17 + i * 18));
             }
         }
-        this.addSlotToContainer(new Slot((IInventory)td, 9, 17, 42));
-        this.addSlotToContainer((Slot)new SlotAlloyFurnace(inv.player, (IInventory)td, 10, 141, 35));
+        this.addSlotToContainer(new Slot(td, 9, 17, 42));
+        this.addSlotToContainer(new SlotAlloyFurnace(inv.player, td, 10, 141, 35));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer(new Slot((IInventory)inv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlotToContainer(new Slot(inv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
         for (int i = 0; i < 9; ++i) {
-            this.addSlotToContainer(new Slot((IInventory)inv, i, 8 + i * 18, 142));
+            this.addSlotToContainer(new Slot(inv, i, 8 + i * 18, 142));
         }
     }
     
@@ -65,7 +65,7 @@ public class ContainerAlloyFurnace extends Container
             }
 
             if(itemstack1.stackSize == 0) {
-                slot.putStack((ItemStack)null);
+                slot.putStack(null);
             } else {
                 slot.onSlotChanged();
             }

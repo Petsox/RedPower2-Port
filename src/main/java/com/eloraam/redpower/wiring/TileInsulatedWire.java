@@ -31,7 +31,7 @@ public class TileInsulatedWire extends TileWiring implements IRedPowerWiring
         }
         int dir = RedPowerLib.getConDirMask(side ^ 0x1);
         dir &= this.getConnectableMask();
-        return dir != 0 && (RedPowerLib.isBlockRedstone((IBlockAccess)super.worldObj, super.xCoord, super.yCoord, super.zCoord, side ^ 0x1) ? (this.PowerState > 15) : (this.PowerState > 0));
+        return dir != 0 && (RedPowerLib.isBlockRedstone(super.worldObj, super.xCoord, super.yCoord, super.zCoord, side ^ 0x1) ? (this.PowerState > 15) : (this.PowerState > 0));
     }
     
     public int getConnectClass(final int side) {
@@ -39,7 +39,7 @@ public class TileInsulatedWire extends TileWiring implements IRedPowerWiring
     }
     
     public int scanPoweringStrength(final int cons, final int ch) {
-        return RedPowerLib.isPowered((IBlockAccess)super.worldObj, super.xCoord, super.yCoord, super.zCoord, cons, 0) ? 255 : 0;
+        return RedPowerLib.isPowered(super.worldObj, super.xCoord, super.yCoord, super.zCoord, cons, 0) ? 255 : 0;
     }
     
     public int getCurrentStrength(final int cons, final int ch) {
@@ -47,7 +47,7 @@ public class TileInsulatedWire extends TileWiring implements IRedPowerWiring
     }
     
     public void updateCurrentStrength() {
-        this.PowerState = (short)RedPowerLib.updateBlockCurrentStrength(super.worldObj, (IRedPowerWiring)this, super.xCoord, super.yCoord, super.zCoord, 16777215, 0x1 | 2 << super.Metadata);
+        this.PowerState = (short)RedPowerLib.updateBlockCurrentStrength(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord, 16777215, 0x1 | 2 << super.Metadata);
         CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
     }
     

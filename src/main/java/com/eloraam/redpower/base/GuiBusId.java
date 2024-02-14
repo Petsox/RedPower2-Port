@@ -22,7 +22,7 @@ public class GuiBusId extends GuiContainer
     private TileEntity tile;
     
     public GuiBusId(final InventoryPlayer pli, final IRedbusConnectable irc, final TileEntity tile) {
-        super((Container)new ContainerBusId((IInventory)pli, irc));
+        super(new ContainerBusId(pli, irc));
         this.rbConn = irc;
         this.tile = tile;
         super.ySize = 81;
@@ -36,7 +36,7 @@ public class GuiBusId extends GuiContainer
     }
     
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
-        super.fontRendererObj.drawString(I18n.format("gui.busid", new Object[0]), 32, 6, 4210752);
+        super.fontRendererObj.drawString(I18n.format("gui.busid"), 32, 6, 4210752);
     }
     
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY) {
@@ -56,7 +56,7 @@ public class GuiBusId extends GuiContainer
     
     private void sendAddr() {
         if (super.mc.theWorld.isRemote) {
-            RedPowerCore.sendPacketToServer((IMessage)new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[] { (byte)this.rbConn.rbGetAddr() }));
+            RedPowerCore.sendPacketToServer(new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[] { (byte)this.rbConn.rbGetAddr() }));
         }
     }
     

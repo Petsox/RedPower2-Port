@@ -22,7 +22,7 @@ public class GuiAdvBench extends GuiContainer
     private TileAdvBench bench;
     
     public GuiAdvBench(final InventoryPlayer pli, final TileAdvBench td) {
-        super((Container)new ContainerAdvBench(pli, td));
+        super(new ContainerAdvBench(pli, td));
         this.bench = td;
         super.ySize = 222;
     }
@@ -33,8 +33,8 @@ public class GuiAdvBench extends GuiContainer
     }
     
     protected void drawGuiContainerForegroundLayer(final int p1, final int p2) {
-        super.fontRendererObj.drawString(I18n.format("tile.rpabench.name", new Object[0]), 60, 6, 4210752);
-        super.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, super.ySize - 96 + 2, 4210752);
+        super.fontRendererObj.drawString(I18n.format("tile.rpabench.name"), 60, 6, 4210752);
+        super.fontRendererObj.drawString(I18n.format("container.inventory"), 8, super.ySize - 96 + 2, 4210752);
     }
     
     protected void drawGuiContainerBackgroundLayer(final float f, final int p1, final int p2) {
@@ -101,7 +101,7 @@ public class GuiAdvBench extends GuiContainer
             if (plan == null || craft == null || plan.getItem() != RedPowerBase.itemPlanBlank) {
                 return;
             }
-            RedPowerCore.sendPacketToServer((IMessage)new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[0]));
+            RedPowerCore.sendPacketToServer(new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[0]));
         }
         super.mouseClicked(i, j, k);
     }

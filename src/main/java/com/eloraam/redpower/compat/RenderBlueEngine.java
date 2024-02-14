@@ -40,7 +40,7 @@ public class RenderBlueEngine extends RenderCustomBlock
             this.context.setDefaults();
             this.context.setPos(x, y, z);
             this.context.setOrientation(tb.Rotation, 0);
-            this.context.readGlobalLights((IBlockAccess)tb.getWorldObj(), tb.xCoord, tb.yCoord, tb.zCoord);
+            this.context.readGlobalLights(tb.getWorldObj(), tb.xCoord, tb.yCoord, tb.zCoord);
             this.context.setBrightness(super.getMixedBrightness(tb));
             this.context.bindTexture(RenderBlueEngine.res);
             this.context.bindModelOffset(this.modelBase, 0.5, 0.5, 0.5);

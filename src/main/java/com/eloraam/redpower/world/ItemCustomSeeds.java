@@ -33,8 +33,8 @@ public class ItemCustomSeeds extends Item implements IPlantable
         if (soil == null) {
             return false;
         }
-        if (soil.canSustainPlant((IBlockAccess)world, i, j, k, ForgeDirection.UP, (IPlantable)this) && world.getBlockMetadata(i, j, k) >= 1 && world.isAirBlock(i, j + 1, k)) {
-            world.setBlock(i, j + 1, k, (Block)RedPowerWorld.blockCrops, 0, 3);
+        if (soil.canSustainPlant(world, i, j, k, ForgeDirection.UP, this) && world.getBlockMetadata(i, j, k) >= 1 && world.isAirBlock(i, j + 1, k)) {
+            world.setBlock(i, j + 1, k, RedPowerWorld.blockCrops, 0, 3);
             --ist.stackSize;
             return true;
         }
@@ -44,7 +44,7 @@ public class ItemCustomSeeds extends Item implements IPlantable
     @SideOnly(Side.CLIENT)
     public void getSubItems(final Item item, final CreativeTabs tab, final List list) {
         for (int i = 0; i <= 0; ++i) {
-            list.add(new ItemStack((Item)this, 1, i));
+            list.add(new ItemStack(this, 1, i));
         }
     }
     
@@ -53,7 +53,7 @@ public class ItemCustomSeeds extends Item implements IPlantable
     }
     
     public Block getPlant(final IBlockAccess world, final int x, final int y, final int z) {
-        return (Block)RedPowerWorld.blockCrops;
+        return RedPowerWorld.blockCrops;
     }
     
     public int getPlantMetadata(final IBlockAccess world, final int x, final int y, final int z) {

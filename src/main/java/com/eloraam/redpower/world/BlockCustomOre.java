@@ -17,7 +17,7 @@ import net.minecraft.util.*;
 
 public class BlockCustomOre extends Block
 {
-    private IIcon[] icons;
+    private final IIcon[] icons;
     
     public BlockCustomOre() {
         super(Material.rock);
@@ -44,7 +44,7 @@ public class BlockCustomOre extends Block
     }
     
     public Item getItemDropped(final int meta, final Random random, final int fortune) {
-        return (Item)((meta >= 3 && meta != 7) ? Item.getItemFromBlock((Block)this) : RedPowerBase.itemResource);
+        return (meta >= 3 && meta != 7) ? Item.getItemFromBlock(this) : RedPowerBase.itemResource;
     }
     
     public int quantityDropped(final int i, final int fortune, final Random random) {
@@ -68,7 +68,7 @@ public class BlockCustomOre extends Block
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(final Item item, final CreativeTabs tab, final List list) {
         for (int i = 0; i <= 7; ++i) {
-            list.add(new ItemStack((Block)this, 1, i));
+            list.add(new ItemStack(this, 1, i));
         }
     }
     
@@ -89,7 +89,7 @@ public class BlockCustomOre extends Block
             }
         }
         if (max > 0) {
-            this.dropXpOnBlockBreak(world, x, y, z, MathHelper.getRandomIntegerInRange(world.rand, (int)min, (int)max));
+            this.dropXpOnBlockBreak(world, x, y, z, MathHelper.getRandomIntegerInRange(world.rand, min, max));
         }
     }
 }

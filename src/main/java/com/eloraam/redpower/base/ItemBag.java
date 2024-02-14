@@ -17,7 +17,7 @@ import net.minecraft.nbt.*;
 
 public class ItemBag extends Item
 {
-    private IIcon[] icons;
+    private final IIcon[] icons;
     
     public ItemBag() {
         this.icons = new IIcon[16];
@@ -48,7 +48,7 @@ public class ItemBag extends Item
     
     public ItemStack onItemRightClick(final ItemStack ist, final World world, final EntityPlayer player) {
         if (!world.isRemote && !player.isSneaking()) {
-            player.openGui((Object)RedPowerBase.instance, 4, world, 0, 0, 0);
+            player.openGui(RedPowerBase.instance, 4, world, 0, 0, 0);
         }
         return ist;
     }
@@ -89,10 +89,10 @@ public class ItemBag extends Item
                     final NBTTagCompound cpd = new NBTTagCompound();
                     this.items[i].writeToNBT(cpd);
                     cpd.setByte("Slot", (byte)i);
-                    contents.appendTag((NBTBase)cpd);
+                    contents.appendTag(cpd);
                 }
             }
-            this.bagitem.stackTagCompound.setTag("contents", (NBTBase)contents);
+            this.bagitem.stackTagCompound.setTag("contents", contents);
         }
         
         public int getSizeInventory() {

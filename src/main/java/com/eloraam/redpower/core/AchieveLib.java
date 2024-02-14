@@ -62,34 +62,34 @@ public class AchieveLib
     public static void triggerAchievement(final EntityPlayer player, final String id) {
         final Achievement ac = AchieveLib.achievelist.get(id);
         if (ac != null) {
-            player.triggerAchievement((StatBase)ac);
+            player.triggerAchievement(ac);
         }
     }
     
     public static void onCrafting(final EntityPlayer player, final ItemStack ist) {
         final Achievement ac = AchieveLib.achievebycraft.get(ist);
         if (ac != null) {
-            player.triggerAchievement((StatBase)ac);
+            player.triggerAchievement(ac);
         }
     }
     
     public static void onFurnace(final EntityPlayer player, final ItemStack ist) {
         final Achievement ac = AchieveLib.achievebyfurnace.get(ist);
         if (ac != null) {
-            player.triggerAchievement((StatBase)ac);
+            player.triggerAchievement(ac);
         }
     }
     
     public static void onAlloy(final EntityPlayer player, final ItemStack ist) {
         final Achievement ac = AchieveLib.achievebyalloy.get(ist);
         if (ac != null) {
-            player.triggerAchievement((StatBase)ac);
+            player.triggerAchievement(ac);
         }
     }
     
     static {
         AchieveLib.achievelist = new HashMap<String, Achievement>();
-        AchieveLib.achievepage = new AchievementPage("RedPower", new Achievement[0]);
+        AchieveLib.achievepage = new AchievementPage("RedPower");
         AchieveLib.achievebycraft = new TreeMap<ItemStack, Achievement>(CoreLib::compareItemStack);
         AchieveLib.achievebyfurnace = new TreeMap<ItemStack, Achievement>(CoreLib::compareItemStack);
         AchieveLib.achievebyalloy = new TreeMap<ItemStack, Achievement>(CoreLib::compareItemStack);

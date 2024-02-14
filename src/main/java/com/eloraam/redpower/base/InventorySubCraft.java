@@ -9,8 +9,8 @@ import net.minecraft.item.*;
 
 public class InventorySubCraft extends InventoryCrafting
 {
-    private Container eventHandler;
-    private IInventory parent;
+    private final Container eventHandler;
+    private final IInventory parent;
     
     public InventorySubCraft(final Container container, final IInventory par) {
         super(container, 3, 3);
@@ -37,13 +37,13 @@ public class InventorySubCraft extends InventoryCrafting
     public ItemStack decrStackSize(final int i, final int j) {
         final ItemStack tr = this.parent.decrStackSize(i, j);
         if (tr != null) {
-            this.eventHandler.onCraftMatrixChanged((IInventory)this);
+            this.eventHandler.onCraftMatrixChanged(this);
         }
         return tr;
     }
     
     public void setInventorySlotContents(final int i, final ItemStack ist) {
         this.parent.setInventorySlotContents(i, ist);
-        this.eventHandler.onCraftMatrixChanged((IInventory)this);
+        this.eventHandler.onCraftMatrixChanged(this);
     }
 }

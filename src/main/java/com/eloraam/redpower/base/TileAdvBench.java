@@ -34,7 +34,7 @@ public class TileAdvBench extends TileAppliance implements ISidedInventory
             return false;
         }
         if (!this.worldObj.isRemote) {
-            player.openGui((Object)RedPowerBase.instance, 2, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+            player.openGui(RedPowerBase.instance, 2, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
         }
         return true;
     }
@@ -134,24 +134,20 @@ public class TileAdvBench extends TileAppliance implements ISidedInventory
                 final NBTTagCompound item = new NBTTagCompound();
                 item.setByte("Slot", (byte)i);
                 this.contents[i].writeToNBT(item);
-                items.appendTag((NBTBase)item);
+                items.appendTag(item);
             }
         }
-        data.setTag("Items", (NBTBase)items);
+        data.setTag("Items", items);
     }
     
     public int[] getAccessibleSlotsFromSide(final int side) {
-        switch (side) {
-            case 1: {
-                return IntStream.range(0, 9).toArray();
-            }
-            default: {
-                if (side != (this.Rotation ^ 0x1)) {
-                    return IntStream.range(10, 28).toArray();
-                }
-                return new int[0];
-            }
+        if (side == 1) {
+            return IntStream.range(0, 9).toArray();
         }
+        if (side != (this.Rotation ^ 0x1)) {
+            return IntStream.range(10, 28).toArray();
+        }
+        return new int[0];
     }
     
     public boolean canInsertItem(final int slotID, final ItemStack itemStack, final int side) {

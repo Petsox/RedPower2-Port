@@ -14,7 +14,7 @@ public abstract class RenderWiring extends RenderCovers
 {
     private float wireWidth;
     private float wireHeight;
-    private IIcon[][] sidetex;
+    private final IIcon[][] sidetex;
     
     public RenderWiring(final Block block) {
         super(block);
@@ -30,25 +30,25 @@ public abstract class RenderWiring extends RenderCovers
         this.context.setLocalLights(0.5f, 1.0f, 0.7f, 0.7f, 0.7f, 0.7f);
         switch (n) {
             case 2: {
-                this.context.setSize(0.0, 0.0, (double)(0.5f - this.wireWidth), (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setSize(0.0, 0.0, 0.5f - this.wireWidth, 0.5f - this.wireWidth, this.wireHeight, 0.5f + this.wireWidth);
                 this.context.calcBounds();
                 this.context.renderFaces(54);
                 break;
             }
             case 3: {
-                this.context.setSize((double)(0.5f + this.wireWidth), 0.0, (double)(0.5f - this.wireWidth), 1.0, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setSize(0.5f + this.wireWidth, 0.0, 0.5f - this.wireWidth, 1.0, this.wireHeight, 0.5f + this.wireWidth);
                 this.context.calcBounds();
                 this.context.renderFaces(58);
                 break;
             }
             case 4: {
-                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, 0.0, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)(0.5f - this.wireWidth));
+                this.context.setSize(0.5f - this.wireWidth, 0.0, 0.0, 0.5f + this.wireWidth, this.wireHeight, 0.5f - this.wireWidth);
                 this.context.calcBounds();
                 this.context.renderFaces(30);
                 break;
             }
             case 5: {
-                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(0.5f + this.wireWidth), (double)(0.5f + this.wireWidth), (double)this.wireHeight, 1.0);
+                this.context.setSize(0.5f - this.wireWidth, 0.0, 0.5f + this.wireWidth, 0.5f + this.wireWidth, this.wireHeight, 1.0);
                 this.context.calcBounds();
                 this.context.renderFaces(46);
                 break;
@@ -241,52 +241,52 @@ public abstract class RenderWiring extends RenderCovers
             }
         }
         if (fxl > 0) {
-            this.context.setSize((double)x1, 0.0, (double)(0.5f - this.wireWidth), (double)x2, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.setSize(x1, 0.0, 0.5f - this.wireWidth, x2, this.wireHeight, 0.5f + this.wireWidth);
             this.context.calcBounds();
-            this.context.setTexFlags((int)fxf);
+            this.context.setTexFlags(fxf);
             this.context.setIconIndex(stb + 1);
             this.context.renderFaces(fxl);
         }
         if (fzl > 0) {
-            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)z1, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)z2);
+            this.context.setSize(0.5f - this.wireWidth, 0.0, z1, 0.5f + this.wireWidth, this.wireHeight, z2);
             this.context.calcBounds();
             this.context.setTexFlags(fzf);
-            this.context.setIconIndex((int)stb);
+            this.context.setIconIndex(stb);
             this.context.renderFaces(fzl);
         }
         if (fc > 0) {
-            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(0.5f - this.wireWidth), (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.setSize(0.5f - this.wireWidth, 0.0, 0.5f - this.wireWidth, 0.5f + this.wireWidth, this.wireHeight, 0.5f + this.wireWidth);
             this.context.calcBounds();
             this.context.setTexFlags(fcf);
             this.context.setIconIndex(0);
             this.context.renderFaces(fc);
         }
         if (fxs1 > 0) {
-            this.context.setSize((double)x1, 0.0, (double)(0.5f - this.wireWidth), (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.setSize(x1, 0.0, 0.5f - this.wireWidth, 0.5f - this.wireWidth, this.wireHeight, 0.5f + this.wireWidth);
             this.context.calcBounds();
-            this.context.setTexFlags((int)fxf);
+            this.context.setTexFlags(fxf);
             this.context.setIconIndex(stb + 1);
             this.context.renderFaces(fxs1);
         }
         if (fxs2 > 0) {
-            this.context.setSize((double)(0.5f + this.wireWidth), 0.0, (double)(0.5f - this.wireWidth), (double)x2, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+            this.context.setSize(0.5f + this.wireWidth, 0.0, 0.5f - this.wireWidth, x2, this.wireHeight, 0.5f + this.wireWidth);
             this.context.calcBounds();
-            this.context.setTexFlags((int)fxf);
+            this.context.setTexFlags(fxf);
             this.context.setIconIndex(stb + 1);
             this.context.renderFaces(fxs2);
         }
         if (fzs1 > 0) {
-            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)z1, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)(0.5f - this.wireWidth));
+            this.context.setSize(0.5f - this.wireWidth, 0.0, z1, 0.5f + this.wireWidth, this.wireHeight, 0.5f - this.wireWidth);
             this.context.calcBounds();
             this.context.setTexFlags(fzf);
-            this.context.setIconIndex((int)stb);
+            this.context.setIconIndex(stb);
             this.context.renderFaces(fzs1);
         }
         if (fzs2 > 0) {
-            this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(0.5f + this.wireWidth), (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)z2);
+            this.context.setSize(0.5f - this.wireWidth, 0.0, 0.5f + this.wireWidth, 0.5f + this.wireWidth, this.wireHeight, z2);
             this.context.calcBounds();
             this.context.setTexFlags(fzf);
-            this.context.setIconIndex((int)stb);
+            this.context.setIconIndex(stb);
             this.context.renderFaces(fzs2);
         }
         if (fn < 2) {
@@ -294,14 +294,14 @@ public abstract class RenderWiring extends RenderCovers
         }
         else {
             if ((ucs & 0x2) > 0) {
-                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(1.0f - this.wireHeight), (double)(0.5f + this.wireWidth), (double)this.wireHeight, 1.0);
+                this.context.setSize(0.5f - this.wireWidth, 0.0, 1.0f - this.wireHeight, 0.5f + this.wireWidth, this.wireHeight, 1.0);
                 this.context.calcBounds();
                 this.context.setTexFlags(73728);
                 this.context.setIconIndex(5);
                 this.context.renderFaces(48);
             }
             if ((ucs & 0x4) > 0) {
-                this.context.setSize(0.0, 0.0, (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setSize(0.0, 0.0, 0.5f - this.wireWidth, this.wireHeight, this.wireHeight, 0.5f + this.wireWidth);
                 this.context.calcBounds();
                 if (fn != 2 && fn != 4) {
                     this.context.setTexFlags(1728);
@@ -313,7 +313,7 @@ public abstract class RenderWiring extends RenderCovers
                 this.context.renderFaces(12);
             }
             if ((ucs & 0x8) > 0) {
-                this.context.setSize((double)(1.0f - this.wireHeight), 0.0, (double)(0.5f - this.wireWidth), 1.0, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setSize(1.0f - this.wireHeight, 0.0, 0.5f - this.wireWidth, 1.0, this.wireHeight, 0.5f + this.wireWidth);
                 this.context.calcBounds();
                 if (fn != 2 && fn != 4) {
                     this.context.setTexFlags(1152);
@@ -332,7 +332,7 @@ public abstract class RenderWiring extends RenderCovers
         if (cs != 0) {
             this.context.setIconIndex(5);
             if ((cs & 0x1) > 0) {
-                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, (double)(1.0f - this.wireHeight), (double)(0.5f + this.wireWidth), (double)this.wireHeight, 1.0);
+                this.context.setSize(0.5f - this.wireWidth, 0.0, 1.0f - this.wireHeight, 0.5f + this.wireWidth, this.wireHeight, 1.0);
                 this.context.setRelPos(0.0, 0.0, -1.0);
                 this.context.setTexFlags(38444);
                 this.context.setLocalLights(0.7f, 1.0f, 0.7f, 1.0f, 0.7f, 0.7f);
@@ -340,7 +340,7 @@ public abstract class RenderWiring extends RenderCovers
                 this.context.renderFaces(55);
             }
             if ((cs & 0x2) > 0) {
-                this.context.setSize((double)(0.5f - this.wireWidth), 0.0, 0.0, (double)(0.5f + this.wireWidth), (double)this.wireHeight, (double)this.wireHeight);
+                this.context.setSize(0.5f - this.wireWidth, 0.0, 0.0, 0.5f + this.wireWidth, this.wireHeight, this.wireHeight);
                 this.context.setRelPos(0.0, 0.0, 1.0);
                 this.context.setTexFlags(38444);
                 this.context.setLocalLights(0.7f, 1.0f, 0.7f, 1.0f, 0.7f, 0.7f);
@@ -349,7 +349,7 @@ public abstract class RenderWiring extends RenderCovers
             }
             this.context.setIconIndex(6);
             if ((cs & 0x4) > 0) {
-                this.context.setSize((double)(1.0f - this.wireHeight), 0.0, (double)(0.5f - this.wireWidth), 1.0, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setSize(1.0f - this.wireHeight, 0.0, 0.5f - this.wireWidth, 1.0, this.wireHeight, 0.5f + this.wireWidth);
                 this.context.setRelPos(-1.0, 0.0, 0.0);
                 if (fn != 2 && fn != 4) {
                     this.context.setTexFlags(3);
@@ -362,7 +362,7 @@ public abstract class RenderWiring extends RenderCovers
                 this.context.renderFaces(31);
             }
             if ((cs & 0x8) > 0) {
-                this.context.setSize(0.0, 0.0, (double)(0.5f - this.wireWidth), (double)this.wireHeight, (double)this.wireHeight, (double)(0.5f + this.wireWidth));
+                this.context.setSize(0.0, 0.0, 0.5f - this.wireWidth, this.wireHeight, this.wireHeight, 0.5f + this.wireWidth);
                 this.context.setRelPos(1.0, 0.0, 0.0);
                 if (fn != 2 && fn != 4) {
                     this.context.setTexFlags(102977);

@@ -20,7 +20,7 @@ public class GuiCPU extends GuiContainer
     private TileCPU tileCPU;
     
     public GuiCPU(final InventoryPlayer pli, final TileCPU cpu) {
-        super((Container)new ContainerCPU((IInventory)pli, cpu));
+        super(new ContainerCPU(pli, cpu));
         this.tileCPU = cpu;
         super.ySize = 145;
         super.xSize = 227;
@@ -65,23 +65,23 @@ public class GuiCPU extends GuiContainer
         else {
             this.drawTexturedModalRect(j + 102, k + 112, 227, 32, 8, 8);
         }
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.diskid", new Object[] { this.tileCPU.diskAddr & 0xFF }), j + 14, k + 47, -1);
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.consoleid", new Object[] { this.tileCPU.displayAddr & 0xFF }), j + 118, k + 47, -1);
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.selfid", new Object[] { this.tileCPU.rbaddr & 0xFF }), j + 118, k + 91, -1);
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.start", new Object[0]), j + 50, k + 99, -1);
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.halt", new Object[0]), j + 50, k + 112, -1);
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.reset", new Object[0]), j + 50, k + 125, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.diskid", this.tileCPU.diskAddr & 0xFF), j + 14, k + 47, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.consoleid", this.tileCPU.displayAddr & 0xFF), j + 118, k + 47, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.selfid", this.tileCPU.rbaddr & 0xFF), j + 118, k + 91, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.start"), j + 50, k + 99, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.halt"), j + 50, k + 112, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.reset"), j + 50, k + 125, -1);
     }
     
     private void sendSimple(final int n, final byte m) {
         if (super.mc.theWorld.isRemote) {
-            RedPowerCore.sendPacketToServer((IMessage)new PacketGuiEvent.GuiMessageEvent(n, super.inventorySlots.windowId, new byte[] { m }));
+            RedPowerCore.sendPacketToServer(new PacketGuiEvent.GuiMessageEvent(n, super.inventorySlots.windowId, new byte[] { m }));
         }
     }
     
     private boolean sendEvent(final int n) {
         if (super.mc.theWorld.isRemote) {
-            RedPowerCore.sendPacketToServer((IMessage)new PacketGuiEvent.GuiMessageEvent(n, super.inventorySlots.windowId, new byte[] { 0 }));
+            RedPowerCore.sendPacketToServer(new PacketGuiEvent.GuiMessageEvent(n, super.inventorySlots.windowId, new byte[] { 0 }));
             return false;
         }
         return true;

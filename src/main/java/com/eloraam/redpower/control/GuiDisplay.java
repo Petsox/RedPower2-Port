@@ -16,17 +16,17 @@ import net.minecraft.client.renderer.*;
 public class GuiDisplay extends GuiContainer
 {
     private static ResourceLocation screenTextures;
-    private TileDisplay disp;
+    private final TileDisplay disp;
     
     public GuiDisplay(final IInventory inv, final TileDisplay td) {
-        super((Container)new ContainerDisplay(inv, td));
+        super(new ContainerDisplay(inv, td));
         super.xSize = 350;
         super.ySize = 230;
         this.disp = td;
     }
     
     private void sendKey(final int id) {
-        RedPowerCore.sendPacketToServer((IMessage)new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[] { (byte)id }));
+        RedPowerCore.sendPacketToServer(new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[] { (byte)id }));
     }
     
     protected void keyTyped(char symbol, final int key) {
@@ -117,10 +117,10 @@ public class GuiDisplay extends GuiContainer
         final float ym = 0.00390625f;
         final Tessellator tess = Tessellator.instance;
         tess.startDrawingQuads();
-        tess.addVertexWithUV((double)xPos, (double)(yPos + heigth), (double)super.zLevel, (double)(uStart * xm), (double)((vStart + vEnd) * ym));
-        tess.addVertexWithUV((double)(xPos + width), (double)(yPos + heigth), (double)super.zLevel, (double)((uStart + uEnd) * xm), (double)((vStart + vEnd) * ym));
-        tess.addVertexWithUV((double)(xPos + width), (double)yPos, (double)super.zLevel, (double)((uStart + uEnd) * xm), (double)(vStart * ym));
-        tess.addVertexWithUV((double)xPos, (double)yPos, (double)super.zLevel, (double)(uStart * xm), (double)(vStart * ym));
+        tess.addVertexWithUV(xPos, yPos + heigth, super.zLevel, uStart * xm, (vStart + vEnd) * ym);
+        tess.addVertexWithUV(xPos + width, yPos + heigth, super.zLevel, (uStart + uEnd) * xm, (vStart + vEnd) * ym);
+        tess.addVertexWithUV(xPos + width, yPos, super.zLevel, (uStart + uEnd) * xm, vStart * ym);
+        tess.addVertexWithUV(xPos, yPos, super.zLevel, uStart * xm, vStart * ym);
         tess.draw();
     }
     

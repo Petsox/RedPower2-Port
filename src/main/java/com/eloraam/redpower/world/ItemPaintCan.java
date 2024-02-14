@@ -29,7 +29,7 @@ public class ItemPaintCan extends ItemPartialCraft
             final ItemStack isl = player.inventory.getStackInSlot(n);
             if (isl != null && isl.getItem() == RedPowerWorld.itemBrushDry && isl.stackSize == 1) {
                 player.inventory.setInventorySlotContents(n, new ItemStack(RedPowerWorld.itemBrushPaint[this.color]));
-                ist.damageItem(1, (EntityLivingBase)player);
+                ist.damageItem(1, player);
                 if (ist.stackSize == 0) {
                     return new ItemStack(RedPowerWorld.itemPaintCanEmpty);
                 }

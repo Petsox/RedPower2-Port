@@ -45,13 +45,13 @@ public class MicroPlacementJacket implements IMicroPlacement
         int md = ist.getItemDamage() >> 8;
         final Block bid = Block.getBlockFromItem(ist.getItem());
         md = this.getWireMeta(md);
-        if (!world.canPlaceEntityOnSide(bid, wc.x, wc.y, wc.z, false, l, (Entity)player, (ItemStack)null)) {
+        if (!world.canPlaceEntityOnSide(bid, wc.x, wc.y, wc.z, false, l, player, null)) {
             return false;
         }
         if (!world.setBlock(wc.x, wc.y, wc.z, bid, md, 3)) {
             return true;
         }
-        final TileWiring tw = (TileWiring)CoreLib.getTileEntity((IBlockAccess)world, wc, (Class)TileWiring.class);
+        final TileWiring tw = (TileWiring)CoreLib.getTileEntity(world, wc, (Class)TileWiring.class);
         if (tw == null) {
             return false;
         }
@@ -63,7 +63,7 @@ public class MicroPlacementJacket implements IMicroPlacement
     }
     
     private boolean tryAddingJacket(final World world, final WorldCoord wc, final ItemStack ist, final EntityPlayer player) {
-        final TileWiring tw = (TileWiring)CoreLib.getTileEntity((IBlockAccess)world, wc, (Class)TileWiring.class);
+        final TileWiring tw = (TileWiring)CoreLib.getTileEntity(world, wc, (Class)TileWiring.class);
         if (tw == null) {
             return false;
         }

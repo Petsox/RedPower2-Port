@@ -25,7 +25,7 @@ import com.eloraam.redpower.core.*;
 
 public class ItemMicro extends ItemBlock
 {
-    private IMicroPlacement[] placers;
+    private final IMicroPlacement[] placers;
     
     public ItemMicro(final Block block) {
         super(block);
@@ -35,7 +35,7 @@ public class ItemMicro extends ItemBlock
     }
     
     private boolean useCover(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side) {
-        MovingObjectPosition pos = CoreLib.retraceBlock(world, (EntityLivingBase)player, x, y, z);
+        MovingObjectPosition pos = CoreLib.retraceBlock(world, player, x, y, z);
         if (pos == null) {
             return false;
         }
@@ -47,8 +47,8 @@ public class ItemMicro extends ItemBlock
             return false;
         }
         final Block oldBlock = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
-        if (world.canPlaceEntityOnSide(oldBlock, pos.blockX, pos.blockY, pos.blockZ, false, side, (Entity)player, ist)) {
-            world.setBlock(pos.blockX, pos.blockY, pos.blockZ, (Block)RedPowerBase.blockMicro, 0, 3);
+        if (world.canPlaceEntityOnSide(oldBlock, pos.blockX, pos.blockY, pos.blockZ, false, side, player, ist)) {
+            world.setBlock(pos.blockX, pos.blockY, pos.blockZ, RedPowerBase.blockMicro, 0, 3);
         }
         final TileEntity te = world.getTileEntity(pos.blockX, pos.blockY, pos.blockZ);
         final Block newBlock = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
@@ -58,18 +58,18 @@ public class ItemMicro extends ItemBlock
         }
         final ICoverable icv = (ICoverable)te;
         final PlayerInteractEvent event = new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, pos.blockX, pos.blockY, pos.blockZ, side, world);
-        if (!MinecraftForge.EVENT_BUS.post((Event)event)) {
+        if (!MinecraftForge.EVENT_BUS.post(event)) {
             final NBTTagCompound nbt = new NBTTagCompound();
             te.writeToNBT(nbt);
             final BlockSnapshot snapshot = new BlockSnapshot(world, pos.blockX, pos.blockY, pos.blockZ, newBlock, newMeta, nbt);
             final BlockEvent.PlaceEvent plvt = new BlockEvent.PlaceEvent(snapshot, oldBlock, player);
-            if (!MinecraftForge.EVENT_BUS.post((Event)plvt)) {
+            if (!MinecraftForge.EVENT_BUS.post(plvt)) {
                 if (icv.tryAddCover(pos.subHit, CoverLib.damageToCoverValue(ist.getItemDamage()))) {
                     if (!player.capabilities.isCreativeMode) {
                         --ist.stackSize;
                     }
                     CoreLib.placeNoise(world, pos.blockX, pos.blockY, pos.blockZ, CoverLib.getBlock(ist.getItemDamage() & 0xFF));
-                    RedPowerLib.updateIndirectNeighbors(world, pos.blockX, pos.blockY, pos.blockZ, (Block)RedPowerBase.blockMicro);
+                    RedPowerLib.updateIndirectNeighbors(world, pos.blockX, pos.blockY, pos.blockZ, RedPowerBase.blockMicro);
                     world.markBlockForUpdate(pos.blockX, pos.blockY, pos.blockZ);
                     return true;
                 }
@@ -234,31 +234,31 @@ public class ItemMicro extends ItemBlock
                 for (int i = 0; i < 255; ++i) {
                     final String stub = CoverLib.getName(i);
                     if (stub != null) {
-                        list.add(new ItemStack((Block)RedPowerBase.blockMicro, 1, i));
+                        list.add(new ItemStack(RedPowerBase.blockMicro, 1, i));
                     }
                 }
                 for (int i = 1; i < 255; ++i) {
                     final String stub = this.getMicroName(i);
                     if (stub != null) {
-                        list.add(new ItemStack((Block)RedPowerBase.blockMicro, 1, i << 8));
+                        list.add(new ItemStack(RedPowerBase.blockMicro, 1, i << 8));
                     }
                 }
                 for (int i = 1; i < 255; ++i) {
                     final String stub = this.getMicroName(i);
                     if (stub != null) {
-                        list.add(new ItemStack((Block)RedPowerBase.blockMicro, 1, i << 8 | 0x2));
+                        list.add(new ItemStack(RedPowerBase.blockMicro, 1, i << 8 | 0x2));
                     }
                 }
                 for (int i = 1; i < 255; ++i) {
                     final String stub = this.getMicroName(i);
                     if (stub != null) {
-                        list.add(new ItemStack((Block)RedPowerBase.blockMicro, 1, i << 8 | 0x17));
+                        list.add(new ItemStack(RedPowerBase.blockMicro, 1, i << 8 | 0x17));
                     }
                 }
                 for (int i = 1; i < 255; ++i) {
                     final String stub = this.getMicroName(i);
                     if (stub != null) {
-                        list.add(new ItemStack((Block)RedPowerBase.blockMicro, 1, i << 8 | 0x1A));
+                        list.add(new ItemStack(RedPowerBase.blockMicro, 1, i << 8 | 0x1A));
                     }
                 }
             }

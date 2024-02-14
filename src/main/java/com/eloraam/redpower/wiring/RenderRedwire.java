@@ -30,13 +30,13 @@ public class RenderRedwire extends RenderWiring
         GL11.glDisable(2896);
         final Tessellator tess = Tessellator.instance;
         this.context.bindBlockTexture();
-        this.context.setBrightness(this.getMixedBrightness((TileEntity)wiring));
+        this.context.setBrightness(this.getMixedBrightness(wiring));
         this.context.setTexFlags(55);
         this.context.setPos(x, y, z);
         tess.startDrawingQuads();
         if (wiring.CoverSides > 0) {
             this.context.setTint(1.0f, 1.0f, 1.0f);
-            this.context.readGlobalLights((IBlockAccess)world, wiring.xCoord, wiring.yCoord, wiring.zCoord);
+            this.context.readGlobalLights(world, wiring.xCoord, wiring.yCoord, wiring.zCoord);
             this.renderCovers(wiring.CoverSides, wiring.Covers);
             this.context.forceFlat = false;
             this.context.lockTexture = false;
@@ -180,7 +180,7 @@ public class RenderRedwire extends RenderWiring
                     }
                 }
                 this.context.setIcon(CoverRenderer.coverIcons[meta]);
-                this.context.setSize(0.0, 0.0, (double)(0.5f - th), 1.0, 1.0, (double)(0.5f + th));
+                this.context.setSize(0.0, 0.0, 0.5f - th, 1.0, 1.0, 0.5f + th);
                 this.context.calcBounds();
                 tess.startDrawingQuads();
                 this.context.useNormal = true;
@@ -210,15 +210,10 @@ public class RenderRedwire extends RenderWiring
                             break;
                         }
                         case 3: {
-                            switch (meta) {
-                                case 0: {
-                                    this.setSideIcon(RedPowerWiring.bundledTop, RedPowerWiring.bundledFace, RedPowerWiring.bundledTop);
-                                    break;
-                                }
-                                default: {
-                                    this.setSideIcon(RedPowerWiring.bundledColTop[meta - 1], RedPowerWiring.bundledColFace[meta - 1], RedPowerWiring.bundledTop);
-                                    break;
-                                }
+                            if (meta == 0) {
+                                this.setSideIcon(RedPowerWiring.bundledTop, RedPowerWiring.bundledFace, RedPowerWiring.bundledTop);
+                            } else {
+                                this.setSideIcon(RedPowerWiring.bundledColTop[meta - 1], RedPowerWiring.bundledColFace[meta - 1], RedPowerWiring.bundledTop);
                             }
                             this.setWireSize(0.375f, 0.25f);
                             break;
@@ -296,7 +291,7 @@ public class RenderRedwire extends RenderWiring
                     }
                 }
                 this.context.setIcon(CoverRenderer.coverIcons[meta]);
-                this.context.setSize((double)(0.5f - th), (double)(0.5f - th), (double)(0.5f - th), (double)(0.5f + th), (double)(0.5f + th), (double)(0.5f + th));
+                this.context.setSize(0.5f - th, 0.5f - th, 0.5f - th, 0.5f + th, 0.5f + th, 0.5f + th);
                 this.context.calcBounds();
                 tess.startDrawingQuads();
                 this.context.useNormal = true;
@@ -346,7 +341,7 @@ public class RenderRedwire extends RenderWiring
                     }
                 }
                 this.context.setIcon(CoverRenderer.coverIcons[meta]);
-                this.context.setSize((double)(0.5f - th), 0.0, (double)(0.5f - th), (double)(0.5f + th), 1.0, (double)(0.5f + th));
+                this.context.setSize(0.5f - th, 0.0, 0.5f - th, 0.5f + th, 1.0, 0.5f + th);
                 this.context.calcBounds();
                 tess.startDrawingQuads();
                 this.context.useNormal = true;
@@ -398,10 +393,10 @@ public class RenderRedwire extends RenderWiring
                 this.context.setIcon(CoverRenderer.coverIcons[meta]);
                 tess.startDrawingQuads();
                 this.context.useNormal = true;
-                this.context.renderBox(63, 0.0, 0.0, (double)(0.5f - th), 0.25, 1.0, (double)(0.5f + th));
-                this.context.renderBox(63, 0.75, 0.0, (double)(0.5f - th), 1.0, 1.0, (double)(0.5f + th));
-                this.context.renderBox(15, 0.25, 0.0, (double)(0.5f - th), 0.75, 0.25, (double)(0.5f + th));
-                this.context.renderBox(15, 0.25, 0.75, (double)(0.5f - th), 0.75, 1.0, (double)(0.5f + th));
+                this.context.renderBox(63, 0.0, 0.0, 0.5f - th, 0.25, 1.0, 0.5f + th);
+                this.context.renderBox(63, 0.75, 0.0, 0.5f - th, 1.0, 1.0, 0.5f + th);
+                this.context.renderBox(15, 0.25, 0.0, 0.5f - th, 0.75, 0.25, 0.5f + th);
+                this.context.renderBox(15, 0.25, 0.75, 0.5f - th, 0.75, 1.0, 0.5f + th);
                 this.context.useNormal = false;
                 tess.draw();
             }
@@ -427,15 +422,15 @@ public class RenderRedwire extends RenderWiring
                     }
                 }
                 this.context.setIcon(CoverRenderer.coverIcons[meta]);
-                this.context.setSize((double)(0.5f - th), 0.125, (double)(0.5f - th), (double)(0.5f + th), 0.875, (double)(0.5f + th));
+                this.context.setSize(0.5f - th, 0.125, 0.5f - th, 0.5f + th, 0.875, 0.5f + th);
                 this.context.calcBounds();
                 tess.startDrawingQuads();
                 this.context.useNormal = true;
                 this.context.renderFaces(63);
-                this.context.setSize((double)(0.45f - th), 0.0, (double)(0.45f - th), (double)(0.55f + th), 0.125, (double)(0.55f + th));
+                this.context.setSize(0.45f - th, 0.0, 0.45f - th, 0.55f + th, 0.125, 0.55f + th);
                 this.context.calcBounds();
                 this.context.renderFaces(63);
-                this.context.setSize((double)(0.45f - th), 0.875, (double)(0.45f - th), (double)(0.55f + th), 1.0, (double)(0.55f + th));
+                this.context.setSize(0.45f - th, 0.875, 0.45f - th, 0.55f + th, 1.0, 0.55f + th);
                 this.context.calcBounds();
                 this.context.renderFaces(63);
                 this.context.useNormal = false;

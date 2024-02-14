@@ -17,9 +17,9 @@ import net.minecraft.item.*;
 
 public class BlockCustomLeaves extends BlockLeaves
 {
-    private String opaque;
+    private final String opaque;
     private IIcon opaqueIcon;
-    private String transparent;
+    private final String transparent;
     private IIcon transparentIcon;
     
     public BlockCustomLeaves(final String opaque, final String transparent) {
@@ -93,7 +93,7 @@ public class BlockCustomLeaves extends BlockLeaves
                             if (!wch.containsKey(wcp)) {
                                 final Block block = world.getBlock(wcp.x, wcp.y, wcp.z);
                                 if (block == RedPowerWorld.blockLogs) {
-                                    world.setBlock(x, y, z, (Block)RedPowerWorld.blockLeaves, md & 0xFFFFFFF7, 3);
+                                    world.setBlock(x, y, z, RedPowerWorld.blockLeaves, md & 0xFFFFFFF7, 3);
                                     return;
                                 }
                                 if (stp != 0 && block == this) {
@@ -111,7 +111,7 @@ public class BlockCustomLeaves extends BlockLeaves
     }
     
     public Item getItemDropped(final int i, final Random random, final int j) {
-        return Item.getItemFromBlock((Block)RedPowerWorld.blockPlants);
+        return Item.getItemFromBlock(RedPowerWorld.blockPlants);
     }
     
     public int quantityDropped(final int i, final int fortune, final Random random) {

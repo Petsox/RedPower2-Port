@@ -28,7 +28,7 @@ public class RenderAlloyFurnace extends RenderCustomBlock
     
     @Override
     public void randomDisplayTick(final World world, final int x, final int y, final int z, final Random random) {
-        final TileAlloyFurnace tb = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileAlloyFurnace.class);
+        final TileAlloyFurnace tb = CoreLib.getTileEntity(world, x, y, z, TileAlloyFurnace.class);
         if (tb != null && tb.Active) {
             final float f = x + 0.5f;
             final float f2 = y + 0.0f + random.nextFloat() * 6.0f / 16.0f;
@@ -37,23 +37,23 @@ public class RenderAlloyFurnace extends RenderCustomBlock
             final float f5 = random.nextFloat() * 0.6f - 0.3f;
             switch (tb.Rotation) {
                 case 0: {
-                    world.spawnParticle("smoke", (double)(f + f5), (double)f2, (double)(f3 - f4), 0.0, 0.0, 0.0);
-                    world.spawnParticle("flame", (double)(f + f5), (double)f2, (double)(f3 - f4), 0.0, 0.0, 0.0);
+                    world.spawnParticle("smoke", f + f5, f2, f3 - f4, 0.0, 0.0, 0.0);
+                    world.spawnParticle("flame", f + f5, f2, f3 - f4, 0.0, 0.0, 0.0);
                     break;
                 }
                 case 1: {
-                    world.spawnParticle("smoke", (double)(f + f4), (double)f2, (double)(f3 + f5), 0.0, 0.0, 0.0);
-                    world.spawnParticle("flame", (double)(f + f4), (double)f2, (double)(f3 + f5), 0.0, 0.0, 0.0);
+                    world.spawnParticle("smoke", f + f4, f2, f3 + f5, 0.0, 0.0, 0.0);
+                    world.spawnParticle("flame", f + f4, f2, f3 + f5, 0.0, 0.0, 0.0);
                     break;
                 }
                 case 2: {
-                    world.spawnParticle("smoke", (double)(f + f5), (double)f2, (double)(f3 + f4), 0.0, 0.0, 0.0);
-                    world.spawnParticle("flame", (double)(f + f5), (double)f2, (double)(f3 + f4), 0.0, 0.0, 0.0);
+                    world.spawnParticle("smoke", f + f5, f2, f3 + f4, 0.0, 0.0, 0.0);
+                    world.spawnParticle("flame", f + f5, f2, f3 + f4, 0.0, 0.0, 0.0);
                     break;
                 }
                 case 3: {
-                    world.spawnParticle("smoke", (double)(f - f4), (double)f2, (double)(f3 + f5), 0.0, 0.0, 0.0);
-                    world.spawnParticle("flame", (double)(f - f4), (double)f2, (double)(f3 + f5), 0.0, 0.0, 0.0);
+                    world.spawnParticle("smoke", f - f4, f2, f3 + f5, 0.0, 0.0, 0.0);
+                    world.spawnParticle("flame", f - f4, f2, f3 + f5, 0.0, 0.0, 0.0);
                     break;
                 }
             }
@@ -69,7 +69,7 @@ public class RenderAlloyFurnace extends RenderCustomBlock
         this.context.setDefaults();
         this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
         this.context.setPos(x, y, z);
-        this.context.readGlobalLights((IBlockAccess)world, alloyFurnace.xCoord, alloyFurnace.yCoord, alloyFurnace.zCoord);
+        this.context.readGlobalLights(world, alloyFurnace.xCoord, alloyFurnace.yCoord, alloyFurnace.zCoord);
         this.context.setIcon(RedPowerBase.alloyFurnaceVert, RedPowerBase.alloyFurnaceVert, alloyFurnace.Active ? RedPowerBase.alloyFurnaceFrontOn : RedPowerBase.alloyFurnaceFront, RedPowerBase.alloyFurnaceSide, RedPowerBase.alloyFurnaceSide, RedPowerBase.alloyFurnaceSide);
         this.context.setSize(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
         this.context.setupBox();

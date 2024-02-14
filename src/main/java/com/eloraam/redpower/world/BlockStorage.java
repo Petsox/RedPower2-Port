@@ -15,7 +15,7 @@ import net.minecraft.item.*;
 
 public class BlockStorage extends Block
 {
-    private IIcon[] icons;
+    private final IIcon[] icons;
     
     public BlockStorage() {
         super(Material.iron);
@@ -44,7 +44,7 @@ public class BlockStorage extends Block
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(final Item item, final CreativeTabs tab, final List items) {
         for (int i = 0; i < 8; ++i) {
-            items.add(new ItemStack((Block)this, 1, i));
+            items.add(new ItemStack(this, 1, i));
         }
     }
 }

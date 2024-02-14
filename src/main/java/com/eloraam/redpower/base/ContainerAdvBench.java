@@ -15,7 +15,7 @@ import net.minecraft.nbt.*;
 public class ContainerAdvBench extends Container implements IHandleGuiEvent
 {
     SlotCraftRefill slotCraft;
-    private TileAdvBench tileAdvBench;
+    private final TileAdvBench tileAdvBench;
     public InventorySubCraft craftMatrix;
     public IInventory craftResult;
     public InventoryCrafting fakeInv;
@@ -23,31 +23,31 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
     
     public ContainerAdvBench(final InventoryPlayer inv, final TileAdvBench td) {
         this.tileAdvBench = td;
-        this.craftMatrix = new InventorySubCraft(this, (IInventory)td);
-        this.craftResult = (IInventory)new InventoryCraftResult();
+        this.craftMatrix = new InventorySubCraft(this, td);
+        this.craftResult = new InventoryCraftResult();
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                this.addSlotToContainer(new Slot((IInventory)this.craftMatrix, j + i * 3, 48 + j * 18, 18 + i * 18));
+                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 3, 48 + j * 18, 18 + i * 18));
             }
         }
-        this.addSlotToContainer((Slot)new SlotPlan((IInventory)new InventorySubUpdate((IInventory)td, 9, 1), 0, 17, 36));
-        this.addSlotToContainer((Slot)(this.slotCraft = new SlotCraftRefill(inv.player, (IInventory)this.craftMatrix, this.craftResult, (IInventory)td, this, 0, 143, 36)));
-        final InventorySubUpdate ingrid = new InventorySubUpdate((IInventory)td, 10, 18);
+        this.addSlotToContainer(new SlotPlan(new InventorySubUpdate(td, 9, 1), 0, 17, 36));
+        this.addSlotToContainer(this.slotCraft = new SlotCraftRefill(inv.player, this.craftMatrix, this.craftResult, td, this, 0, 143, 36));
+        final InventorySubUpdate ingrid = new InventorySubUpdate(td, 10, 18);
         for (int k = 0; k < 2; ++k) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlotToContainer(new Slot((IInventory)ingrid, l + k * 9, 8 + l * 18, 90 + k * 18));
+                this.addSlotToContainer(new Slot(ingrid, l + k * 9, 8 + l * 18, 90 + k * 18));
             }
         }
         for (int k = 0; k < 3; ++k) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlotToContainer(new Slot((IInventory)inv, l + k * 9 + 9, 8 + l * 18, 140 + k * 18));
+                this.addSlotToContainer(new Slot(inv, l + k * 9 + 9, 8 + l * 18, 140 + k * 18));
             }
         }
         for (int k = 0; k < 9; ++k) {
-            this.addSlotToContainer(new Slot((IInventory)inv, k, 8 + k * 18, 198));
+            this.addSlotToContainer(new Slot(inv, k, 8 + k * 18, 198));
         }
-        this.fakeInv = new InventoryCrafting((Container)new ContainerNull(), 3, 3);
-        this.onCraftMatrixChanged((IInventory)this.craftMatrix);
+        this.fakeInv = new InventoryCrafting(new ContainerNull(), 3, 3);
+        this.onCraftMatrixChanged(this.craftMatrix);
     }
     
     public void putStackInSlot(final int num, final ItemStack ist) {
@@ -80,7 +80,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
     
     public ItemStack[] getPlanItems() {
         final ItemStack plan = this.tileAdvBench.getStackInSlot(9);
-        return (ItemStack[])((plan == null) ? null : getShadowItems(plan));
+        return (plan == null) ? null : getShadowItems(plan);
     }
     
     public int getSatisfyMask() {
@@ -156,7 +156,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
             this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.fakeInv, this.tileAdvBench.getWorldObj()));
         }
         else {
-            this.craftResult.setInventorySlotContents(0, (ItemStack)null);
+            this.craftResult.setInventorySlotContents(0, null);
         }
     }
 
@@ -185,7 +185,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
             }
 
             if (itemstack1.stackSize == 0) {
-                slot.putStack((ItemStack) null);
+                slot.putStack(null);
             } else {
                 slot.onSlotChanged();
             }
@@ -296,7 +296,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
                         plan.stackTagCompound = new NBTTagCompound();
                         final NBTTagCompound result = new NBTTagCompound();
                         this.craftResult.getStackInSlot(0).writeToNBT(result);
-                        plan.stackTagCompound.setTag("result", (NBTBase)result);
+                        plan.stackTagCompound.setTag("result", result);
                         final NBTTagList requires = new NBTTagList();
                         for (int i = 0; i < 9; ++i) {
                             final ItemStack is1 = this.craftMatrix.getStackInSlot(i);
@@ -305,10 +305,10 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
                                 final NBTTagCompound item = new NBTTagCompound();
                                 ist.writeToNBT(item);
                                 item.setByte("Slot", (byte)i);
-                                requires.appendTag((NBTBase)item);
+                                requires.appendTag(item);
                             }
                         }
-                        plan.stackTagCompound.setTag("requires", (NBTBase)requires);
+                        plan.stackTagCompound.setTag("requires", requires);
                         this.tileAdvBench.setInventorySlotContents(9, plan);
                     }
                 }
@@ -357,7 +357,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
         public ItemStack decrStackSize(final int idx, final int num) {
             final ItemStack tr = this.parent.decrStackSize(idx + this.start, num);
             if (tr != null) {
-                ContainerAdvBench.this.onCraftMatrixChanged((IInventory)this);
+                ContainerAdvBench.this.onCraftMatrixChanged(this);
             }
             return tr;
         }
@@ -368,7 +368,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
         
         public void setInventorySlotContents(final int idx, final ItemStack ist) {
             this.parent.setInventorySlotContents(idx + this.start, ist);
-            ContainerAdvBench.this.onCraftMatrixChanged((IInventory)this);
+            ContainerAdvBench.this.onCraftMatrixChanged(this);
         }
         
         public String getInventoryName() {
@@ -380,7 +380,7 @@ public class ContainerAdvBench extends Container implements IHandleGuiEvent
         }
         
         public void markDirty() {
-            ContainerAdvBench.this.onCraftMatrixChanged((IInventory)this);
+            ContainerAdvBench.this.onCraftMatrixChanged(this);
             this.parent.markDirty();
         }
         

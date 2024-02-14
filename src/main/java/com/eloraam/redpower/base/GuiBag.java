@@ -17,7 +17,7 @@ public class GuiBag extends GuiContainer
     private static ResourceLocation res;
     
     public GuiBag(final InventoryPlayer pli, final IInventory td) {
-        super((Container)new ContainerBag(pli, td, (ItemStack)null));
+        super(new ContainerBag(pli, td, null));
         super.ySize = 167;
     }
     
@@ -27,8 +27,8 @@ public class GuiBag extends GuiContainer
     }
     
     protected void drawGuiContainerForegroundLayer(final int p1, final int p2) {
-        super.fontRendererObj.drawString(I18n.format("item.rpBag.name", new Object[0]), 8, 6, 4210752);
-        super.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, super.ySize - 94 + 2, 4210752);
+        super.fontRendererObj.drawString(I18n.format("item.rpBag.name"), 8, 6, 4210752);
+        super.fontRendererObj.drawString(I18n.format("container.inventory"), 8, super.ySize - 94 + 2, 4210752);
     }
     
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY) {

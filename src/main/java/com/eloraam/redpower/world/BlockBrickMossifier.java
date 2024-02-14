@@ -50,7 +50,7 @@ public class BlockBrickMossifier extends BlockStoneBrick
             }
         }
         if (lava && water && random.nextInt(2) == 0) {
-            world.setBlock(i, j, k, (Block)this, 2, 3);
+            world.setBlock(i, j, k, this, 2, 3);
         }
     }
     
@@ -88,7 +88,7 @@ public class BlockBrickMossifier extends BlockStoneBrick
                         }
                     }
                     if (wet && random.nextInt(2) == 0) {
-                        world.setBlock(wc2.x, wc2.y, wc2.z, rpb, (int)rpmd, 3);
+                        world.setBlock(wc2.x, wc2.y, wc2.z, rpb, rpmd, 3);
                     }
                 }
             }

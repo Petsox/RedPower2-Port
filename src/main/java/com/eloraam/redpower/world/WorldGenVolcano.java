@@ -12,13 +12,13 @@ import net.minecraft.block.*;
 
 public class WorldGenVolcano extends WorldGenCustomOre
 {
-    private LinkedList<ChunkCoordinates> fillStack;
-    private Map<ChunkCoordIntPair, Integer> fillStackTest;
+    private final LinkedList<ChunkCoordinates> fillStack;
+    private final Map<ChunkCoordIntPair, Integer> fillStackTest;
     
     public WorldGenVolcano(final Block block, final int meta, final int num) {
         super(block, meta, num);
-        this.fillStack = new LinkedList<ChunkCoordinates>();
-        this.fillStackTest = new HashMap<ChunkCoordIntPair, Integer>();
+        this.fillStack = new LinkedList<>();
+        this.fillStackTest = new HashMap<>();
     }
     
     private void addBlock(final int x, final int y, final int z, final int p) {
@@ -64,7 +64,7 @@ public class WorldGenVolcano extends WorldGenCustomOre
         for (swh = world.getHeightValue(x, z); swh > 0 && this.canReplace(world, x, swh - 1, z); --swh) {}
         int yTop;
         for (yTop = y; yTop < swh; ++yTop) {
-            world.setBlock(x, yTop, z, (Block)Blocks.flowing_lava);
+            world.setBlock(x, yTop, z, Blocks.flowing_lava);
             world.setBlock(x - 1, yTop, z, super.minableBlock, super.minableBlockMeta, 2);
             world.setBlock(x + 1, yTop, z, super.minableBlock, super.minableBlockMeta, 2);
             world.setBlock(x, yTop, z - 1, super.minableBlock, super.minableBlockMeta, 2);

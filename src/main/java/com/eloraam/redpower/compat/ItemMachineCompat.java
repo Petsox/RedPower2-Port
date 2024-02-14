@@ -20,7 +20,7 @@ public class ItemMachineCompat extends ItemExtended
     
     public boolean onItemUse(final ItemStack stack, final EntityPlayer player, final World world, int x, int y, int z, int side, final float xp, final float yp, final float zp) {
         final Block bid = world.getBlock(x, y, z);
-        final Block bl = Block.getBlockFromItem((Item)this);
+        final Block bl = Block.getBlockFromItem(this);
         if (bid == Blocks.snow) {
             side = 1;
         }
@@ -61,15 +61,15 @@ public class ItemMachineCompat extends ItemExtended
         if (y >= world.getHeight() - 1) {
             return false;
         }
-        if (!world.canPlaceEntityOnSide(bl, x, y, z, false, side, (Entity)player, stack)) {
+        if (!world.canPlaceEntityOnSide(bl, x, y, z, false, side, player, stack)) {
             return false;
         }
         if (world.setBlock(x, y, z, bl, this.getMetadata(stack.getItemDamage()), 3)) {
             if (world.getBlock(x, y, z) == bl) {
                 final BlockExtended bex = (BlockExtended)bl;
-                bex.onBlockPlacedBy(world, x, y, z, side, (EntityLivingBase)player, stack);
+                bex.onBlockPlacedBy(world, x, y, z, side, player, stack);
             }
-            world.playSoundEffect((double)(x + 0.5f), (double)(y + 0.5f), (double)(z + 0.5f), bl.stepSound.func_150496_b(), (bl.stepSound.getVolume() + 1.0f) / 2.0f, bl.stepSound.getPitch() * 0.8f);
+            world.playSoundEffect(x + 0.5f, y + 0.5f, z + 0.5f, bl.stepSound.func_150496_b(), (bl.stepSound.getVolume() + 1.0f) / 2.0f, bl.stepSound.getPitch() * 0.8f);
             --stack.stackSize;
         }
         return true;

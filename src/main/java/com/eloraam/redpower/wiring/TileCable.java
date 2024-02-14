@@ -38,7 +38,7 @@ public class TileCable extends TileWiring implements IRedPowerWiring
     
     public void updateCurrentStrength() {
         for (int ch = 0; ch < 16; ++ch) {
-            this.PowerState[ch] = (short)RedPowerLib.updateBlockCurrentStrength(super.worldObj, (IRedPowerWiring)this, super.xCoord, super.yCoord, super.zCoord, 1073741823, 2 << ch);
+            this.PowerState[ch] = (short)RedPowerLib.updateBlockCurrentStrength(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord, 1073741823, 2 << ch);
         }
         CoreLib.markBlockDirty(super.worldObj, super.xCoord, super.yCoord, super.zCoord);
     }

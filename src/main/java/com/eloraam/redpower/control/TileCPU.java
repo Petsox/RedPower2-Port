@@ -49,7 +49,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
     private boolean rbTimeout;
     private boolean waiTimeout;
     private IRedbusConnectable rbCache;
-    private TileBackplane[] backplane;
+    private final TileBackplane[] backplane;
     private int rtcTicks;
     int sliceCycles;
     int diskAddr;
@@ -171,13 +171,13 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             return false;
         }
         if (!this.worldObj.isRemote) {
-            player.openGui((Object)RedPowerControl.instance, 2, super.worldObj, super.xCoord, super.yCoord, super.zCoord);
+            player.openGui(RedPowerControl.instance, 2, super.worldObj, super.xCoord, super.yCoord, super.zCoord);
         }
         return true;
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerControl.blockPeripheral;
+        return RedPowerControl.blockPeripheral;
     }
     
     @Override
@@ -198,7 +198,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             }
             else {
                 wc.step(CoreLib.rotToSide(this.Rotation));
-                final TileBackplane tbp = CoreLib.getTileEntity((IBlockAccess)super.worldObj, wc, TileBackplane.class);
+                final TileBackplane tbp = CoreLib.getTileEntity(super.worldObj, wc, TileBackplane.class);
                 if ((this.backplane[i] = tbp) == null) {
                     bpok = false;
                 }
@@ -239,7 +239,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             return this.readOnlyMem(addr);
         }
         if (this.rbCache == null) {
-            this.rbCache = RedbusLib.getAddr((IBlockAccess)super.worldObj, new WorldCoord(this), this.mmuRBA);
+            this.rbCache = RedbusLib.getAddr(super.worldObj, new WorldCoord(this), this.mmuRBA);
         }
         if (this.rbCache == null) {
             this.rbTimeout = true;
@@ -265,7 +265,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
     public void writeMem(final int addr, final int val) {
         if (this.mmuEnRB && addr >= this.mmuRBB && addr < this.mmuRBB + 256) {
             if (this.rbCache == null) {
-                this.rbCache = RedbusLib.getAddr((IBlockAccess)super.worldObj, new WorldCoord(this), this.mmuRBA);
+                this.rbCache = RedbusLib.getAddr(super.worldObj, new WorldCoord(this), this.mmuRBA);
             }
             if (this.rbCache == null) {
                 this.rbTimeout = true;
@@ -710,7 +710,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
                 v2 = (short)val * (short)this.regA;
             }
             else {
-                v2 = val * this.regA;
+                v2 = (long) val * this.regA;
             }
             this.regA = (int)(v2 & 0xFFFFL);
             this.regD = (int)(v2 >> 16 & 0xFFFFL);
@@ -760,7 +760,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             this.flagN = (q < 0);
         }
         else {
-            long q2 = this.regD << 16 | this.regA;
+            long q2 = (long) this.regD << 16 | this.regA;
             this.regD = (int)(q2 % val & 0xFFFFL);
             q2 /= val;
             this.regA = (int)(q2 & 0xFFFFL);
@@ -1940,7 +1940,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
                 this.sliceCycles = -1;
                 if (super.worldObj.isAirBlock(super.xCoord, super.yCoord + 1, super.zCoord)) {
                     super.worldObj.playSoundEffect(super.xCoord + 0.5, super.yCoord + 0.5, super.zCoord + 0.5, "fire.ignite", 1.0f, super.worldObj.rand.nextFloat() * 0.4f + 0.8f);
-                    super.worldObj.setBlock(super.xCoord, super.yCoord + 1, super.zCoord, (Block)Blocks.fire, 0, 3);
+                    super.worldObj.setBlock(super.xCoord, super.yCoord + 1, super.zCoord, Blocks.fire, 0, 3);
                     break;
                 }
                 break;

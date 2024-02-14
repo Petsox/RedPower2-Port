@@ -30,7 +30,7 @@ public class TileRAM extends TileBackplane
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerControl.blockBackplane;
+        return RedPowerControl.blockBackplane;
     }
     
     public int getExtendedID() {
@@ -38,16 +38,16 @@ public class TileRAM extends TileBackplane
     }
     
     public void addHarvestContents(final List<ItemStack> ist) {
-        ist.add(new ItemStack((Block)RedPowerControl.blockBackplane, 1, 0));
-        ist.add(new ItemStack((Block)RedPowerControl.blockBackplane, 1, 1));
+        ist.add(new ItemStack(RedPowerControl.blockBackplane, 1, 0));
+        ist.add(new ItemStack(RedPowerControl.blockBackplane, 1, 1));
     }
     
     public void onHarvestPart(final EntityPlayer player, final int part, final boolean willHarvest) {
         if (willHarvest) {
-            CoreLib.dropItem(super.worldObj, super.xCoord, super.yCoord, super.zCoord, new ItemStack((Block)RedPowerControl.blockBackplane, 1, 1));
+            CoreLib.dropItem(super.worldObj, super.xCoord, super.yCoord, super.zCoord, new ItemStack(RedPowerControl.blockBackplane, 1, 1));
         }
-        super.worldObj.setBlock(super.xCoord, super.yCoord, super.zCoord, (Block)RedPowerControl.blockBackplane);
-        final TileBackplane tb = CoreLib.getTileEntity((IBlockAccess)super.worldObj, super.xCoord, super.yCoord, super.zCoord, TileBackplane.class);
+        super.worldObj.setBlock(super.xCoord, super.yCoord, super.zCoord, RedPowerControl.blockBackplane);
+        final TileBackplane tb = CoreLib.getTileEntity(super.worldObj, super.xCoord, super.yCoord, super.zCoord, TileBackplane.class);
         if (tb != null) {
             tb.Rotation = this.Rotation;
         }

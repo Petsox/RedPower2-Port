@@ -16,51 +16,35 @@ public class TileBluewire extends TileWiring implements IBluePowerConnectable
     public TileBluewire() {
         this.cond = new BluePowerConductor() {
             public TileEntity getParent() {
-                return (TileEntity)TileBluewire.this;
+                return TileBluewire.this;
             }
             
             public double getInvCap() {
-                switch (TileBluewire.this.Metadata) {
-                    case 0: {
-                        return 8.0;
-                    }
-                    default: {
-                        return 800.0;
-                    }
+                if (TileBluewire.this.Metadata == 0) {
+                    return 8.0;
                 }
+                return 800.0;
             }
             
             public double getResistance() {
-                switch (TileBluewire.this.Metadata) {
-                    case 0: {
-                        return 0.01;
-                    }
-                    default: {
-                        return 1.0;
-                    }
+                if (TileBluewire.this.Metadata == 0) {
+                    return 0.01;
                 }
+                return 1.0;
             }
             
             public double getIndScale() {
-                switch (TileBluewire.this.Metadata) {
-                    case 0: {
-                        return 0.07;
-                    }
-                    default: {
-                        return 7.0E-4;
-                    }
+                if (TileBluewire.this.Metadata == 0) {
+                    return 0.07;
                 }
+                return 7.0E-4;
             }
             
             public double getCondParallel() {
-                switch (TileBluewire.this.Metadata) {
-                    case 0: {
-                        return 0.5;
-                    }
-                    default: {
-                        return 0.005;
-                    }
+                if (TileBluewire.this.Metadata == 0) {
+                    return 0.5;
                 }
+                return 0.005;
             }
         };
     }
@@ -110,10 +94,10 @@ public class TileBluewire extends TileWiring implements IBluePowerConnectable
         if (super.ConMask >= 0) {
             return super.ConMask;
         }
-        super.ConMask = RedPowerLib.getConnections((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
+        super.ConMask = RedPowerLib.getConnections(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
         if (super.EConMask < 0) {
-            super.EConMask = RedPowerLib.getExtConnections((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
-            super.EConEMask = RedPowerLib.getExtConnectionExtras((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
+            super.EConMask = RedPowerLib.getExtConnections(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
+            super.EConEMask = RedPowerLib.getExtConnectionExtras(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
         }
         if (!this.worldObj.isRemote) {
             this.cond.recache(super.ConMask, super.EConMask);
@@ -126,10 +110,10 @@ public class TileBluewire extends TileWiring implements IBluePowerConnectable
         if (super.EConMask >= 0) {
             return super.EConMask;
         }
-        super.EConMask = RedPowerLib.getExtConnections((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
-        super.EConEMask = RedPowerLib.getExtConnectionExtras((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
+        super.EConMask = RedPowerLib.getExtConnections(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
+        super.EConEMask = RedPowerLib.getExtConnectionExtras(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
         if (super.ConMask < 0) {
-            super.ConMask = RedPowerLib.getConnections((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
+            super.ConMask = RedPowerLib.getConnections(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
         }
         if (!this.worldObj.isRemote) {
             this.cond.recache(super.ConMask, super.EConMask);
@@ -145,11 +129,11 @@ public class TileBluewire extends TileWiring implements IBluePowerConnectable
         if (!this.worldObj.isRemote) {
             if (super.ConMask < 0 || super.EConMask < 0) {
                 if (super.ConMask < 0) {
-                    super.ConMask = RedPowerLib.getConnections((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
+                    super.ConMask = RedPowerLib.getConnections(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
                 }
                 if (super.EConMask < 0) {
-                    super.EConMask = RedPowerLib.getExtConnections((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
-                    super.EConEMask = RedPowerLib.getExtConnectionExtras((IBlockAccess)super.worldObj, (IConnectable)this, super.xCoord, super.yCoord, super.zCoord);
+                    super.EConMask = RedPowerLib.getExtConnections(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
+                    super.EConEMask = RedPowerLib.getExtConnectionExtras(super.worldObj, this, super.xCoord, super.yCoord, super.zCoord);
                 }
                 this.cond.recache(super.ConMask, super.EConMask);
             }

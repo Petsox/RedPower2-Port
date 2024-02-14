@@ -17,8 +17,8 @@ public class WorldGenMarble extends WorldGenCustomOre
     
     public WorldGenMarble(final Block block, final int meta, final int num) {
         super(block, meta, num);
-        this.fillStack = new LinkedList<CoordSearchPath>();
-        this.fillStackTest = new HashSet<ChunkCoordinates>();
+        this.fillStack = new LinkedList<>();
+        this.fillStackTest = new HashSet<>();
     }
     
     private void addBlock(final int x, final int y, final int z, final int p) {

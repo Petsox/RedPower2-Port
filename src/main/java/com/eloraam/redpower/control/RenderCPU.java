@@ -18,7 +18,7 @@ import net.minecraft.item.*;
 @SideOnly(Side.CLIENT)
 public class RenderCPU extends RenderCustomBlock
 {
-    private RenderContext context;
+    private final RenderContext context;
     
     public RenderCPU(final Block block) {
         super(block);
@@ -34,7 +34,7 @@ public class RenderCPU extends RenderCustomBlock
         this.context.setDefaults();
         this.context.setLocalLights(0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f);
         this.context.setPos(x, y, z);
-        this.context.readGlobalLights((IBlockAccess)world, cpu.xCoord, cpu.yCoord, cpu.zCoord);
+        this.context.readGlobalLights(world, cpu.xCoord, cpu.yCoord, cpu.zCoord);
         this.context.setIcon(RedPowerControl.peripheralBottom, RedPowerControl.peripheralTop, RedPowerControl.peripheralSide, RedPowerControl.peripheralSide, RedPowerControl.cpuFront, RedPowerControl.peripheralBack);
         this.context.setSize(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
         this.context.setupBox();

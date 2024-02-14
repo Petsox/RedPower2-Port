@@ -37,22 +37,19 @@ public class ItemScrewdriver extends Item
         if (world.isRemote) {
             return false;
         }
-        boolean sec = false;
-        if (player != null && player.isSneaking()) {
-            sec = true;
-        }
+        boolean sec = player != null && player.isSneaking();
         final Block bid = world.getBlock(x, y, z);
         int md = world.getBlockMetadata(x, y, z);
         if (bid == Blocks.unpowered_repeater || bid == Blocks.powered_repeater) {
             world.setBlock(x, y, z, bid, (md & 0xC) | (md + 1 & 0x3), 3);
-            ist.damageItem(1, (EntityLivingBase)player);
+            ist.damageItem(1, player);
             return true;
         }
         if (bid == Blocks.dispenser) {
             md = ((md & 0x3) ^ md >> 2);
             md += 2;
             world.setBlock(x, y, z, bid, md, 3);
-            ist.damageItem(1, (EntityLivingBase)player);
+            ist.damageItem(1, player);
             return true;
         }
         if (bid == Blocks.piston || bid == Blocks.sticky_piston) {
@@ -60,21 +57,21 @@ public class ItemScrewdriver extends Item
                 md = 0;
             }
             world.setBlock(x, y, z, bid, md, 3);
-            ist.damageItem(1, (EntityLivingBase)player);
+            ist.damageItem(1, player);
             return true;
         }
         if (player.isSneaking()) {
-            final IRedbusConnectable irb = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, IRedbusConnectable.class);
+            final IRedbusConnectable irb = CoreLib.getTileEntity(world, x, y, z, IRedbusConnectable.class);
             if (irb != null && !(irb instanceof TileCPU)) {
-                player.openGui((Object)RedPowerBase.instance, 3, world, x, y, z);
+                player.openGui(RedPowerBase.instance, 3, world, x, y, z);
                 return true;
             }
         }
-        final IRotatable ir = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, IRotatable.class);
+        final IRotatable ir = CoreLib.getTileEntity(world, x, y, z, IRotatable.class);
         if (ir == null) {
             return false;
         }
-        final MovingObjectPosition mop = CoreLib.retraceBlock(world, (EntityLivingBase)player, x, y, z);
+        final MovingObjectPosition mop = CoreLib.retraceBlock(world, player, x, y, z);
         if (mop == null) {
             return false;
         }
@@ -87,13 +84,13 @@ public class ItemScrewdriver extends Item
             r = 0;
         }
         ir.setPartRotation(mop.subHit, sec, r);
-        ist.damageItem(1, (EntityLivingBase)player);
+        ist.damageItem(1, player);
         return true;
     }
     
     public Multimap getAttributeModifiers(final ItemStack stack) {
         final Multimap map = super.getAttributeModifiers(stack);
-        map.put((Object)SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), (Object)new AttributeModifier(ItemScrewdriver.field_111210_e, "Weapon modifier", 4.0, 0));
+        map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(ItemScrewdriver.field_111210_e, "Weapon modifier", 4.0, 0));
         return map;
     }
 }

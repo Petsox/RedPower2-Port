@@ -44,6 +44,6 @@ public class ItemAthame extends ItemSword
     }
     
     public Multimap getAttributeModifiers(final ItemStack stack) {
-        return (Multimap)HashMultimap.create();
+        return HashMultimap.create();
     }
 }

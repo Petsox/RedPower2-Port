@@ -61,7 +61,7 @@ public class ItemDisk extends Item
     
     public boolean onItemUseFirst(final ItemStack ist, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float xOffset, final float yOffset, final float zOffset) {
         if (!world.isRemote) {
-            final TileDiskDrive tdd = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileDiskDrive.class);
+            final TileDiskDrive tdd = CoreLib.getTileEntity(world, x, y, z, TileDiskDrive.class);
             if (tdd != null && tdd.setDisk(ist.copy())) {
                 ist.stackSize = 0;
                 tdd.updateBlock();
@@ -91,7 +91,7 @@ public class ItemDisk extends Item
     
     public void getSubItems(final Item item, final CreativeTabs tab, final List items) {
         for (int i = 0; i <= 2; ++i) {
-            items.add(new ItemStack((Item)this, 1, i));
+            items.add(new ItemStack(this, 1, i));
         }
     }
 }

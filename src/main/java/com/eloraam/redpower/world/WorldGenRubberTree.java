@@ -16,7 +16,7 @@ public class WorldGenRubberTree extends WorldGenerator
 {
     public void putLeaves(final World world, final int x, final int y, final int z) {
         if (world.isAirBlock(x, y, z)) {
-            world.setBlock(x, y, z, (Block)RedPowerWorld.blockLeaves, 0, 3);
+            world.setBlock(x, y, z, RedPowerWorld.blockLeaves, 0, 3);
         }
     }
     
@@ -25,13 +25,13 @@ public class WorldGenRubberTree extends WorldGenerator
             return false;
         }
         final Block bl = world.getBlock(x, y, z);
-        if (bl != null && bl.isWood((IBlockAccess)world, x, y, z)) {
+        if (bl != null && bl.isWood(world, x, y, z)) {
             return true;
         }
-        if (bl != Blocks.air && bl != null && !bl.isLeaves((IBlockAccess)world, x, y, z) && bl != Blocks.tallgrass && bl != Blocks.grass && bl != Blocks.vine) {
+        if (bl != Blocks.air && bl != null && !bl.isLeaves(world, x, y, z) && bl != Blocks.tallgrass && bl != Blocks.grass && bl != Blocks.vine) {
             return false;
         }
-        world.setBlock(x, y, z, (Block)RedPowerWorld.blockLogs, 0, 3);
+        world.setBlock(x, y, z, RedPowerWorld.blockLogs, 0, 3);
         this.putLeaves(world, x, y - 1, z);
         this.putLeaves(world, x, y + 1, z);
         this.putLeaves(world, x, y, z - 1);
@@ -60,7 +60,7 @@ public class WorldGenRubberTree extends WorldGenerator
                 for (int x2 = xPos - rw; x2 <= xPos + rw; ++x2) {
                     for (int z2 = zPos - rw; z2 <= zPos + rw; ++z2) {
                         final Block dest = world.getBlock(x2, org, z2);
-                        if (dest != Blocks.air && dest != null && !dest.isLeaves((IBlockAccess)world, x2, org, z2) && !dest.isWood((IBlockAccess)world, x2, org, z2) && dest != Blocks.tallgrass && dest != Blocks.grass && dest != Blocks.vine) {
+                        if (dest != Blocks.air && dest != null && !dest.isLeaves(world, x2, org, z2) && !dest.isWood(world, x2, org, z2) && dest != Blocks.tallgrass && dest != Blocks.grass && dest != Blocks.vine) {
                             return false;
                         }
                     }
@@ -74,7 +74,7 @@ public class WorldGenRubberTree extends WorldGenerator
             for (int org = 0; org <= 6; ++org) {
                 for (int x2 = -1; x2 <= 1; ++x2) {
                     for (int z2 = -1; z2 <= 1; ++z2) {
-                        world.setBlock(xPos + x2, yPos + org, zPos + z2, (Block)RedPowerWorld.blockLogs, 1, 3);
+                        world.setBlock(xPos + x2, yPos + org, zPos + z2, RedPowerWorld.blockLogs, 1, 3);
                     }
                 }
                 for (int x2 = -1; x2 <= 1; ++x2) {
@@ -97,9 +97,9 @@ public class WorldGenRubberTree extends WorldGenerator
             final Vector3 var23 = new Vector3();
             final Vector3 var24 = new Vector3();
             for (int nbr = random.nextInt(100) + 10, br = 0; br < nbr; ++br) {
-                var24.set(random.nextFloat() - 0.5, (double)random.nextFloat(), random.nextFloat() - 0.5);
+                var24.set(random.nextFloat() - 0.5, random.nextFloat(), random.nextFloat() - 0.5);
                 var24.normalize();
-                final double m = (nbr / 10.0 + 4.0) * (1.0f + 1.0f * random.nextFloat());
+                final double m = (nbr / 10.0 + 4.0) * (1.0f + random.nextFloat());
                 final Vector3 vector3 = var24;
                 vector3.x *= m;
                 final Vector3 vector4 = var24;
@@ -108,41 +108,41 @@ public class WorldGenRubberTree extends WorldGenerator
                 if (nbr < 8) {
                     switch (nbr - 1) {
                         case 0: {
-                            var23.set((double)(xPos - 1), (double)(yPos + 6), (double)(zPos - 1));
+                            var23.set(xPos - 1, yPos + 6, zPos - 1);
                             break;
                         }
                         case 1: {
-                            var23.set((double)(xPos - 1), (double)(yPos + 6), (double)zPos);
+                            var23.set(xPos - 1, yPos + 6, zPos);
                             break;
                         }
                         case 2: {
-                            var23.set((double)(xPos - 1), (double)(yPos + 6), (double)(zPos + 1));
+                            var23.set(xPos - 1, yPos + 6, zPos + 1);
                             break;
                         }
                         case 3: {
-                            var23.set((double)xPos, (double)(yPos + 6), (double)(zPos + 1));
+                            var23.set(xPos, yPos + 6, zPos + 1);
                             break;
                         }
                         case 4: {
-                            var23.set((double)(xPos + 1), (double)(yPos + 6), (double)(zPos + 1));
+                            var23.set(xPos + 1, yPos + 6, zPos + 1);
                             break;
                         }
                         case 5: {
-                            var23.set((double)(xPos + 1), (double)(yPos + 6), (double)zPos);
+                            var23.set(xPos + 1, yPos + 6, zPos);
                             break;
                         }
                         case 6: {
-                            var23.set((double)(xPos + 1), (double)(yPos + 6), (double)(zPos - 1));
+                            var23.set(xPos + 1, yPos + 6, zPos - 1);
                             break;
                         }
                         default: {
-                            var23.set((double)xPos, (double)(yPos + 6), (double)(zPos - 1));
+                            var23.set(xPos, yPos + 6, zPos - 1);
                             break;
                         }
                     }
                 }
                 else {
-                    var23.set((double)(xPos + random.nextInt(3) - 1), (double)(yPos + 6), (double)(zPos + random.nextInt(3) - 1));
+                    var23.set(xPos + random.nextInt(3) - 1, yPos + 6, zPos + random.nextInt(3) - 1);
                 }
                 final long brseed = random.nextLong();
                 final FractalLib.BlockSnake bsn = new FractalLib.BlockSnake(var23, var24, brseed);

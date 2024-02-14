@@ -45,7 +45,7 @@ public class ItemSeedBag extends Item
     }
     
     public static IInventory getBagInventory(final ItemStack ist, final EntityPlayer host) {
-        return (IInventory)((ist.getItem() instanceof ItemSeedBag) ? new InventorySeedBag(ist, host) : null);
+        return (ist.getItem() instanceof ItemSeedBag) ? new InventorySeedBag(ist, host) : null;
     }
     
     public static boolean canAdd(final IInventory inv, final ItemStack ist) {
@@ -87,7 +87,7 @@ public class ItemSeedBag extends Item
     
     public ItemStack onItemRightClick(final ItemStack ist, final World world, final EntityPlayer player) {
         if (!world.isRemote && player.isSneaking()) {
-            player.openGui((Object)RedPowerWorld.instance, 1, world, 0, 0, 0);
+            player.openGui(RedPowerWorld.instance, 1, world, 0, 0, 0);
         }
         return ist;
     }
@@ -121,7 +121,7 @@ public class ItemSeedBag extends Item
                     break;
                 }
                 final IPlantable plant = (IPlantable)plantstk.getItem();
-                if (soil != Blocks.air && soil.canSustainPlant((IBlockAccess)world, search.point.x, search.point.y, search.point.z, ForgeDirection.UP, plant)) {
+                if (soil != Blocks.air && soil.canSustainPlant(world, search.point.x, search.point.y, search.point.z, ForgeDirection.UP, plant)) {
                     if (!world.isAirBlock(search.point.x, search.point.y + 1, search.point.z)) {
                         if (!st) {
                             break;
@@ -129,7 +129,7 @@ public class ItemSeedBag extends Item
                     }
                     else {
                         st = true;
-                        world.setBlock(search.point.x, search.point.y + 1, search.point.z, plant.getPlant((IBlockAccess)world, search.point.x, search.point.y + 1, search.point.z), plant.getPlantMetadata((IBlockAccess)world, search.point.x, search.point.y + 1, search.point.z), 3);
+                        world.setBlock(search.point.x, search.point.y + 1, search.point.z, plant.getPlant(world, search.point.x, search.point.y + 1, search.point.z), plant.getPlantMetadata(world, search.point.x, search.point.y + 1, search.point.z), 3);
                         if (!player.capabilities.isCreativeMode) {
                             decrPlant(baginv);
                         }
@@ -196,10 +196,10 @@ public class ItemSeedBag extends Item
                     final NBTTagCompound cpd = new NBTTagCompound();
                     this.items[i].writeToNBT(cpd);
                     cpd.setByte("Slot", (byte)i);
-                    contents.appendTag((NBTBase)cpd);
+                    contents.appendTag(cpd);
                 }
             }
-            this.bagitem.stackTagCompound.setTag("contents", (NBTBase)contents);
+            this.bagitem.stackTagCompound.setTag("contents", contents);
             this.bagitem.setItemDamage((itc == 0) ? 0 : (577 - itc));
         }
         

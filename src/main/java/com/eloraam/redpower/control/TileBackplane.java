@@ -31,7 +31,7 @@ public class TileBackplane extends TileMultipart implements IFrameSupport
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerControl.blockBackplane;
+        return RedPowerControl.blockBackplane;
     }
     
     @Override
@@ -41,7 +41,7 @@ public class TileBackplane extends TileMultipart implements IFrameSupport
     
     @Override
     public void onBlockNeighborChange(final Block block) {
-        if (!super.worldObj.getBlock(super.xCoord, super.yCoord - 1, super.zCoord).isSideSolid((IBlockAccess)super.worldObj, super.xCoord, super.yCoord - 1, super.zCoord, ForgeDirection.UP)) {
+        if (!super.worldObj.getBlock(super.xCoord, super.yCoord - 1, super.zCoord).isSideSolid(super.worldObj, super.xCoord, super.yCoord - 1, super.zCoord, ForgeDirection.UP)) {
             this.breakBlock();
         }
         else {
@@ -57,7 +57,7 @@ public class TileBackplane extends TileMultipart implements IFrameSupport
     
     @Override
     public void addHarvestContents(final List<ItemStack> ist) {
-        ist.add(new ItemStack((Block)RedPowerControl.blockBackplane, 1, 0));
+        ist.add(new ItemStack(RedPowerControl.blockBackplane, 1, 0));
     }
     
     @Override

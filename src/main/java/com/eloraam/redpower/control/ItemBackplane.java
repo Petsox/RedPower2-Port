@@ -31,7 +31,7 @@ public class ItemBackplane extends ItemExtended
         final int md = world.getBlockMetadata(x, y, z);
         final int dmg = ist.getItemDamage();
         if (bid == Block.getBlockFromItem(ist.getItem()) && md == 0 && dmg != 0) {
-            TileBackplane bp = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileBackplane.class);
+            TileBackplane bp = CoreLib.getTileEntity(world, x, y, z, TileBackplane.class);
             if (bp == null) {
                 return false;
             }
@@ -39,7 +39,7 @@ public class ItemBackplane extends ItemExtended
             if (!world.setBlock(x, y, z, bid, dmg, 3)) {
                 return false;
             }
-            bp = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileBackplane.class);
+            bp = CoreLib.getTileEntity(world, x, y, z, TileBackplane.class);
             if (bp != null) {
                 bp.Rotation = rx;
             }
@@ -57,10 +57,10 @@ public class ItemBackplane extends ItemExtended
             }
             final WorldCoord wc = new WorldCoord(x, y, z);
             wc.step(side);
-            if (!world.canPlaceEntityOnSide(Block.getBlockFromItem(ist.getItem()), wc.x, wc.y, wc.z, false, 1, (Entity)player, ist)) {
+            if (!world.canPlaceEntityOnSide(Block.getBlockFromItem(ist.getItem()), wc.x, wc.y, wc.z, false, 1, player, ist)) {
                 return false;
             }
-            if (!RedPowerLib.isSideNormal((IBlockAccess)world, wc.x, wc.y, wc.z, 0)) {
+            if (!RedPowerLib.isSideNormal(world, wc.x, wc.y, wc.z, 0)) {
                 return false;
             }
             int rx = -1;
@@ -69,12 +69,12 @@ public class ItemBackplane extends ItemExtended
                 final WorldCoord wc2 = wc.copy();
                 final int dir = CoreLib.rotToSide(i) ^ 0x1;
                 wc2.step(dir);
-                final TileCPU cpu = CoreLib.getTileEntity((IBlockAccess)world, wc2, TileCPU.class);
+                final TileCPU cpu = CoreLib.getTileEntity(world, wc2, TileCPU.class);
                 if (cpu != null && cpu.Rotation == i) {
                     rx = i;
                     break;
                 }
-                final TileBackplane backplane = CoreLib.getTileEntity((IBlockAccess)world, wc2, TileBackplane.class);
+                final TileBackplane backplane = CoreLib.getTileEntity(world, wc2, TileBackplane.class);
                 if (backplane != null && backplane.Rotation == i) {
                     for (int pb = 0; pb < 6; ++pb) {
                         wc2.step(dir);
@@ -91,7 +91,7 @@ public class ItemBackplane extends ItemExtended
             if (!world.setBlock(wc.x, wc.y, wc.z, Block.getBlockFromItem(ist.getItem()), dmg, 3)) {
                 return true;
             }
-            final TileBackplane bp2 = CoreLib.getTileEntity((IBlockAccess)world, wc, TileBackplane.class);
+            final TileBackplane bp2 = CoreLib.getTileEntity(world, wc, TileBackplane.class);
             bp2.Rotation = rx;
             CoreLib.placeNoise(world, wc.x, wc.y, wc.z, Block.getBlockFromItem(ist.getItem()));
             if (!player.capabilities.isCreativeMode) {

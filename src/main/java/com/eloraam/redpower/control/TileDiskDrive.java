@@ -10,6 +10,8 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.block.*;
 import com.eloraam.redpower.*;
+
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.io.*;
 import net.minecraft.tileentity.*;
@@ -129,7 +131,7 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerControl.blockPeripheral;
+        return RedPowerControl.blockPeripheral;
     }
     
     @Override
@@ -204,11 +206,8 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
             }
             nm = e.getString("label");
         }
-        try {
-            final byte[] e2 = nm.getBytes("US-ASCII");
-            System.arraycopy(e2, 0, this.databuf, 0, Math.min(e2.length, 128));
-        }
-        catch (UnsupportedEncodingException ex) {}
+        final byte[] e2 = nm.getBytes(StandardCharsets.US_ASCII);
+        System.arraycopy(e2, 0, this.databuf, 0, Math.min(e2.length, 128));
     }
     
     private void runCmd2() {
@@ -220,11 +219,8 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
             int len;
             for (len = 0; this.databuf[len] != 0 && len < 64; ++len) {}
             this.cmdreg = 0;
-            try {
-                final String e = new String(this.databuf, 0, len, "US-ASCII");
-                tags.setString("label", e);
-            }
-            catch (UnsupportedEncodingException ex) {}
+            final String e = new String(this.databuf, 0, len, StandardCharsets.US_ASCII);
+            tags.setString("label", e);
         }
     }
     
@@ -242,11 +238,8 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
             }
             nm = e.getString("serno");
         }
-        try {
-            final byte[] e2 = nm.getBytes("US-ASCII");
-            System.arraycopy(e2, 0, this.databuf, 0, Math.min(e2.length, 128));
-        }
-        catch (UnsupportedEncodingException ex) {}
+        final byte[] e2 = nm.getBytes(StandardCharsets.US_ASCII);
+        System.arraycopy(e2, 0, this.databuf, 0, Math.min(e2.length, 128));
     }
     
     private void runCmd4() {
@@ -254,7 +247,7 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
             this.cmdreg = -1;
         }
         else {
-            final long l = this.sector * 128;
+            final long l = this.sector * 128L;
             if (this.contents[0].getItemDamage() > 0) {
                 InputStream file = null;
                 switch (this.contents[0].getItemDamage()) {
@@ -332,7 +325,7 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
             this.cmdreg = -1;
         }
         else {
-            final long l = this.sector * 128;
+            final long l = this.sector * 128L;
             final File file = this.startDisk();
             if (file == null) {
                 this.cmdreg = -1;
@@ -556,10 +549,10 @@ public class TileDiskDrive extends TileExtended implements IRedbusConnectable, I
                 final NBTTagCompound item = new NBTTagCompound();
                 item.setByte("Slot", (byte)i);
                 this.contents[i].writeToNBT(item);
-                items.appendTag((NBTBase)item);
+                items.appendTag(item);
             }
         }
-        data.setTag("Items", (NBTBase)items);
+        data.setTag("Items", items);
     }
     
     @Override

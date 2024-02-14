@@ -11,26 +11,26 @@ import net.minecraft.entity.player.*;
 
 public class ContainerBag extends Container
 {
-    private ItemStack itemBag;
-    private int hotbarIndex;
+    private final ItemStack itemBag;
+    private final int hotbarIndex;
     
     public ContainerBag(final InventoryPlayer inv, final IInventory bag, final ItemStack stack) {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer((Slot)new SlotBag(bag, j + i * 9, 8 + j * 18, 18 + i * 18));
+                this.addSlotToContainer(new SlotBag(bag, j + i * 9, 8 + j * 18, 18 + i * 18));
             }
         }
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer(new Slot((IInventory)inv, j + i * 9 + 9, 8 + j * 18, 86 + i * 18));
+                this.addSlotToContainer(new Slot(inv, j + i * 9 + 9, 8 + j * 18, 86 + i * 18));
             }
         }
         for (int i = 0; i < 9; ++i) {
             if (inv.currentItem == i) {
-                this.addSlotToContainer((Slot)new SlotLocked((IInventory)inv, i, 8 + i * 18, 144));
+                this.addSlotToContainer(new SlotLocked(inv, i, 8 + i * 18, 144));
             }
             else {
-                this.addSlotToContainer(new Slot((IInventory)inv, i, 8 + i * 18, 144));
+                this.addSlotToContainer(new Slot(inv, i, 8 + i * 18, 144));
             }
         }
         this.itemBag = stack;
@@ -63,7 +63,7 @@ public class ContainerBag extends Container
                 return null;
             }
             if (slotStack.stackSize == 0) {
-                slot.putStack((ItemStack)null);
+                slot.putStack(null);
             }
             else {
                 slot.onSlotChanged();

@@ -28,9 +28,9 @@ apply plugin: 'idea'
 sourceCompatibility = targetCompatibility = "1.8"
 compileJava { sourceCompatibility = targetCompatibility = "1.8" }
 
-version = "0.0.1"
+version = "0.9.1"
 group= "com.eloraam.redpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "RedPower2"
+archivesBaseName = "RedPower2_1.7.10"
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"

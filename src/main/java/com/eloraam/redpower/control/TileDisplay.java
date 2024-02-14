@@ -199,13 +199,13 @@ public class TileDisplay extends TileExtended implements IRedbusConnectable, IFr
     @Override
     public boolean onBlockActivated(final EntityPlayer player) {
         if (!this.worldObj.isRemote) {
-            player.openGui((Object)RedPowerControl.instance, 1, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+            player.openGui(RedPowerControl.instance, 1, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
         }
         return true;
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerControl.blockPeripheral;
+        return RedPowerControl.blockPeripheral;
     }
     
     @Override
@@ -261,16 +261,14 @@ public class TileDisplay extends TileExtended implements IRedbusConnectable, IFr
                         h = Math.min(h, 50 - this.blitYS);
                         if (w >= 0 && h >= 0) {
                             final int soffs = this.blitYS * 80 + this.blitXS;
-                            switch (this.blitMode) {
-                                case 3: {
-                                    for (int j = 0; j < h; ++j) {
-                                        for (int i = 0; i < w; ++i) {
-                                            this.screen[doffs + 80 * j + i] = this.screen[soffs + 80 * j + i];
-                                        }
+                            if (this.blitMode == 3) {
+                                for (int j = 0; j < h; ++j) {
+                                    for (int i = 0; i < w; ++i) {
+                                        this.screen[doffs + 80 * j + i] = this.screen[soffs + 80 * j + i];
                                     }
-                                    this.blitMode = 0;
-                                    return;
                                 }
+                                this.blitMode = 0;
+                                return;
                             }
                         }
                         else {

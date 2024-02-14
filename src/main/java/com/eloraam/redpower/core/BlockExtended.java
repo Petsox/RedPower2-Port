@@ -23,7 +23,7 @@ import net.minecraft.client.particle.*;
 
 public class BlockExtended extends BlockContainer
 {
-    private Supplier<? extends TileExtended>[] tileEntityMap;
+    private final Supplier<? extends TileExtended>[] tileEntityMap;
     
     public BlockExtended(final Material m) {
         super(m);
@@ -56,7 +56,7 @@ public class BlockExtended extends BlockContainer
     
     public ArrayList getDrops(final World world, final int x, final int y, final int z, final int meta, final int fortune) {
         final ArrayList<ItemStack> ist = new ArrayList<ItemStack>();
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         if (tl == null) {
             return ist;
         }
@@ -79,7 +79,7 @@ public class BlockExtended extends BlockContainer
         final int md = world.getBlockMetadata(x, y, z);
         if (bl != null) {
             if (bl.canHarvestBlock(player, md) && willHarvest) {
-                final List<ItemStack> il = (List<ItemStack>)this.getDrops(world, x, y, z, md, EnchantmentHelper.getFortuneModifier((EntityLivingBase)player));
+                final List<ItemStack> il = (List<ItemStack>)this.getDrops(world, x, y, z, md, EnchantmentHelper.getFortuneModifier(player));
                 for (final ItemStack it : il) {
                     CoreLib.dropItem(world, x, y, z, it);
                 }
@@ -91,7 +91,7 @@ public class BlockExtended extends BlockContainer
     }
     
     public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final Block block) {
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         if (tl == null) {
             world.setBlockToAir(x, y, z);
         }
@@ -105,14 +105,14 @@ public class BlockExtended extends BlockContainer
     }
     
     public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final int side, final EntityLivingBase ent, final ItemStack ist) {
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         if (tl != null) {
             tl.onBlockPlaced(ist, side, ent);
         }
     }
     
     public void breakBlock(final World world, final int x, final int y, final int z, final Block block, final int md) {
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         if (tl != null) {
             tl.onBlockRemoval();
             super.breakBlock(world, x, y, z, block, md);
@@ -130,31 +130,31 @@ public class BlockExtended extends BlockContainer
     }
     
     public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float xp, final float yp, final float zp) {
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         return tl != null && tl.onBlockActivated(player);
     }
     
     public void onEntityCollidedWithBlock(final World world, final int x, final int y, final int z, final Entity entity) {
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         if (tl != null) {
             tl.onEntityCollidedWithBlock(entity);
         }
     }
     
     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
-        final TileExtended tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileExtended.class);
+        final TileExtended tl = CoreLib.getTileEntity(world, x, y, z, TileExtended.class);
         if (tl != null) {
             final AxisAlignedBB bb = tl.getCollisionBoundingBox();
             if (bb != null) {
                 return bb;
             }
         }
-        this.setBlockBoundsBasedOnState((IBlockAccess)world, x, y, z);
+        this.setBlockBoundsBasedOnState(world, x, y, z);
         return super.getCollisionBoundingBoxFromPool(world, x, y, z);
     }
     
     public AxisAlignedBB getSelectedBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
-        this.setBlockBoundsBasedOnState((IBlockAccess)world, x, y, z);
+        this.setBlockBoundsBasedOnState(world, x, y, z);
         return super.getSelectedBoundingBoxFromPool(world, x, y, z);
     }
     
@@ -165,7 +165,7 @@ public class BlockExtended extends BlockContainer
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(final World world, final int x, final int y, final int z, final Random random) {
         final int md = world.getBlockMetadata(x, y, z);
-        final RenderCustomBlock rend = RenderLib.getRenderer((Block)this, md);
+        final RenderCustomBlock rend = RenderLib.getRenderer(this, md);
         if (rend != null) {
             rend.randomDisplayTick(world, x, y, z, random);
         }
@@ -176,13 +176,13 @@ public class BlockExtended extends BlockContainer
     }
     
     public void setBlockName(final int md, final String name) {
-        final Item item = Item.getItemFromBlock((Block)this);
+        final Item item = Item.getItemFromBlock(this);
         ((ItemExtended)item).setMetaName(md, "tile." + name);
     }
     
     public TileEntity createNewTileEntity(final World world, final int md) {
         if (this.tileEntityMap[md] != null) {
-            return (TileEntity)this.tileEntityMap[md].get();
+            return this.tileEntityMap[md].get();
         }
         return null;
     }
@@ -194,13 +194,13 @@ public class BlockExtended extends BlockContainer
         final int z = target.blockZ;
         final int meta = world.getBlockMetadata(x, y, z);
         final int side = target.sideHit;
-        final RenderCustomBlock renderer = RenderLib.getRenderer((Block)this, meta);
+        final RenderCustomBlock renderer = RenderLib.getRenderer(this, meta);
         return renderer != null && renderer.renderHit(effectRenderer, world, target, x, y, z, side, meta);
     }
     
     @SideOnly(Side.CLIENT)
     public boolean addDestroyEffects(final World world, final int x, final int y, final int z, final int meta, final EffectRenderer effectRenderer) {
-        final RenderCustomBlock renderer = RenderLib.getRenderer((Block)this, meta);
+        final RenderCustomBlock renderer = RenderLib.getRenderer(this, meta);
         return renderer != null && renderer.renderDestroy(effectRenderer, world, x, y, z, meta);
     }
 }

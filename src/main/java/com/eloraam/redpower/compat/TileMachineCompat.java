@@ -63,7 +63,7 @@ public class TileMachineCompat extends TileMultipart implements IRotatable, IFra
     }
     
     public Block getBlockType() {
-        return (Block)RedPowerCompat.blockMachineCompat;
+        return RedPowerCompat.blockMachineCompat;
     }
     
     @Override
@@ -78,8 +78,8 @@ public class TileMachineCompat extends TileMultipart implements IRotatable, IFra
     
     @Override
     public float getPartStrength(final EntityPlayer player, final int part) {
-        final BlockExtended bl = (BlockExtended)RedPowerCompat.blockMachineCompat;
-        return player.getBreakSpeed((Block)bl, false, this.blockMetadata, this.xCoord, this.yCoord, this.zCoord) / (bl.getHardness() * 30.0f);
+        final BlockExtended bl = RedPowerCompat.blockMachineCompat;
+        return player.getBreakSpeed(bl, false, this.blockMetadata, this.xCoord, this.yCoord, this.zCoord) / (bl.getHardness() * 30.0f);
     }
     
     @Override

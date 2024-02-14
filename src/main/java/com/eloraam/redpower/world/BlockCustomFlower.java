@@ -62,7 +62,7 @@ public class BlockCustomFlower extends BlockFlower implements IGrowable
         }
         final WorldGenRubberTree wg = new WorldGenRubberTree();
         if (!wg.generate(world, world.rand, x, y, z)) {
-            world.setBlock(x, y, z, (Block)this, 1, 3);
+            world.setBlock(x, y, z, this, 1, 3);
             return false;
         }
         return true;
@@ -74,8 +74,8 @@ public class BlockCustomFlower extends BlockFlower implements IGrowable
     
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(final Item item, final CreativeTabs tab, final List items) {
-        items.add(new ItemStack((Block)this, 1, 0));
-        items.add(new ItemStack((Block)this, 1, 1));
+        items.add(new ItemStack(this, 1, 0));
+        items.add(new ItemStack(this, 1, 1));
     }
     
     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World worldObj, final int x, final int y, final int z) {

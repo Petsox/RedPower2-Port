@@ -14,7 +14,7 @@ import net.minecraft.nbt.*;
 
 public class TileBlueEngine extends TileMachineCompat implements IBluePowerConnectable
 {
-    private BluePowerEndpoint cond;
+    private final BluePowerEndpoint cond;
     public int ConMask;
     public byte PumpTick;
     public byte PumpSpeed;
@@ -58,7 +58,7 @@ public class TileBlueEngine extends TileMachineCompat implements IBluePowerConne
     public void onBlockNeighborChange(final Block bl) {
         this.ConMask = -1;
         final int cm = this.getConnectableMask();
-        if (RedPowerLib.isPowered((IBlockAccess)this.worldObj, this.xCoord, this.yCoord, this.zCoord, cm, cm >> 24)) {
+        if (RedPowerLib.isPowered(this.worldObj, this.xCoord, this.yCoord, this.zCoord, cm, cm >> 24)) {
             if (!super.Powered) {
                 super.Powered = true;
                 this.updateBlock();
@@ -73,7 +73,7 @@ public class TileBlueEngine extends TileMachineCompat implements IBluePowerConne
     protected void deliverPower() {
         final WorldCoord pos = new WorldCoord(this);
         pos.step(super.Rotation ^ 0x1);
-        final IEnergyReceiver ipr = CoreLib.getTileEntity((IBlockAccess)this.worldObj, pos, IEnergyReceiver.class);
+        final IEnergyReceiver ipr = CoreLib.getTileEntity(this.worldObj, pos, IEnergyReceiver.class);
         final ForgeDirection oppSide = ForgeDirection.getOrientation(this.Rotation);
         if (ipr != null && ipr.canConnectEnergy(oppSide)) {
             this.Flywheel -= ipr.receiveEnergy(oppSide, this.Flywheel * 10, false) / 10;
@@ -89,7 +89,7 @@ public class TileBlueEngine extends TileMachineCompat implements IBluePowerConne
         super.updateEntity();
         if (!this.worldObj.isRemote) {
             if (this.ConMask < 0) {
-                this.ConMask = RedPowerLib.getConnections((IBlockAccess)this.worldObj, this, this.xCoord, this.yCoord, this.zCoord);
+                this.ConMask = RedPowerLib.getConnections(this.worldObj, this, this.xCoord, this.yCoord, this.zCoord);
                 this.cond.recache(this.ConMask, 0);
             }
             this.cond.iterate();

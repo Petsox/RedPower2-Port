@@ -30,6 +30,6 @@ public class BlockMicro extends BlockCoverable
     }
     
     public void registerPlacement(final int md, final IMicroPlacement imp) {
-        ((ItemMicro)Item.getItemFromBlock((Block)this)).registerPlacement(md, imp);
+        ((ItemMicro)Item.getItemFromBlock(this)).registerPlacement(md, imp);
     }
 }

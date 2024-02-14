@@ -25,16 +25,16 @@ public class MicroPlacementWire implements IMicroPlacement
     private boolean initialPlace(final ItemStack ist, final EntityPlayer player, final World world, final WorldCoord wc, final int l) {
         final int md = ist.getItemDamage() >> 8;
         final Block bid = Block.getBlockFromItem(ist.getItem());
-        if (!world.canPlaceEntityOnSide(bid, wc.x, wc.y, wc.z, false, l, (Entity)player, (ItemStack)null)) {
+        if (!world.canPlaceEntityOnSide(bid, wc.x, wc.y, wc.z, false, l, player, null)) {
             return false;
         }
-        if (!RedPowerLib.canSupportWire((IBlockAccess)world, wc.x, wc.y, wc.z, l ^ 0x1)) {
+        if (!RedPowerLib.canSupportWire(world, wc.x, wc.y, wc.z, l ^ 0x1)) {
             return false;
         }
         if (!world.setBlock(wc.x, wc.y, wc.z, bid, md, 3)) {
             return true;
         }
-        final TileWiring tw = (TileWiring)CoreLib.getTileEntity((IBlockAccess)world, wc, (Class)TileWiring.class);
+        final TileWiring tw = (TileWiring)CoreLib.getTileEntity(world, wc, (Class)TileWiring.class);
         if (tw == null) {
             return false;
         }
@@ -50,7 +50,7 @@ public class MicroPlacementWire implements IMicroPlacement
         if (bid != Block.getBlockFromItem(ist.getItem())) {
             return this.initialPlace(ist, player, world, wc, size);
         }
-        final TileCovered tc = (TileCovered)CoreLib.getTileEntity((IBlockAccess)world, wc, (Class)TileCovered.class);
+        final TileCovered tc = (TileCovered)CoreLib.getTileEntity(world, wc, (Class)TileCovered.class);
         if (tc == null) {
             return false;
         }
@@ -62,11 +62,11 @@ public class MicroPlacementWire implements IMicroPlacement
         if (!CoverLib.tryMakeCompatible(world, wc, Block.getBlockFromItem(ist.getItem()), hb)) {
             return false;
         }
-        final TileWiring tw = (TileWiring)CoreLib.getTileEntity((IBlockAccess)world, wc, (Class)TileWiring.class);
+        final TileWiring tw = (TileWiring)CoreLib.getTileEntity(world, wc, (Class)TileWiring.class);
         if (tw == null) {
             return false;
         }
-        if (!RedPowerLib.canSupportWire((IBlockAccess)world, wc.x, wc.y, wc.z, size ^ 0x1)) {
+        if (!RedPowerLib.canSupportWire(world, wc.x, wc.y, wc.z, size ^ 0x1)) {
             return false;
         }
         if (((tw.ConSides | tw.CoverSides) & d) > 0) {
@@ -90,27 +90,19 @@ public class MicroPlacementWire implements IMicroPlacement
         Label_0173: {
             switch (hb) {
                 case 1: {
-                    switch (lb) {
-                        case 0: {
-                            return "tile.rpwire";
-                        }
-                        default: {
-                            break Label_0173;
-                        }
+                    if (lb == 0) {
+                        return "tile.rpwire";
                     }
+                    break Label_0173;
                 }
                 case 2: {
                     return "tile.rpinsulated." + CoreLib.rawColorNames[lb];
                 }
                 case 3: {
-                    switch (lb) {
-                        case 0: {
-                            return "tile.rpcable";
-                        }
-                        default: {
-                            return "tile.rpcable." + CoreLib.rawColorNames[lb - 1];
-                        }
+                    if (lb == 0) {
+                        return "tile.rpcable";
                     }
+                    return "tile.rpcable." + CoreLib.rawColorNames[lb - 1];
                 }
                 case 5: {
                     switch (lb) {

@@ -17,7 +17,7 @@ public class GuiAlloyFurnace extends GuiContainer
     private TileAlloyFurnace furnace;
     
     public GuiAlloyFurnace(final InventoryPlayer pli, final TileAlloyFurnace td) {
-        super((Container)new ContainerAlloyFurnace(pli, td));
+        super(new ContainerAlloyFurnace(pli, td));
         this.furnace = td;
     }
     
@@ -26,8 +26,8 @@ public class GuiAlloyFurnace extends GuiContainer
     }
     
     protected void drawGuiContainerForegroundLayer(final int p1, final int p2) {
-        super.fontRendererObj.drawString(I18n.format("tile.rpafurnace.name", new Object[0]), 60, 6, 4210752);
-        super.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, super.ySize - 96 + 2, 4210752);
+        super.fontRendererObj.drawString(I18n.format("tile.rpafurnace.name"), 60, 6, 4210752);
+        super.fontRendererObj.drawString(I18n.format("container.inventory"), 8, super.ySize - 96 + 2, 4210752);
     }
     
     protected void drawGuiContainerBackgroundLayer(final float f, final int p1, final int p2) {

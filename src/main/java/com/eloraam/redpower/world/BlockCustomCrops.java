@@ -18,7 +18,7 @@ import net.minecraft.entity.player.*;
 
 public class BlockCustomCrops extends BlockFlower implements IGrowable
 {
-    private IIcon[] icons;
+    private final IIcon[] icons;
     
     public BlockCustomCrops() {
         super(0);
@@ -62,18 +62,18 @@ public class BlockCustomCrops extends BlockFlower implements IGrowable
                 if (random.nextBoolean()) {
                     world.setBlockMetadataWithNotify(x, y, z, md + 1, 3);
                     if (md == 3) {
-                        world.setBlock(x, y + 1, z, (Block)this, 1, 3);
+                        world.setBlock(x, y + 1, z, this, 1, 3);
                     }
                     return true;
                 }
             }
             else if (world.getBlock(x, y - 2, z) == Blocks.farmland && world.getBlockMetadata(x, y - 2, z) != 0 && world.isAirBlock(x, y + 1, z) && random.nextBoolean()) {
                 if (md + 1 < 4) {
-                    world.setBlock(x, y, z, (Block)this, md + 1, 3);
+                    world.setBlock(x, y, z, this, md + 1, 3);
                     return true;
                 }
                 if (world.getBlockMetadata(x, y, z) != 5) {
-                    world.setBlock(x, y, z, (Block)this, 5, 3);
+                    world.setBlock(x, y, z, this, 5, 3);
                     return true;
                 }
                 return false;
@@ -82,11 +82,11 @@ public class BlockCustomCrops extends BlockFlower implements IGrowable
         else if (world.getBlock(x, y - 1, z) == Blocks.farmland && world.getBlockMetadata(x, y - 1, z) != 0 && world.isAirBlock(x, y + 2, z) && world.getBlock(x, y + 1, z) == this && world.getBlockMetadata(x, y + 1, z) <= 3 && random.nextBoolean()) {
             final int mdup = world.getBlockMetadata(x, y + 1, z);
             if (mdup + 1 <= 3) {
-                world.setBlock(x, y + 1, z, (Block)this, mdup + 1, 3);
+                world.setBlock(x, y + 1, z, this, mdup + 1, 3);
                 return true;
             }
             if (world.getBlockMetadata(x, y + 1, z) != 5) {
-                world.setBlock(x, y + 1, z, (Block)this, 5, 3);
+                world.setBlock(x, y + 1, z, this, 5, 3);
                 return true;
             }
             return false;
@@ -105,7 +105,7 @@ public class BlockCustomCrops extends BlockFlower implements IGrowable
         else {
             for (int n = 0; n < 3 + fortune; ++n) {
                 if (world.rand.nextInt(8) <= metadata) {
-                    tr.add(new ItemStack((Item)RedPowerWorld.itemSeeds, 1, 0));
+                    tr.add(new ItemStack(RedPowerWorld.itemSeeds, 1, 0));
                 }
             }
         }
@@ -121,16 +121,16 @@ public class BlockCustomCrops extends BlockFlower implements IGrowable
                     if (random.nextBoolean()) {
                         world.setBlockMetadataWithNotify(x, y, z, md + 1, 3);
                         if (md == 3) {
-                            world.setBlock(x, y + 1, z, (Block)this, 1, 3);
+                            world.setBlock(x, y + 1, z, this, 1, 3);
                         }
                     }
                 }
                 else if (world.getBlock(x, y - 2, z) == Blocks.farmland && world.getBlockMetadata(x, y - 2, z) != 0 && world.isAirBlock(x, y + 1, z) && random.nextBoolean()) {
                     if (md + 1 < 4) {
-                        world.setBlock(x, y, z, (Block)this, md + 1, 3);
+                        world.setBlock(x, y, z, this, md + 1, 3);
                     }
                     else if (world.getBlockMetadata(x, y, z) != 5) {
-                        world.setBlock(x, y, z, (Block)this, 5, 3);
+                        world.setBlock(x, y, z, this, 5, 3);
                     }
                 }
             }
@@ -176,11 +176,11 @@ public class BlockCustomCrops extends BlockFlower implements IGrowable
         else if (meta < 4) {
             ey = y + 0.25 * meta;
         }
-        return AxisAlignedBB.getBoundingBox((double)x, sy, (double)z, ex, ey, ez);
+        return AxisAlignedBB.getBoundingBox(x, sy, z, ex, ey, ez);
     }
     
     public ItemStack getPickBlock(final MovingObjectPosition target, final World world, final int x, final int y, final int z, final EntityPlayer player) {
-        return new ItemStack((Item)RedPowerWorld.itemSeeds, 1, 0);
+        return new ItemStack(RedPowerWorld.itemSeeds, 1, 0);
     }
     
     public boolean func_149851_a(final World world, final int x, final int y, final int z, final boolean isWorldRemote) {

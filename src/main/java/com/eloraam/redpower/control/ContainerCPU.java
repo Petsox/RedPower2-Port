@@ -12,7 +12,7 @@ import com.eloraam.redpower.core.*;
 
 public class ContainerCPU extends Container implements IHandleGuiEvent
 {
-    private TileCPU tileCPU;
+    private final TileCPU tileCPU;
     private int byte0;
     private int byte1;
     private int rbaddr;
@@ -46,16 +46,16 @@ public class ContainerCPU extends Container implements IHandleGuiEvent
         for (int i = 0; i < super.crafters.size(); ++i) {
             ICrafting ic = (ICrafting) super.crafters.get(i);
             if (this.tileCPU.diskAddr != this.byte0) {
-                ic.sendProgressBarUpdate((Container)this, 0, this.tileCPU.diskAddr);
+                ic.sendProgressBarUpdate(this, 0, this.tileCPU.diskAddr);
             }
             if (this.tileCPU.displayAddr != this.byte1) {
-                ic.sendProgressBarUpdate((Container)this, 1, this.tileCPU.displayAddr);
+                ic.sendProgressBarUpdate(this, 1, this.tileCPU.displayAddr);
             }
             if (this.tileCPU.rbaddr != this.rbaddr) {
-                ic.sendProgressBarUpdate((Container)this, 2, this.tileCPU.rbaddr);
+                ic.sendProgressBarUpdate(this, 2, this.tileCPU.rbaddr);
             }
             if (this.tileCPU.isRunning() != this.isrun) {
-                ic.sendProgressBarUpdate((Container)this, 3, (int)(this.tileCPU.isRunning() ? 1 : 0));
+                ic.sendProgressBarUpdate(this, 3, this.tileCPU.isRunning() ? 1 : 0);
             }
         }
         this.byte0 = this.tileCPU.diskAddr;

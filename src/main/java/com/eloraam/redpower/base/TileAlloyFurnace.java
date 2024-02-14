@@ -129,7 +129,7 @@ public class TileAlloyFurnace extends TileAppliance implements IInventory, ISide
             return false;
         }
         if (!this.worldObj.isRemote) {
-            player.openGui((Object)RedPowerBase.instance, 1, super.worldObj, super.xCoord, super.yCoord, super.zCoord);
+            player.openGui(RedPowerBase.instance, 1, super.worldObj, super.xCoord, super.yCoord, super.zCoord);
         }
         return true;
     }
@@ -229,10 +229,10 @@ public class TileAlloyFurnace extends TileAppliance implements IInventory, ISide
                 final NBTTagCompound item = new NBTTagCompound();
                 item.setByte("Slot", (byte)i);
                 this.contents[i].writeToNBT(item);
-                items.appendTag((NBTBase)item);
+                items.appendTag(item);
             }
         }
-        data.setTag("Items", (NBTBase)items);
+        data.setTag("Items", items);
         data.setShort("TotalBurn", (short)this.totalburn);
         data.setShort("BurnTime", (short)this.burntime);
         data.setShort("CookTime", (short)this.cooktime);
@@ -257,14 +257,10 @@ public class TileAlloyFurnace extends TileAppliance implements IInventory, ISide
     }
     
     public boolean canInsertItem(final int slotID, final ItemStack stack, final int side) {
-        switch (side) {
-            case 1: {
-                return slotID >= 0 && slotID < 9;
-            }
-            default: {
-                return side != (this.Rotation ^ 0x1) && TileEntityFurnace.isItemFuel(stack);
-            }
+        if (side == 1) {
+            return slotID >= 0 && slotID < 9;
         }
+        return side != (this.Rotation ^ 0x1) && TileEntityFurnace.isItemFuel(stack);
     }
     
     public boolean canExtractItem(final int slotID, final ItemStack stack, final int side) {

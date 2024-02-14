@@ -35,7 +35,7 @@ public abstract class BlockCoverable extends BlockMultipart
         if (mop == null) {
             return bl.getExplosionResistance(exploder);
         }
-        final TileCoverable tl = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileCoverable.class);
+        final TileCoverable tl = CoreLib.getTileEntity(world, x, y, z, TileCoverable.class);
         if (tl == null) {
             return bl.getExplosionResistance(exploder);
         }
@@ -44,7 +44,7 @@ public abstract class BlockCoverable extends BlockMultipart
     }
     
     public ItemStack getPickBlock(final MovingObjectPosition target, final World world, final int x, final int y, final int z, final EntityPlayer player) {
-        final TileCoverable tile = CoreLib.getTileEntity((IBlockAccess)world, x, y, z, TileCoverable.class);
+        final TileCoverable tile = CoreLib.getTileEntity(world, x, y, z, TileCoverable.class);
         if (tile != null) {
             return tile.getPickBlock(target, player);
         }
