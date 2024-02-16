@@ -1,6 +1,3 @@
-//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
-
-//Decompiled by Procyon!
 
 package com.eloraam.redpower.control;
 
@@ -17,9 +14,9 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
 {
     private final TileDisplay tileDisplay;
     private final byte[] screen;
-    private int cursx;
-    private int cursy;
-    private int cursmode;
+    int cursx;
+    int cursy;
+    int cursmode;
     
     private void decompress(final byte[] compress, final byte[] out) {
         int opos = 0;
@@ -58,13 +55,6 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
         this.cursy = 0;
         this.cursmode = 0;
         this.tileDisplay = td;
-    }
-    
-    public ItemStack slotClick(final int a, final int b, final int c, final EntityPlayer player) {
-        if (!this.canInteractWith(player)) {
-            return null;
-        }
-        return super.slotClick(a, b, c, player);
     }
     
     public boolean canInteractWith(final EntityPlayer player) {
@@ -114,14 +104,17 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
         switch (id) {
             case 0: {
                 this.tileDisplay.cursX = value;
+                return;
             }
             case 1: {
                 this.tileDisplay.cursY = value;
+                return;
             }
             case 2: {
                 this.tileDisplay.cursMode = value;
-                break;
+                return;
             }
+            default:
         }
     }
     

@@ -1,6 +1,3 @@
-//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
-
-//Decompiled by Procyon!
 
 package com.eloraam.redpower.control;
 
@@ -20,41 +17,41 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
 {
     public int Rotation;
     public byte[] memory;
-    private int addrPOR;
-    private int addrBRK;
-    private int regSP;
-    private int regPC;
-    private int regA;
-    private int regB;
-    private int regX;
-    private int regY;
-    private int regR;
-    private int regI;
-    private int regD;
-    private boolean flagC;
-    private boolean flagZ;
-    private boolean flagID;
-    private boolean flagD;
-    private boolean flagBRK;
-    private boolean flagO;
-    private boolean flagN;
-    private boolean flagE;
-    private boolean flagM;
-    private boolean flagX;
-    private int mmuRBB;
-    private int mmuRBA;
-    private int mmuRBW;
-    private boolean mmuEnRB;
-    private boolean mmuEnRBW;
+    int addrPOR;
+    int addrBRK;
+    int regSP;
+    int regPC;
+    int regA;
+    int regB;
+    int regX;
+    int regY;
+    int regR;
+    int regI;
+    int regD;
+    boolean flagC;
+    boolean flagZ;
+    boolean flagID;
+    boolean flagD;
+    boolean flagBRK;
+    boolean flagO;
+    boolean flagN;
+    boolean flagE;
+    boolean flagM;
+    boolean flagX;
+    int mmuRBB;
+    int mmuRBA;
+    int mmuRBW;
+    boolean mmuEnRB;
+    boolean mmuEnRBW;
     private boolean rbTimeout;
     private boolean waiTimeout;
-    private IRedbusConnectable rbCache;
-    private final TileBackplane[] backplane;
-    private int rtcTicks;
-    int sliceCycles;
-    int diskAddr;
-    int displayAddr;
-    int rbaddr;
+    IRedbusConnectable rbCache;
+    final TileBackplane[] backplane;
+    public int rtcTicks;
+    public int sliceCycles;
+    public int diskAddr;
+    public int displayAddr;
+    public int rbaddr;
     
     public TileCPU() {
         this.Rotation = 0;
@@ -280,7 +277,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
     }
     
     private void incPC() {
-        ++this.regPC;
+        this.regPC = this.regPC + 1 & 65535;
     }
     
     private int maskM() {
@@ -374,27 +371,27 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
     }
     
     private int readBS() {
-        final int i = this.readMem(this.regPC) + this.regSP;
+        final int i = this.readMem(this.regPC) + this.regSP & 65535;
         this.incPC();
         return i;
     }
     
     private int readBR() {
-        final int i = this.readMem(this.regPC) + this.regR;
+        final int i = this.readMem(this.regPC) + this.regR & 65535;
         this.incPC();
         return i;
     }
     
     private int readBSWY() {
-        final int i = this.readMem(this.regPC) + this.regSP;
+        final int i = this.readMem(this.regPC) + this.regSP & 65535;
         this.incPC();
-        return this.readW(i) + this.regY;
+        return this.readW(i) + this.regY & 65535;
     }
     
     private int readBRWY() {
-        final int i = this.readMem(this.regPC) + this.regR;
+        final int i = this.readMem(this.regPC) + this.regR & 65535;
         this.incPC();
-        return this.readW(i) + this.regY;
+        return this.readW(i) + this.regY & 65535;
     }
     
     private int readW() {
@@ -416,7 +413,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
         this.incPC();
         i |= this.readMem(this.regPC) << 8;
         this.incPC();
-        return i + this.regX;
+        return i + this.regX & 65535;
     }
     
     private int readWY() {
@@ -424,7 +421,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
         this.incPC();
         i |= this.readMem(this.regPC) << 8;
         this.incPC();
-        return i + this.regY;
+        return i + this.regY & 65535;
     }
     
     private int readWXW() {
@@ -432,7 +429,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
         this.incPC();
         i |= this.readMem(this.regPC) << 8;
         this.incPC();
-        i += this.regX;
+        i += this.regX & 65535;
         int j = this.readMem(i);
         j |= this.readMem(i + 1) << 8;
         return j;
@@ -469,7 +466,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
         this.incPC();
         int j = this.readMem(i);
         j |= this.readMem(i + 1) << 8;
-        return j + this.regY;
+        return j + this.regY & 65535;
     }
     
     private void upNZ() {
@@ -492,13 +489,13 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             this.regSP = ((this.regSP - 1 & 0xFF) | (this.regSP & 0xFF00));
         }
         else {
-            --this.regSP;
+            this.regSP = this.regSP - 1 & 65535;
         }
         this.writeMem(this.regSP, b);
     }
     
     private void push1r(final int b) {
-        this.writeMem(--this.regR, b);
+        this.writeMem(this.regR = this.regR - 1 & 65535, b);
     }
     
     private void push2(final int w) {
@@ -553,14 +550,14 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             this.regSP = ((this.regSP + 1 & 0xFF) | (this.regSP & 0xFF00));
         }
         else {
-            ++this.regSP;
+            this.regSP = this.regSP + 1 & 65535;
         }
         return tr;
     }
     
     private int pop1r() {
         final int tr = this.readMem(this.regR);
-        ++this.regR;
+        this.regR = this.regR + 1 & 65535;
         return tr;
     }
     
@@ -653,7 +650,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             final int v = this.regA + val + (this.flagC ? 1 : 0);
             this.flagC = (v > 65535);
             this.flagO = (((v ^ this.regA) & (v ^ val) & 0x8000) > 0);
-            this.regA = v;
+            this.regA = v & 65535;
         }
         this.upNZ();
     }
@@ -684,7 +681,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             final int v = this.regA - val + (this.flagC ? 1 : 0) - 1;
             this.flagC = ((v & 0x10000) == 0x0);
             this.flagO = (((v ^ this.regA) & (v ^ -val) & 0x8000) > 0);
-            this.regA = v;
+            this.regA = v & 65535;
         }
         this.upNZ();
     }
@@ -752,9 +749,9 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
         else if (this.flagC) {
             int q = (short)this.regD << 16 | this.regA;
             final short val2 = (short)val;
-            this.regD = q % val2;
+            this.regD = q % val2 & 65535;
             q /= val2;
-            this.regA = q;
+            this.regA = q & 65535;
             this.flagO = (q > 32767 || q < -32768);
             this.flagZ = (this.regA == 0);
             this.flagN = (q < 0);
@@ -810,7 +807,7 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
     private void i_brc(final boolean cond) {
         final int n = this.readB();
         if (cond) {
-            this.regPC += (byte)n;
+            this.regPC += (byte)n & 65535;
         }
     }
     
@@ -960,8 +957,8 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
                 break;
             }
             case 135: {
-                this.regA = this.rtcTicks;
-                this.regD = this.rtcTicks >> 16;
+                this.regA = this.rtcTicks & 65535;
+                this.regD = this.rtcTicks >> 16 & 65535;
                 break;
             }
         }
@@ -2142,27 +2139,27 @@ public class TileCPU extends TileExtended implements IRedbusConnectable, IFrameS
             this.memory = new byte[8192];
         }
         this.Rotation = data.getByte("rot");
-        this.addrPOR = data.getShort("por");
-        this.addrBRK = data.getShort("brk");
+        this.addrPOR = data.getShort("por") & 65535;
+        this.addrBRK = data.getShort("brk") & 65535;
         final byte efl = data.getByte("efl");
         this.flagE = ((efl & 0x1) > 0);
         this.mmuEnRB = ((efl & 0x2) > 0);
         this.mmuEnRBW = ((efl & 0x4) > 0);
         this.setFlags(data.getByte("fl"));
-        this.regSP = data.getShort("rsp");
-        this.regPC = data.getShort("rpc");
-        this.regA = data.getShort("ra");
+        this.regSP = data.getShort("rsp") & 65535;
+        this.regPC = data.getShort("rpc") & 65535;
+        this.regA = data.getShort("ra") & 65535;
         if (this.flagM) {
             this.regB = this.regA >> 8;
             this.regA &= 0xFF;
         }
-        this.regX = data.getShort("rx");
-        this.regY = data.getShort("ry");
-        this.regD = data.getShort("rd");
-        this.regR = data.getShort("rr");
-        this.regI = data.getShort("ri");
-        this.mmuRBB = data.getShort("mmrb");
-        this.mmuRBW = data.getShort("mmrbw");
+        this.regX = data.getShort("rx") & 65535;
+        this.regY = data.getShort("ry") & 65535;
+        this.regD = data.getShort("rd") & 65535;
+        this.regR = data.getShort("rr") & 65535;
+        this.regI = data.getShort("ri") & 65535;
+        this.mmuRBB = data.getShort("mmrb") & 65535;
+        this.mmuRBW = data.getShort("mmrbw") & 65535;
         this.mmuRBA = (data.getByte("mmra") & 0xFF);
         this.sliceCycles = data.getInteger("cyc");
         this.rtcTicks = data.getInteger("rtct");

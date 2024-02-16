@@ -1,6 +1,3 @@
-//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
-
-//Decompiled by Procyon!
 
 package com.eloraam.redpower.control;
 
@@ -13,10 +10,10 @@ import com.eloraam.redpower.core.*;
 public class ContainerCPU extends Container implements IHandleGuiEvent
 {
     private final TileCPU tileCPU;
-    private int byte0;
-    private int byte1;
-    private int rbaddr;
-    private boolean isrun;
+    int byte0;
+    int byte1;
+    int rbaddr;
+    boolean isrun;
     
     public ContainerCPU(final IInventory inv, final TileCPU cpu) {
         this.byte0 = 0;
@@ -24,13 +21,6 @@ public class ContainerCPU extends Container implements IHandleGuiEvent
         this.rbaddr = 0;
         this.isrun = false;
         this.tileCPU = cpu;
-    }
-    
-    public ItemStack slotClick(final int a, final int b, final int c, final EntityPlayer player) {
-        if (!this.canInteractWith(player)) {
-            return null;
-        }
-        return super.slotClick(a, b, c, player);
     }
     
     public boolean canInteractWith(final EntityPlayer player) {

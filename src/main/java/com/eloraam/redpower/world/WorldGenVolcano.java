@@ -1,6 +1,3 @@
-//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
-
-//Decompiled by Procyon!
 
 package com.eloraam.redpower.world;
 
@@ -99,12 +96,12 @@ public class WorldGenVolcano extends WorldGenCustomOre
                 --super.numberOfBlocks;
             }
         }
-        world.setBlock(x, yTop, z, Blocks.lava, 0, 2);
-        while (yTop > swh && world.getBlock(x, yTop, z) == Blocks.lava) {
+        world.setBlock(x, yTop, z, Blocks.flowing_lava, 0, 2);
+        while (yTop > swh && world.getBlock(x, yTop, z) == Blocks.flowing_lava) {
             world.markBlockForUpdate(x, yTop, z);
-            world.notifyBlocksOfNeighborChange(x, yTop, z, Blocks.lava);
+            world.notifyBlocksOfNeighborChange(x, yTop, z, Blocks.flowing_lava);
             world.scheduledUpdatesAreImmediate = true;
-            Blocks.lava.updateTick(world, x, yTop, z, random);
+            Blocks.flowing_lava.updateTick(world, x, yTop, z, random);
             world.scheduledUpdatesAreImmediate = false;
             --yTop;
         }

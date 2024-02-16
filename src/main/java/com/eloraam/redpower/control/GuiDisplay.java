@@ -1,6 +1,3 @@
-//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "D:\Minecraft-Deobfuscator3000-master\1.7.10 stable mappings"!
-
-//Decompiled by Procyon!
 
 package com.eloraam.redpower.control;
 
@@ -16,7 +13,7 @@ import net.minecraft.client.renderer.*;
 public class GuiDisplay extends GuiContainer
 {
     private static ResourceLocation screenTextures;
-    private final TileDisplay disp;
+    final TileDisplay disp;
     
     public GuiDisplay(final IInventory inv, final TileDisplay td) {
         super(new ContainerDisplay(inv, td));
