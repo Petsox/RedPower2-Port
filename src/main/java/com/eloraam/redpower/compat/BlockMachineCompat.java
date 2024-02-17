@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.compat;
 
 import net.minecraft.block.material.*;

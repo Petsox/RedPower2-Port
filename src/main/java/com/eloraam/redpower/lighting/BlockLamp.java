@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.lighting;
 
 import com.eloraam.redpower.core.*;

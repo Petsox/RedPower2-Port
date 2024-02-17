@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.machine;
 
 public class TileRestrictTube extends TileTube

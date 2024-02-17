@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.machine;
 
 import cpw.mods.fml.relauncher.*;

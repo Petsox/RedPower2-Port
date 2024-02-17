@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.core;
 
 public interface IRedPowerWiring extends IRedPowerConnectable, IWiring

@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower;
 
 import com.eloraam.redpower.machine.RenderFrame;

@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.world;
 
 import cpw.mods.fml.common.*;

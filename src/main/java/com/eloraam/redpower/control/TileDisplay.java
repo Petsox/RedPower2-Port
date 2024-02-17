@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.control;
 
 import com.eloraam.redpower.core.*;

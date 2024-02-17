@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.lighting;
 
 import net.minecraft.item.*;

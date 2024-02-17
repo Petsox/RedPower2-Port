@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.base;
 
 import net.minecraft.entity.player.*;

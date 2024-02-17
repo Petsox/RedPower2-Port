@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.logic;
 
 import com.eloraam.redpower.core.*;

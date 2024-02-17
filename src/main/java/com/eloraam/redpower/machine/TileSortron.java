@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.machine;
 
 import net.minecraft.tileentity.*;

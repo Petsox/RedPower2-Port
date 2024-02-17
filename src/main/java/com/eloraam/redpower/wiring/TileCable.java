@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.wiring;
 
 import com.eloraam.redpower.core.*;

@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower;
 
 public class Flags

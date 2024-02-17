@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.wiring;
 
 import cpw.mods.fml.relauncher.*;

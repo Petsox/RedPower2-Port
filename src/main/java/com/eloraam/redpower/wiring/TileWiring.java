@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.wiring;
 
 import net.minecraft.world.*;

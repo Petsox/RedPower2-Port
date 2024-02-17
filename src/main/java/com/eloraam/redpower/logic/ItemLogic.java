@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.logic;
 
 import net.minecraft.block.*;

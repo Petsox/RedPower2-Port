@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.core;
 
 import cpw.mods.fml.common.network.simpleimpl.*;

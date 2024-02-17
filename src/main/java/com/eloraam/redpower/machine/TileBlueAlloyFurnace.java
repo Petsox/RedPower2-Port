@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.machine;
 
 import com.eloraam.redpower.base.*;

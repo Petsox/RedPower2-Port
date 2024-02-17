@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.core;
 
 import net.minecraftforge.common.util.*;

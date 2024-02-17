@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.nei;
 
 import java.awt.*;

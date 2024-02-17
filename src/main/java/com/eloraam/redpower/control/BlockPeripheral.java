@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.control;
 
 import net.minecraft.block.material.*;

@@ -1,4 +1,3 @@
-
 package com.eloraam.redpower.core;
 
 import com.mojang.authlib.*;
