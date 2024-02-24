@@ -28,7 +28,7 @@ public class RedPowerNEIPlugin
     public static boolean base;
     public static boolean compat;
     static Block micro;
-    private List<ItemRange> validMicroTypes;
+    private final List<ItemRange> validMicroTypes;
     
     public RedPowerNEIPlugin() {
         this.validMicroTypes = new ArrayList<ItemRange>();
@@ -45,7 +45,7 @@ public class RedPowerNEIPlugin
     @Mod.EventHandler
     public void postInit(final FMLPostInitializationEvent event) {
         if (FMLCommonHandler.instance().getSide().isServer()) {
-            FMLLog.severe("[RedPowerNEIPlugin] Server env detected, disabling...", new Object[0]);
+            FMLLog.severe("[RedPowerNEIPlugin] Server env detected, disabling...");
             return;
         }
         if (Loader.isModLoaded("NotEnoughItems")) {
@@ -60,15 +60,15 @@ public class RedPowerNEIPlugin
             if (RedPowerNEIPlugin.base) {
                 this.loadCoverSubSets();
                 this.loadSaws();
-                API.registerGuiOverlay((Class)GuiAlloyFurnace.class, "alloy");
-                API.registerGuiOverlay((Class)GuiAdvBench.class, "crafting", 23, 12);
-                API.registerGuiOverlayHandler((Class)GuiAlloyFurnace.class, (IOverlayHandler)new AlloyFurnaceOverlayHandler(), "alloy");
-                API.registerGuiOverlayHandler((Class)GuiAdvBench.class, (IOverlayHandler)new DefaultOverlayHandler(23, 12), "crafting");
-                API.hideItem(new ItemStack((Block)RedPowerBase.blockMultiblock));
-                API.registerRecipeHandler((ICraftingHandler)new AlloyFurnaceRecipeHandler());
-                API.registerUsageHandler((IUsageHandler)new AlloyFurnaceRecipeHandler());
-                API.registerRecipeHandler((ICraftingHandler)new MicroRecipeHandler());
-                API.registerUsageHandler((IUsageHandler)new MicroRecipeHandler());
+                API.registerGuiOverlay(GuiAlloyFurnace.class, "alloy");
+                API.registerGuiOverlay(GuiAdvBench.class, "crafting", 23, 12);
+                API.registerGuiOverlayHandler(GuiAlloyFurnace.class, new AlloyFurnaceOverlayHandler(), "alloy");
+                API.registerGuiOverlayHandler(GuiAdvBench.class, new DefaultOverlayHandler(23, 12), "crafting");
+                API.hideItem(new ItemStack(RedPowerBase.blockMultiblock));
+                API.registerRecipeHandler(new AlloyFurnaceRecipeHandler());
+                API.registerUsageHandler(new AlloyFurnaceRecipeHandler());
+                API.registerRecipeHandler(new MicroRecipeHandler());
+                API.registerUsageHandler(new MicroRecipeHandler());
             }
         }
         else {
@@ -87,14 +87,14 @@ public class RedPowerNEIPlugin
         for (int i = 0; i < saws.size(); ++i) {
             MicroRecipeHandler.saws[i] = saws.get(i);
         }
-        final ItemStackSet set = new ItemStackSet().with((Item[])MicroRecipeHandler.saws);
-        API.addSubset(new SubsetWidget.SubsetTag("RedPower.Tools.Saws", (ItemFilter)set));
-        API.addSubset(new SubsetWidget.SubsetTag("Items.Tools.Saws", (ItemFilter)set));
+        final ItemStackSet set = new ItemStackSet().with(MicroRecipeHandler.saws);
+        API.addSubset(new SubsetWidget.SubsetTag("RedPower.Tools.Saws", set));
+        API.addSubset(new SubsetWidget.SubsetTag("Items.Tools.Saws", set));
     }
     
     private void loadCoverSubSets() {
         if (RedPowerNEIPlugin.base) {
-            RedPowerNEIPlugin.micro = (Block)RedPowerBase.blockMicro;
+            RedPowerNEIPlugin.micro = RedPowerBase.blockMicro;
             int startRange = -1;
             for (int i = 0; i < 256; ++i) {
                 final ItemStack stack = new ItemStack(RedPowerNEIPlugin.micro, 1, i);
@@ -151,9 +151,9 @@ public class RedPowerNEIPlugin
     private void registerMicroSet(final String RPName, final int microID) {
         final ItemStackSet set = new ItemStackSet();
         for (final ItemRange type : this.validMicroTypes) {
-            set.with((ItemStack[])IntStream.rangeClosed(type.start, type.end).mapToObj(i -> new ItemStack(type.bl, 1, i + microID * 256)).toArray(ItemStack[]::new));
+            set.with(IntStream.rangeClosed(type.start, type.end).mapToObj(i -> new ItemStack(type.bl, 1, i + microID * 256)).toArray(ItemStack[]::new));
         }
-        API.addSubset("RedPower." + RPName, (ItemFilter)set);
+        API.addSubset("RedPower." + RPName, set);
     }
     
     private class ItemRange

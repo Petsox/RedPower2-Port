@@ -321,9 +321,9 @@ public class RedPowerMachine implements IGuiHandler
         if (FMLCommonHandler.instance().getSide().isClient()) {
             this.registerRenderers();
         }
-        NetworkRegistry.INSTANCE.registerGuiHandler((Object)RedPowerMachine.instance, (IGuiHandler)RedPowerMachine.instance);
+        NetworkRegistry.INSTANCE.registerGuiHandler(RedPowerMachine.instance, RedPowerMachine.instance);
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            MinecraftForge.EVENT_BUS.register((Object)RedPowerMachine.instance);
+            MinecraftForge.EVENT_BUS.register(RedPowerMachine.instance);
         }
     }
     
@@ -334,31 +334,31 @@ public class RedPowerMachine implements IGuiHandler
     private static void setupItems() {
         RedPowerMachine.itemVoltmeter = new ItemVoltmeter();
         RedPowerMachine.itemBatteryEmpty = new ItemTextured("rpmachine:battery").setUnlocalizedName("btbattery").setCreativeTab(CreativeTabs.tabRedstone);
-        RedPowerMachine.itemBatteryPowered = (Item)new ItemBattery();
-        CraftLib.addOreRecipe(new ItemStack((Item)RedPowerMachine.itemVoltmeter), new Object[] { "WWW", "WNW", "CCC", 'W', "plankWood", 'N', RedPowerBase.itemNikolite, 'C', "ingotCopper" });
-        GameRegistry.registerItem((Item)RedPowerMachine.itemVoltmeter, "voltmeter");
-        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.itemBatteryEmpty, 1), new Object[] { "NCN", "NTN", "NCN", 'N', RedPowerBase.itemNikolite, 'C', "ingotCopper", 'T', "ingotTin" });
+        RedPowerMachine.itemBatteryPowered = new ItemBattery();
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.itemVoltmeter), "WWW", "WNW", "CCC", 'W', "plankWood", 'N', RedPowerBase.itemNikolite, 'C', "ingotCopper");
+        GameRegistry.registerItem(RedPowerMachine.itemVoltmeter, "voltmeter");
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.itemBatteryEmpty, 1), "NCN", "NTN", "NCN", 'N', RedPowerBase.itemNikolite, 'C', "ingotCopper", 'T', "ingotTin");
         GameRegistry.registerItem(RedPowerMachine.itemBatteryEmpty, "batteryEmpty");
         GameRegistry.registerItem(RedPowerMachine.itemBatteryPowered, "batteryPowered");
         RedPowerMachine.itemSonicDriver = new ItemSonicDriver();
         RedPowerMachine.itemSonicDriver.setUnlocalizedName("sonicDriver").setTextureName("rpmachine:sonicScrewdriver");
-        GameRegistry.addRecipe(new ItemStack((Item)RedPowerMachine.itemSonicDriver, 1, RedPowerMachine.itemSonicDriver.getMaxDamage()), new Object[] { "E  ", " R ", "  B", 'R', RedPowerBase.itemIngotBrass, 'E', RedPowerBase.itemGreenSapphire, 'B', RedPowerMachine.itemBatteryEmpty });
-        GameRegistry.registerItem((Item)RedPowerMachine.itemSonicDriver, "sonicDriver");
-        RedPowerMachine.itemWoodTurbine = (Item)new ItemWindmill(1);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.itemSonicDriver, 1, RedPowerMachine.itemSonicDriver.getMaxDamage()), "E  ", " R ", "  B", 'R', RedPowerBase.itemIngotBrass, 'E', RedPowerBase.itemGreenSapphire, 'B', RedPowerMachine.itemBatteryEmpty);
+        GameRegistry.registerItem(RedPowerMachine.itemSonicDriver, "sonicDriver");
+        RedPowerMachine.itemWoodTurbine = new ItemWindmill(1);
         RedPowerMachine.itemWoodWindmill = new ItemWindmill(2).setUnlocalizedName("windmillWood").setTextureName("rpmachine:windmill");
         (RedPowerMachine.itemMachineParts = new ItemParts()).addItem(0, "rpmachine:windSailWood", "item.windSailWood");
-        RedPowerMachine.itemWoodSail = new ItemStack((Item)RedPowerMachine.itemMachineParts, 1, 0);
-        GameRegistry.registerItem((Item)RedPowerMachine.itemMachineParts, "machineParts");
-        CraftLib.addOreRecipe(RedPowerMachine.itemWoodSail, new Object[] { "CCS", "CCW", "CCS", 'C', RedPowerBase.itemCanvas, 'W', "plankWood", 'S', Items.stick });
-        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.itemWoodTurbine), new Object[] { "SAS", "SAS", "SAS", 'S', RedPowerMachine.itemWoodSail, 'A', new ItemStack((Block)RedPowerBase.blockMicro, 1, 5905) });
-        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.itemWoodWindmill), new Object[] { " S ", "SAS", " S ", 'S', RedPowerMachine.itemWoodSail, 'A', new ItemStack((Block)RedPowerBase.blockMicro, 1, 5905) });
+        RedPowerMachine.itemWoodSail = new ItemStack(RedPowerMachine.itemMachineParts, 1, 0);
+        GameRegistry.registerItem(RedPowerMachine.itemMachineParts, "machineParts");
+        CraftLib.addOreRecipe(RedPowerMachine.itemWoodSail, "CCS", "CCW", "CCS", 'C', RedPowerBase.itemCanvas, 'W', "plankWood", 'S', Items.stick);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.itemWoodTurbine), "SAS", "SAS", "SAS", 'S', RedPowerMachine.itemWoodSail, 'A', new ItemStack(RedPowerBase.blockMicro, 1, 5905));
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.itemWoodWindmill), " S ", "SAS", " S ", 'S', RedPowerMachine.itemWoodSail, 'A', new ItemStack(RedPowerBase.blockMicro, 1, 5905));
         GameRegistry.registerItem(RedPowerMachine.itemWoodTurbine, "woodTurbine");
         GameRegistry.registerItem(RedPowerMachine.itemWoodWindmill, "woodWindmill");
     }
     
     private static void setupBlocks() {
         (RedPowerMachine.blockMachine = new BlockMachine()).setBlockName("rpmachine");
-        GameRegistry.registerBlock((Block)RedPowerMachine.blockMachine, ItemExtended.class, "machine");
+        GameRegistry.registerBlock(RedPowerMachine.blockMachine, ItemExtended.class, "machine");
         RedPowerMachine.blockMachine.setBlockName(0, "rpdeploy");
         RedPowerMachine.blockMachine.setBlockName(1, "rpbreaker");
         RedPowerMachine.blockMachine.setBlockName(2, "rptranspose");
@@ -416,17 +416,17 @@ public class RedPowerMachine implements IGuiHandler
         RedPowerMachine.blockMachine.addTileEntityMapping(15, (Supplier)TileRelay::new);
         RedPowerMachine.blockMachine2 = new BlockMachine();
         RedPowerMachine.blockMachine.setBlockName("rpmachine2");
-        GameRegistry.registerBlock((Block)RedPowerMachine.blockMachine2, (Class)ItemExtended.class, "machine2");
+        GameRegistry.registerBlock(RedPowerMachine.blockMachine2, ItemExtended.class, "machine2");
         RedPowerMachine.blockMachine2.setBlockName(0, "rpsortron");
         RedPowerMachine.blockMachine2.setBlockName(1, "rpmanager");
-        GameRegistry.registerTileEntity((Class)TileSortron.class, "RPSortron");
-        GameRegistry.registerTileEntity((Class)TileManager.class, "RPManager");
+        GameRegistry.registerTileEntity(TileSortron.class, "RPSortron");
+        GameRegistry.registerTileEntity(TileManager.class, "RPManager");
         RedPowerMachine.blockMachine2.addTileEntityMapping(0, (Supplier)TileSortron::new);
         RedPowerMachine.blockMachine2.addTileEntityMapping(1, (Supplier)TileManager::new);
-        GameRegistry.registerBlock((Block)(RedPowerMachine.blockMachinePanel = new BlockMachinePanel()), (Class)ItemMachinePanel.class, "machinePanel");
-        GameRegistry.registerTileEntity((Class)TileSolarPanel.class, "RPSolar");
-        GameRegistry.registerTileEntity((Class)TileGrate.class, "RPGrate");
-        GameRegistry.registerTileEntity((Class)TileTransformer.class, "RPXfmr");
+        GameRegistry.registerBlock(RedPowerMachine.blockMachinePanel = new BlockMachinePanel(), ItemMachinePanel.class, "machinePanel");
+        GameRegistry.registerTileEntity(TileSolarPanel.class, "RPSolar");
+        GameRegistry.registerTileEntity(TileGrate.class, "RPGrate");
+        GameRegistry.registerTileEntity(TileTransformer.class, "RPXfmr");
         RedPowerMachine.blockMachinePanel.addTileEntityMapping(0, (Supplier)TileSolarPanel::new);
         RedPowerMachine.blockMachinePanel.addTileEntityMapping(1, (Supplier)TilePump::new);
         RedPowerMachine.blockMachinePanel.addTileEntityMapping(2, (Supplier)TileAccel::new);
@@ -437,10 +437,10 @@ public class RedPowerMachine implements IGuiHandler
         RedPowerMachine.blockMachinePanel.setBlockName(2, "rpaccel");
         RedPowerMachine.blockMachinePanel.setBlockName(3, "rpgrate");
         RedPowerMachine.blockMachinePanel.setBlockName(4, "rptransformer");
-        GameRegistry.registerTileEntity((Class)TileBlueFurnace.class, "RPBFurnace");
-        GameRegistry.registerTileEntity((Class)TileBufferChest.class, "RPBuffer");
-        GameRegistry.registerTileEntity((Class)TileBlueAlloyFurnace.class, "RPBAFurnace");
-        GameRegistry.registerTileEntity((Class)TileChargingBench.class, "RPCharge");
+        GameRegistry.registerTileEntity(TileBlueFurnace.class, "RPBFurnace");
+        GameRegistry.registerTileEntity(TileBufferChest.class, "RPBuffer");
+        GameRegistry.registerTileEntity(TileBlueAlloyFurnace.class, "RPBAFurnace");
+        GameRegistry.registerTileEntity(TileChargingBench.class, "RPCharge");
         RedPowerBase.blockAppliance.setBlockName(1, "rpbfurnace");
         RedPowerBase.blockAppliance.addTileEntityMapping(1, (Supplier)TileBlueFurnace::new);
         RedPowerBase.blockAppliance.setBlockName(2, "rpbuffer");
@@ -449,81 +449,81 @@ public class RedPowerMachine implements IGuiHandler
         RedPowerBase.blockAppliance.addTileEntityMapping(4, (Supplier)TileBlueAlloyFurnace::new);
         RedPowerBase.blockAppliance.setBlockName(5, "rpcharge");
         RedPowerBase.blockAppliance.addTileEntityMapping(5, (Supplier)TileChargingBench::new);
-        GameRegistry.registerBlock((Block)(RedPowerMachine.blockFrame = new BlockFrame()), (Class)ItemExtended.class, "frame");
+        GameRegistry.registerBlock(RedPowerMachine.blockFrame = new BlockFrame(), ItemExtended.class, "frame");
         RedPowerMachine.blockFrame.setBlockName("rpframe");
         RedPowerMachine.blockFrame.setBlockName(0, "rpframe");
         RedPowerMachine.blockFrame.setBlockName(2, "rptframe");
         RedPowerMachine.blockFrame.setBlockName(3, "rprtframe");
-        GameRegistry.registerTileEntity((Class)TileFrame.class, "RPFrame");
-        GameRegistry.registerTileEntity((Class)TileFrameMoving.class, "RPMFrame");
-        GameRegistry.registerTileEntity((Class)TileFrameTube.class, "RPTFrame");
-        GameRegistry.registerTileEntity((Class)TileFrameRedstoneTube.class, "RPRTFrame");
+        GameRegistry.registerTileEntity(TileFrame.class, "RPFrame");
+        GameRegistry.registerTileEntity(TileFrameMoving.class, "RPMFrame");
+        GameRegistry.registerTileEntity(TileFrameTube.class, "RPTFrame");
+        GameRegistry.registerTileEntity(TileFrameRedstoneTube.class, "RPRTFrame");
         RedPowerMachine.blockFrame.addTileEntityMapping(0, (Supplier)TileFrame::new);
         RedPowerMachine.blockFrame.addTileEntityMapping(1, (Supplier)TileFrameMoving::new);
         RedPowerMachine.blockFrame.addTileEntityMapping(2, (Supplier)TileFrameTube::new);
         RedPowerMachine.blockFrame.addTileEntityMapping(3, (Supplier)TileFrameRedstoneTube::new);
         final MicroPlacementTube imp = new MicroPlacementTube();
-        RedPowerBase.blockMicro.registerPlacement(7, (IMicroPlacement)imp);
-        RedPowerBase.blockMicro.registerPlacement(8, (IMicroPlacement)imp);
-        RedPowerBase.blockMicro.registerPlacement(9, (IMicroPlacement)imp);
-        RedPowerBase.blockMicro.registerPlacement(10, (IMicroPlacement)imp);
-        RedPowerBase.blockMicro.registerPlacement(11, (IMicroPlacement)imp);
+        RedPowerBase.blockMicro.registerPlacement(7, imp);
+        RedPowerBase.blockMicro.registerPlacement(8, imp);
+        RedPowerBase.blockMicro.registerPlacement(9, imp);
+        RedPowerBase.blockMicro.registerPlacement(10, imp);
+        RedPowerBase.blockMicro.registerPlacement(11, imp);
         RedPowerBase.blockMicro.addTileEntityMapping(7, (Supplier)TilePipe::new);
         RedPowerBase.blockMicro.addTileEntityMapping(8, (Supplier)TileTube::new);
         RedPowerBase.blockMicro.addTileEntityMapping(9, (Supplier)TileRedstoneTube::new);
         RedPowerBase.blockMicro.addTileEntityMapping(10, (Supplier)TileRestrictTube::new);
         RedPowerBase.blockMicro.addTileEntityMapping(11, (Supplier)TileMagTube::new);
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 0), new Object[] { "SCS", "SPS", "SRS", 'S', Blocks.cobblestone, 'C', Blocks.chest, 'R', Items.redstone, 'P', Blocks.piston });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 1), new Object[] { "SAS", "SPS", "SRS", 'S', Blocks.cobblestone, 'A', Items.iron_pickaxe, 'R', Items.redstone, 'P', Blocks.piston });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 2), new Object[] { "SSS", "WPW", "SRS", 'S', Blocks.cobblestone, 'R', Items.redstone, 'P', Blocks.piston, 'W', "plankWood" });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 3), new Object[] { "SSS", "GPG", "SRS", 'S', Blocks.cobblestone, 'R', RedPowerBase.itemWaferRed, 'P', Blocks.piston, 'G', Items.gold_ingot });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 4), new Object[] { "BTB", "RPR", "WTW", 'B', "ingotBrass", 'T', new ItemStack((Block)RedPowerBase.blockMicro, 1, 2048), 'R', RedPowerBase.itemWaferRed, 'W', "plankWood", 'P', Blocks.wooden_pressure_plate });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 5), new Object[] { "III", "RFR", "IBI", 'B', RedPowerBase.itemIngotBlue, 'R', RedPowerBase.itemWaferRed, 'F', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 3), 'I', Items.iron_ingot });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 8), new Object[] { "BLB", "EFE", "INI", 'N', RedPowerBase.itemIngotBlue, 'B', RedPowerBase.itemIngotBrass, 'E', Items.ender_pearl, 'L', Items.leather, 'F', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 3), 'I', Items.iron_ingot });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 9), new Object[] { "IBI", "IMI", "IUI", 'I', Items.iron_ingot, 'B', RedPowerBase.itemIngotBrass, 'M', RedPowerBase.itemMotor, 'U', RedPowerBase.itemIngotBlue });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerBase.blockAppliance, 1, 2), new Object[] { "BWB", "W W", "BWB", 'B', Blocks.iron_bars, 'W', "plankWood" });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 10), new Object[] { "BCB", "RDR", "WCW", 'R', RedPowerBase.itemWaferRed, 'B', "ingotBrass", 'D', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 4), 'W', "plankWood", 'C', new ItemStack((Block)RedPowerBase.blockAppliance, 1, 2) });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 11), new Object[] { "CIC", "WBW", "CIC", 'I', Items.iron_ingot, 'B', RedPowerBase.itemIngotBlue, 'W', RedPowerBase.itemWaferBlue, 'C', "ingotCopper" });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 8, 2048), new Object[] { "BGB", 'G', Blocks.glass, 'B', "ingotBrass" });
-        GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 2304), new Object[] { Items.redstone, new ItemStack((Block)RedPowerBase.blockMicro, 1, 2048) });
-        GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 1, 2560), new Object[] { Items.iron_ingot, new ItemStack((Block)RedPowerBase.blockMicro, 1, 2048) });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 8, 2816), new Object[] { "CCC", "OGO", "CCC", 'G', Blocks.glass, 'O', Blocks.obsidian, 'C', RedPowerBase.itemFineCopper });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockAppliance, 1, 1), new Object[] { "CCC", "C C", "IBI", 'C', Blocks.clay, 'B', RedPowerBase.itemIngotBlue, 'I', Items.iron_ingot });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerBase.blockAppliance, 1, 4), new Object[] { "CCC", "C C", "IBI", 'C', Blocks.brick_block, 'B', RedPowerBase.itemIngotBlue, 'I', Items.iron_ingot });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 0), new Object[] { "WWW", "WBW", "WWW", 'W', RedPowerBase.itemWaferBlue, 'B', RedPowerBase.itemIngotBlue });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 2), new Object[] { "BOB", "O O", "BOB", 'O', Blocks.obsidian, 'B', RedPowerBase.itemIngotBlue });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 6), new Object[] { "BWB", "BIB", "IAI", 'I', Items.iron_ingot, 'W', "plankWood", 'A', RedPowerBase.itemIngotBlue, 'B', RedPowerMachine.itemBatteryEmpty });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 4), new Object[] { "III", "CIC", "BIB", 'I', Items.iron_ingot, 'C', RedPowerBase.itemCopperCoil, 'B', RedPowerBase.itemIngotBlue });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine2, 1, 0), new Object[] { "IDI", "RSR", "IWI", 'D', Items.diamond, 'I', Items.iron_ingot, 'R', RedPowerBase.itemWaferRed, 'W', new ItemStack((Block)RedPowerBase.blockMicro, 1, 3072), 'S', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 5) });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine2, 1, 1), new Object[] { "IMI", "RSR", "WBW", 'I', Items.iron_ingot, 'R', RedPowerBase.itemWaferRed, 'S', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 5), 'M', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 10), 'W', "plankWood", 'B', RedPowerBase.itemIngotBlue });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerBase.blockAppliance, 1, 5), new Object[] { "OQO", "BCB", "WUW", 'O', Blocks.obsidian, 'W', "plankWood", 'U', RedPowerBase.itemIngotBlue, 'C', Blocks.chest, 'Q', RedPowerBase.itemCopperCoil, 'B', RedPowerMachine.itemBatteryEmpty });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 12), new Object[] { "NFN", "SDS", "SRS", 'N', Blocks.netherrack, 'F', Items.flint_and_steel, 'D', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 0), 'S', Blocks.cobblestone, 'R', Items.redstone });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 13), new Object[] { "BIB", "CDC", "IRI", 'I', Items.iron_ingot, 'D', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 0), 'C', new ItemStack((Block)RedPowerBase.blockMicro, 1, 768), 'R', RedPowerBase.itemWaferRed, 'B', RedPowerBase.itemIngotBrass });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 14), new Object[] { "WBW", "WTW", "SRS", 'R', Items.redstone, 'T', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 2), 'W', "plankWood", 'B', new ItemStack((Block)RedPowerBase.blockAppliance, 1, 2), 'S', Blocks.cobblestone });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 15), new Object[] { "WBW", "WTW", "SRS", 'R', RedPowerBase.itemWaferRed, 'T', new ItemStack((Block)RedPowerMachine.blockMachine, 1, 2), 'W', "plankWood", 'B', new ItemStack((Block)RedPowerBase.blockAppliance, 1, 2), 'S', Blocks.cobblestone });
-        GameRegistry.addRecipe(RedPowerBase.itemCopperCoil, new Object[] { "FBF", "BIB", "FBF", 'F', RedPowerBase.itemFineCopper, 'B', Blocks.iron_bars, 'I', Items.iron_ingot });
-        GameRegistry.addRecipe(RedPowerBase.itemMotor, new Object[] { "ICI", "ICI", "IBI", 'C', RedPowerBase.itemCopperCoil, 'B', RedPowerBase.itemIngotBlue, 'I', Items.iron_ingot });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockFrame, 1), new Object[] { "SSS", "SBS", "SSS", 'S', Items.stick, 'B', "ingotBrass" });
-        GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerMachine.blockFrame, 1, 2), new Object[] { new ItemStack((Block)RedPowerMachine.blockFrame, 1), new ItemStack((Block)RedPowerBase.blockMicro, 1, 2048) });
-        GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerMachine.blockFrame, 1, 3), new Object[] { new ItemStack((Block)RedPowerMachine.blockFrame, 1), new ItemStack((Block)RedPowerBase.blockMicro, 1, 2304) });
-        GameRegistry.addShapelessRecipe(new ItemStack((Block)RedPowerMachine.blockFrame, 1, 3), new Object[] { new ItemStack((Block)RedPowerMachine.blockFrame, 1, 2), Items.redstone });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 7), new Object[] { "III", "BMB", "IAI", 'I', Items.iron_ingot, 'A', RedPowerBase.itemIngotBlue, 'B', "ingotBrass", 'M', RedPowerBase.itemMotor });
-        CraftLib.addOreRecipe(new ItemStack((Block)RedPowerBase.blockMicro, 16, 1792), new Object[] { "B B", "BGB", "B B", 'G', Blocks.glass, 'B', "ingotBrass" });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 3), new Object[] { "III", "I I", "IPI", 'P', new ItemStack((Block)RedPowerBase.blockMicro, 1, 1792), 'I', Blocks.iron_bars });
-        GameRegistry.addRecipe(new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 1), new Object[] { "III", "PMP", "IAI", 'I', Items.iron_ingot, 'A', RedPowerBase.itemIngotBlue, 'P', new ItemStack((Block)RedPowerBase.blockMicro, 1, 1792), 'M', RedPowerBase.itemMotor });
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 0), "SCS", "SPS", "SRS", 'S', Blocks.cobblestone, 'C', Blocks.chest, 'R', Items.redstone, 'P', Blocks.piston);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 1), "SAS", "SPS", "SRS", 'S', Blocks.cobblestone, 'A', Items.iron_pickaxe, 'R', Items.redstone, 'P', Blocks.piston);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 2), "SSS", "WPW", "SRS", 'S', Blocks.cobblestone, 'R', Items.redstone, 'P', Blocks.piston, 'W', "plankWood");
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 3), "SSS", "GPG", "SRS", 'S', Blocks.cobblestone, 'R', RedPowerBase.itemWaferRed, 'P', Blocks.piston, 'G', Items.gold_ingot);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 4), "BTB", "RPR", "WTW", 'B', "ingotBrass", 'T', new ItemStack(RedPowerBase.blockMicro, 1, 2048), 'R', RedPowerBase.itemWaferRed, 'W', "plankWood", 'P', Blocks.wooden_pressure_plate);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 5), "III", "RFR", "IBI", 'B', RedPowerBase.itemIngotBlue, 'R', RedPowerBase.itemWaferRed, 'F', new ItemStack(RedPowerMachine.blockMachine, 1, 3), 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 8), "BLB", "EFE", "INI", 'N', RedPowerBase.itemIngotBlue, 'B', RedPowerBase.itemIngotBrass, 'E', Items.ender_pearl, 'L', Items.leather, 'F', new ItemStack(RedPowerMachine.blockMachine, 1, 3), 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 9), "IBI", "IMI", "IUI", 'I', Items.iron_ingot, 'B', RedPowerBase.itemIngotBrass, 'M', RedPowerBase.itemMotor, 'U', RedPowerBase.itemIngotBlue);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerBase.blockAppliance, 1, 2), "BWB", "W W", "BWB", 'B', Blocks.iron_bars, 'W', "plankWood");
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 10), "BCB", "RDR", "WCW", 'R', RedPowerBase.itemWaferRed, 'B', "ingotBrass", 'D', new ItemStack(RedPowerMachine.blockMachine, 1, 4), 'W', "plankWood", 'C', new ItemStack(RedPowerBase.blockAppliance, 1, 2));
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 11), "CIC", "WBW", "CIC", 'I', Items.iron_ingot, 'B', RedPowerBase.itemIngotBlue, 'W', RedPowerBase.itemWaferBlue, 'C', "ingotCopper");
+        CraftLib.addOreRecipe(new ItemStack(RedPowerBase.blockMicro, 8, 2048), "BGB", 'G', Blocks.glass, 'B', "ingotBrass");
+        GameRegistry.addShapelessRecipe(new ItemStack(RedPowerBase.blockMicro, 1, 2304), Items.redstone, new ItemStack(RedPowerBase.blockMicro, 1, 2048));
+        GameRegistry.addShapelessRecipe(new ItemStack(RedPowerBase.blockMicro, 1, 2560), Items.iron_ingot, new ItemStack(RedPowerBase.blockMicro, 1, 2048));
+        GameRegistry.addRecipe(new ItemStack(RedPowerBase.blockMicro, 8, 2816), "CCC", "OGO", "CCC", 'G', Blocks.glass, 'O', Blocks.obsidian, 'C', RedPowerBase.itemFineCopper);
+        GameRegistry.addRecipe(new ItemStack(RedPowerBase.blockAppliance, 1, 1), "CCC", "C C", "IBI", 'C', Blocks.clay, 'B', RedPowerBase.itemIngotBlue, 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(RedPowerBase.blockAppliance, 1, 4), "CCC", "C C", "IBI", 'C', Blocks.brick_block, 'B', RedPowerBase.itemIngotBlue, 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachinePanel, 1, 0), "WWW", "WBW", "WWW", 'W', RedPowerBase.itemWaferBlue, 'B', RedPowerBase.itemIngotBlue);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachinePanel, 1, 2), "BOB", "O O", "BOB", 'O', Blocks.obsidian, 'B', RedPowerBase.itemIngotBlue);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 6), "BWB", "BIB", "IAI", 'I', Items.iron_ingot, 'W', "plankWood", 'A', RedPowerBase.itemIngotBlue, 'B', RedPowerMachine.itemBatteryEmpty);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachinePanel, 1, 4), "III", "CIC", "BIB", 'I', Items.iron_ingot, 'C', RedPowerBase.itemCopperCoil, 'B', RedPowerBase.itemIngotBlue);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine2, 1, 0), "IDI", "RSR", "IWI", 'D', Items.diamond, 'I', Items.iron_ingot, 'R', RedPowerBase.itemWaferRed, 'W', new ItemStack(RedPowerBase.blockMicro, 1, 3072), 'S', new ItemStack(RedPowerMachine.blockMachine, 1, 5));
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine2, 1, 1), "IMI", "RSR", "WBW", 'I', Items.iron_ingot, 'R', RedPowerBase.itemWaferRed, 'S', new ItemStack(RedPowerMachine.blockMachine, 1, 5), 'M', new ItemStack(RedPowerMachine.blockMachine, 1, 10), 'W', "plankWood", 'B', RedPowerBase.itemIngotBlue);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerBase.blockAppliance, 1, 5), "OQO", "BCB", "WUW", 'O', Blocks.obsidian, 'W', "plankWood", 'U', RedPowerBase.itemIngotBlue, 'C', Blocks.chest, 'Q', RedPowerBase.itemCopperCoil, 'B', RedPowerMachine.itemBatteryEmpty);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 12), "NFN", "SDS", "SRS", 'N', Blocks.netherrack, 'F', Items.flint_and_steel, 'D', new ItemStack(RedPowerMachine.blockMachine, 1, 0), 'S', Blocks.cobblestone, 'R', Items.redstone);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 13), "BIB", "CDC", "IRI", 'I', Items.iron_ingot, 'D', new ItemStack(RedPowerMachine.blockMachine, 1, 0), 'C', new ItemStack(RedPowerBase.blockMicro, 1, 768), 'R', RedPowerBase.itemWaferRed, 'B', RedPowerBase.itemIngotBrass);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 14), "WBW", "WTW", "SRS", 'R', Items.redstone, 'T', new ItemStack(RedPowerMachine.blockMachine, 1, 2), 'W', "plankWood", 'B', new ItemStack(RedPowerBase.blockAppliance, 1, 2), 'S', Blocks.cobblestone);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 15), "WBW", "WTW", "SRS", 'R', RedPowerBase.itemWaferRed, 'T', new ItemStack(RedPowerMachine.blockMachine, 1, 2), 'W', "plankWood", 'B', new ItemStack(RedPowerBase.blockAppliance, 1, 2), 'S', Blocks.cobblestone);
+        GameRegistry.addRecipe(RedPowerBase.itemCopperCoil, "FBF", "BIB", "FBF", 'F', RedPowerBase.itemFineCopper, 'B', Blocks.iron_bars, 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(RedPowerBase.itemMotor, "ICI", "ICI", "IBI", 'C', RedPowerBase.itemCopperCoil, 'B', RedPowerBase.itemIngotBlue, 'I', Items.iron_ingot);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockFrame, 1), "SSS", "SBS", "SSS", 'S', Items.stick, 'B', "ingotBrass");
+        GameRegistry.addShapelessRecipe(new ItemStack(RedPowerMachine.blockFrame, 1, 2), new ItemStack(RedPowerMachine.blockFrame, 1), new ItemStack(RedPowerBase.blockMicro, 1, 2048));
+        GameRegistry.addShapelessRecipe(new ItemStack(RedPowerMachine.blockFrame, 1, 3), new ItemStack(RedPowerMachine.blockFrame, 1), new ItemStack(RedPowerBase.blockMicro, 1, 2304));
+        GameRegistry.addShapelessRecipe(new ItemStack(RedPowerMachine.blockFrame, 1, 3), new ItemStack(RedPowerMachine.blockFrame, 1, 2), Items.redstone);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerMachine.blockMachine, 1, 7), "III", "BMB", "IAI", 'I', Items.iron_ingot, 'A', RedPowerBase.itemIngotBlue, 'B', "ingotBrass", 'M', RedPowerBase.itemMotor);
+        CraftLib.addOreRecipe(new ItemStack(RedPowerBase.blockMicro, 16, 1792), "B B", "BGB", "B B", 'G', Blocks.glass, 'B', "ingotBrass");
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachinePanel, 1, 3), "III", "I I", "IPI", 'P', new ItemStack(RedPowerBase.blockMicro, 1, 1792), 'I', Blocks.iron_bars);
+        GameRegistry.addRecipe(new ItemStack(RedPowerMachine.blockMachinePanel, 1, 1), "III", "PMP", "IAI", 'I', Items.iron_ingot, 'A', RedPowerBase.itemIngotBlue, 'P', new ItemStack(RedPowerBase.blockMicro, 1, 1792), 'M', RedPowerBase.itemMotor);
     }
     
     public static void initAchievements() {
-        AchieveLib.registerAchievement("rpTranspose", -2, 2, new ItemStack((Block)RedPowerMachine.blockMachine, 1, 2), (Object)AchievementList.acquireIron);
-        AchieveLib.registerAchievement("rpBreaker", -2, 4, new ItemStack((Block)RedPowerMachine.blockMachine, 1, 1), (Object)AchievementList.acquireIron);
-        AchieveLib.registerAchievement("rpDeploy", -2, 6, new ItemStack((Block)RedPowerMachine.blockMachine, 1, 0), (Object)AchievementList.acquireIron);
-        AchieveLib.addCraftingAchievement(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 2), "rpTranspose");
-        AchieveLib.addCraftingAchievement(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 1), "rpBreaker");
-        AchieveLib.addCraftingAchievement(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 0), "rpDeploy");
-        AchieveLib.registerAchievement("rpFrames", 4, 4, new ItemStack((Block)RedPowerMachine.blockMachine, 1, 7), (Object)"rpIngotBlue");
-        AchieveLib.registerAchievement("rpPump", 4, 5, new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 1), (Object)"rpIngotBlue");
-        AchieveLib.addCraftingAchievement(new ItemStack((Block)RedPowerMachine.blockMachine, 1, 7), "rpFrames");
-        AchieveLib.addCraftingAchievement(new ItemStack((Block)RedPowerMachine.blockMachinePanel, 1, 1), "rpPump");
+        AchieveLib.registerAchievement("rpTranspose", -2, 2, new ItemStack(RedPowerMachine.blockMachine, 1, 2), AchievementList.acquireIron);
+        AchieveLib.registerAchievement("rpBreaker", -2, 4, new ItemStack(RedPowerMachine.blockMachine, 1, 1), AchievementList.acquireIron);
+        AchieveLib.registerAchievement("rpDeploy", -2, 6, new ItemStack(RedPowerMachine.blockMachine, 1, 0), AchievementList.acquireIron);
+        AchieveLib.addCraftingAchievement(new ItemStack(RedPowerMachine.blockMachine, 1, 2), "rpTranspose");
+        AchieveLib.addCraftingAchievement(new ItemStack(RedPowerMachine.blockMachine, 1, 1), "rpBreaker");
+        AchieveLib.addCraftingAchievement(new ItemStack(RedPowerMachine.blockMachine, 1, 0), "rpDeploy");
+        AchieveLib.registerAchievement("rpFrames", 4, 4, new ItemStack(RedPowerMachine.blockMachine, 1, 7), "rpIngotBlue");
+        AchieveLib.registerAchievement("rpPump", 4, 5, new ItemStack(RedPowerMachine.blockMachinePanel, 1, 1), "rpIngotBlue");
+        AchieveLib.addCraftingAchievement(new ItemStack(RedPowerMachine.blockMachine, 1, 7), "rpFrames");
+        AchieveLib.addCraftingAchievement(new ItemStack(RedPowerMachine.blockMachinePanel, 1, 1), "rpPump");
     }
     
     public Object getClientGuiElement(final int ID, final EntityPlayer player, final World world, final int X, final int Y, final int Z) {
@@ -585,52 +585,52 @@ public class RedPowerMachine implements IGuiHandler
     public Object getServerGuiElement(final int ID, final EntityPlayer player, final World world, final int X, final int Y, final int Z) {
         switch (ID) {
             case 1: {
-                return new ContainerDeploy((IInventory)player.inventory, (TileDeploy)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileDeploy.class));
+                return new ContainerDeploy(player.inventory, (TileDeploy)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileDeploy.class));
             }
             case 2: {
-                return new ContainerFilter((IInventory)player.inventory, (TileFilter)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileFilter.class));
+                return new ContainerFilter(player.inventory, (TileFilter)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileFilter.class));
             }
             case 3: {
-                return new ContainerBlueFurnace(player.inventory, (TileBlueFurnace)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileBlueFurnace.class));
+                return new ContainerBlueFurnace(player.inventory, (TileBlueFurnace)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileBlueFurnace.class));
             }
             case 4: {
-                return new ContainerBufferChest((IInventory)player.inventory, (TileBufferChest)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileBufferChest.class));
+                return new ContainerBufferChest(player.inventory, (TileBufferChest)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileBufferChest.class));
             }
             case 5: {
-                return new ContainerSorter((IInventory)player.inventory, (TileSorter)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileSorter.class));
+                return new ContainerSorter(player.inventory, (TileSorter)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileSorter.class));
             }
             case 6: {
-                return new ContainerItemDetect((IInventory)player.inventory, (TileItemDetect)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileItemDetect.class));
+                return new ContainerItemDetect(player.inventory, (TileItemDetect)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileItemDetect.class));
             }
             case 7: {
-                return new ContainerRetriever((IInventory)player.inventory, (TileRetriever)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileRetriever.class));
+                return new ContainerRetriever(player.inventory, (TileRetriever)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileRetriever.class));
             }
             case 8: {
-                return new ContainerBatteryBox((IInventory)player.inventory, (TileBatteryBox)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileBatteryBox.class));
+                return new ContainerBatteryBox(player.inventory, (TileBatteryBox)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileBatteryBox.class));
             }
             case 9: {
-                return new ContainerRegulator((IInventory)player.inventory, (TileRegulator)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileRegulator.class));
+                return new ContainerRegulator(player.inventory, (TileRegulator)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileRegulator.class));
             }
             case 10: {
-                return new ContainerBlueAlloyFurnace(player.inventory, (TileBlueAlloyFurnace)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileBlueAlloyFurnace.class));
+                return new ContainerBlueAlloyFurnace(player.inventory, (TileBlueAlloyFurnace)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileBlueAlloyFurnace.class));
             }
             case 11: {
-                return new ContainerAssemble((IInventory)player.inventory, (TileAssemble)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileAssemble.class));
+                return new ContainerAssemble(player.inventory, (TileAssemble)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileAssemble.class));
             }
             case 12: {
-                return new ContainerEject((IInventory)player.inventory, (TileEjectBase)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileEjectBase.class));
+                return new ContainerEject(player.inventory, (TileEjectBase)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileEjectBase.class));
             }
             case 13: {
-                return new ContainerEject((IInventory)player.inventory, (TileEjectBase)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileRelay.class));
+                return new ContainerEject(player.inventory, (TileEjectBase)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileRelay.class));
             }
             case 14: {
-                return new ContainerChargingBench((IInventory)player.inventory, (TileChargingBench)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileChargingBench.class));
+                return new ContainerChargingBench(player.inventory, (TileChargingBench)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileChargingBench.class));
             }
             case 15: {
-                return new ContainerWindTurbine((IInventory)player.inventory, (TileWindTurbine)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileWindTurbine.class));
+                return new ContainerWindTurbine(player.inventory, (TileWindTurbine)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileWindTurbine.class));
             }
             case 16: {
-                return new ContainerManager((IInventory)player.inventory, (TileManager)CoreLib.getTileEntity((IBlockAccess)world, X, Y, Z, (Class)TileManager.class));
+                return new ContainerManager(player.inventory, (TileManager)CoreLib.getTileEntity(world, X, Y, Z, (Class)TileManager.class));
             }
             default: {
                 return null;
@@ -676,28 +676,28 @@ public class RedPowerMachine implements IGuiHandler
         RenderLib.setRenderer(RedPowerMachine.blockFrame, 1, RenderFrameMoving::new);
         RenderLib.setRenderer(RedPowerMachine.blockFrame, 2, RenderFrameTube::new);
         RenderLib.setRenderer(RedPowerMachine.blockFrame, 3, RenderFrameRedstoneTube::new);
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileBreaker.class, (TileEntitySpecialRenderer)new RenderBreaker((Block)RedPowerMachine.blockMachine));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileFrame.class, (TileEntitySpecialRenderer)new RenderFrame((Block)RedPowerMachine.blockFrame));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileFrameTube.class, (TileEntitySpecialRenderer)new RenderFrameTube((Block)RedPowerMachine.blockFrame));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileFrameRedstoneTube.class, (TileEntitySpecialRenderer)new RenderFrameRedstoneTube((Block)RedPowerMachine.blockFrame));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileFrameMoving.class, (TileEntitySpecialRenderer)new RenderFrameMoving((Block)RedPowerMachine.blockFrame));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileMachine.class, (TileEntitySpecialRenderer)new RenderMachine((Block)RedPowerMachine.blockMachine));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileTube.class, (TileEntitySpecialRenderer)new RenderTube((Block)RedPowerBase.blockMicro));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileRedstoneTube.class, (TileEntitySpecialRenderer)new RenderRedstoneTube((Block)RedPowerBase.blockMicro));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileMotor.class, (TileEntitySpecialRenderer)new RenderMotor((Block)RedPowerMachine.blockMachine));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileAccel.class, (TileEntitySpecialRenderer)new RenderAccel((Block)RedPowerMachine.blockMachinePanel));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TilePump.class, (TileEntitySpecialRenderer)new RenderPump((Block)RedPowerMachine.blockMachinePanel));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileTransformer.class, (TileEntitySpecialRenderer)new RenderTransformer((Block)RedPowerMachine.blockMachinePanel));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileThermopile.class, (TileEntitySpecialRenderer)new RenderThermopile((Block)RedPowerMachine.blockMachine));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TilePipe.class, (TileEntitySpecialRenderer)new RenderPipe((Block)RedPowerBase.blockMicro));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileWindTurbine.class, (TileEntitySpecialRenderer)new RenderWindTurbine((Block)RedPowerMachine.blockMachine));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileGrate.class, (TileEntitySpecialRenderer)new RenderGrate((Block)RedPowerMachine.blockMachinePanel));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileSolarPanel.class, (TileEntitySpecialRenderer)new RenderSolarPanel((Block)RedPowerMachine.blockMachinePanel));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileBatteryBox.class, (TileEntitySpecialRenderer)new RenderBatteryBox((Block)RedPowerMachine.blockMachine));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileBlueFurnace.class, (TileEntitySpecialRenderer)new RenderBlueFurnace((Block)RedPowerBase.blockAppliance));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileBlueAlloyFurnace.class, (TileEntitySpecialRenderer)new RenderBlueAlloyFurnace((Block)RedPowerBase.blockAppliance));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileChargingBench.class, (TileEntitySpecialRenderer)new RenderChargingBench((Block)RedPowerBase.blockAppliance));
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileBufferChest.class, (TileEntitySpecialRenderer)new RenderBufferChest((Block)RedPowerBase.blockAppliance));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileBreaker.class, new RenderBreaker(RedPowerMachine.blockMachine));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFrame.class, new RenderFrame(RedPowerMachine.blockFrame));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFrameTube.class, new RenderFrameTube(RedPowerMachine.blockFrame));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFrameRedstoneTube.class, new RenderFrameRedstoneTube(RedPowerMachine.blockFrame));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFrameMoving.class, new RenderFrameMoving(RedPowerMachine.blockFrame));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileMachine.class, new RenderMachine(RedPowerMachine.blockMachine));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileTube.class, new RenderTube(RedPowerBase.blockMicro));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileRedstoneTube.class, new RenderRedstoneTube(RedPowerBase.blockMicro));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileMotor.class, new RenderMotor(RedPowerMachine.blockMachine));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileAccel.class, new RenderAccel(RedPowerMachine.blockMachinePanel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump(RedPowerMachine.blockMachinePanel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileTransformer.class, new RenderTransformer(RedPowerMachine.blockMachinePanel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileThermopile.class, new RenderThermopile(RedPowerMachine.blockMachine));
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePipe.class, new RenderPipe(RedPowerBase.blockMicro));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileWindTurbine.class, new RenderWindTurbine(RedPowerMachine.blockMachine));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileGrate.class, new RenderGrate(RedPowerMachine.blockMachinePanel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileSolarPanel.class, new RenderSolarPanel(RedPowerMachine.blockMachinePanel));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileBatteryBox.class, new RenderBatteryBox(RedPowerMachine.blockMachine));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileBlueFurnace.class, new RenderBlueFurnace(RedPowerBase.blockAppliance));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileBlueAlloyFurnace.class, new RenderBlueAlloyFurnace(RedPowerBase.blockAppliance));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileChargingBench.class, new RenderChargingBench(RedPowerBase.blockAppliance));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileBufferChest.class, new RenderBufferChest(RedPowerBase.blockAppliance));
     }
     
     @SideOnly(Side.CLIENT)

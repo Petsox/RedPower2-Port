@@ -40,7 +40,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
     }
     
     public static PositionedStack position(final ItemStack item, final int row, final int col) {
-        return new PositionedStack((Object)item, 25 + col * 18, 6 + row * 18);
+        return new PositionedStack(item, 25 + col * 18, 6 + row * 18);
     }
     
     public String getRecipeName() {
@@ -54,7 +54,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
             this.arecipes.add(new GluingRecipe(MicroRecipeHandler.covers, ingred, -1));
             this.arecipes.add(new GluingRecipe(MicroRecipeHandler.hollow, ingred, -1));
         }
-        else if (ingred.getItem() == ItemHandsaw.getItemFromBlock((Block)RedPowerBase.blockMicro) && isValidMicroType(ingred.getItemDamage() >> 8)) {
+        else if (ingred.getItem() == ItemHandsaw.getItemFromBlock(RedPowerBase.blockMicro) && isValidMicroType(ingred.getItemDamage() >> 8)) {
             final int type = ingred.getItemDamage() >> 8;
             final int material = ingred.getItemDamage() & 0xFF;
             this.addCuttingRecipe(type, material);
@@ -108,7 +108,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
         else if (result.getItem() instanceof ItemHandsaw) {
             this.addSawUsage(result);
         }
-        else if (result.getItem() == Item.getItemFromBlock((Block)RedPowerBase.blockMicro) && isValidMicroType(result.getItemDamage() >> 8)) {
+        else if (result.getItem() == Item.getItemFromBlock(RedPowerBase.blockMicro) && isValidMicroType(result.getItemDamage() >> 8)) {
             final int type = result.getItemDamage() >> 8;
             final int material = result.getItemDamage() & 0xFF;
             this.addCuttingUsage(type, material);
@@ -301,7 +301,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
         public List<PositionedStack> getIngredients() {
             final int index = this.cyclemap.get(MicroRecipeHandler.this.cycleticks / 20 % this.cyclemap.size());
             if (this.cycletype == 0) {
-                this.saw = new ItemStack((Item)MicroRecipeHandler.saws[index]);
+                this.saw = new ItemStack(MicroRecipeHandler.saws[index]);
             }
             else {
                 this.ingred = MicroRecipeHandler.getMicro(MicroRecipeHandler.getType(this.ingred), MicroRecipeHandler.materials[index], 1);
@@ -323,7 +323,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
             if (this.cycletype == 1) {
                 this.result = MicroRecipeHandler.getMicro(MicroRecipeHandler.getType(this.result), MicroRecipeHandler.materials[index], 2);
             }
-            return new PositionedStack((Object)this.result, 119, 24);
+            return new PositionedStack(this.result, 119, 24);
         }
     }
     
@@ -339,9 +339,9 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
             this.ingreds = new ArrayList<PositionedStack>();
             this.result = result;
             this.microclass = microclass;
-            this.gluingcombos = (List<LinkedList<Integer>>)ComboGenerator.generate(MicroRecipeHandler.getThickness(MicroRecipeHandler.getType(result)));
+            this.gluingcombos = ComboGenerator.generate(MicroRecipeHandler.getThickness(MicroRecipeHandler.getType(result)));
             if (usedthickness != -1) {
-                ComboGenerator.removeNotContaining((List)this.gluingcombos, usedthickness);
+                ComboGenerator.removeNotContaining(this.gluingcombos, usedthickness);
             }
             this.cycletype = 0;
         }
@@ -373,7 +373,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
         }
         
         public PositionedStack getResult() {
-            return new PositionedStack((Object)this.result, 119, 24);
+            return new PositionedStack(this.result, 119, 24);
         }
     }
     
@@ -392,7 +392,7 @@ public class MicroRecipeHandler extends ShapedRecipeHandler
         }
         
         public PositionedStack getResult() {
-            return new PositionedStack((Object)MicroRecipeHandler.getMicro(this.type, this.material, 1), 119, 24);
+            return new PositionedStack(MicroRecipeHandler.getMicro(this.type, this.material, 1), 119, 24);
         }
     }
 }

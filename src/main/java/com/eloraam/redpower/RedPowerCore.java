@@ -33,9 +33,9 @@ public class RedPowerCore
     public void preInit(final FMLPreInitializationEvent event) {
         Config.loadConfig();
         CoreLib.readOres();
-        MinecraftForge.EVENT_BUS.register((Object)new CoreEvents());
+        MinecraftForge.EVENT_BUS.register(new CoreEvents());
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            MinecraftForge.EVENT_BUS.register((Object)RedPowerCore.instance);
+            MinecraftForge.EVENT_BUS.register(RedPowerCore.instance);
         }
     }
     
@@ -72,8 +72,8 @@ public class RedPowerCore
     public void setupRenderers() {
         RedPowerCore.customBlockModel = RenderingRegistry.getNextAvailableRenderId();
         RedPowerCore.nullBlockModel = RenderingRegistry.getNextAvailableRenderId();
-        MinecraftForge.EVENT_BUS.register((Object)new RenderHighlight());
-        ClientRegistry.bindTileEntitySpecialRenderer((Class)TileCovered.class, (TileEntitySpecialRenderer)new RenderSimpleCovered());
+        MinecraftForge.EVENT_BUS.register(new RenderHighlight());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileCovered.class, new RenderSimpleCovered());
     }
     
     @SideOnly(Side.CLIENT)

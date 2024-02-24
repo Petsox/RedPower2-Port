@@ -13,9 +13,9 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
 {
     private final TileDisplay tileDisplay;
     private final byte[] screen;
-    int cursx;
-    int cursy;
-    int cursmode;
+    private int cursx;
+    private int cursy;
+    private int cursmode;
     
     private void decompress(final byte[] compress, final byte[] out) {
         int opos = 0;
@@ -56,6 +56,13 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
         this.tileDisplay = td;
     }
     
+    public ItemStack slotClick(final int a, final int b, final int c, final EntityPlayer player) {
+        if (!this.canInteractWith(player)) {
+            return null;
+        }
+        return super.slotClick(a, b, c, player);
+    }
+    
     public boolean canInteractWith(final EntityPlayer player) {
         return this.tileDisplay.isUseableByPlayer(player);
     }
@@ -73,7 +80,7 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
         rle.flush();
         return rle.getByteArray();
     }
-
+    
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         final byte[] drl = this.getDisplayRLE();
@@ -82,11 +89,9 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
             if (this.tileDisplay.cursX != this.cursx) {
                 ic.sendProgressBarUpdate(this, 0, this.tileDisplay.cursX);
             }
-
             if (this.tileDisplay.cursY != this.cursy) {
                 ic.sendProgressBarUpdate(this, 1, this.tileDisplay.cursY);
             }
-
             if (this.tileDisplay.cursMode != this.cursmode) {
                 ic.sendProgressBarUpdate(this, 2, this.tileDisplay.cursMode);
             }
@@ -103,17 +108,14 @@ public class ContainerDisplay extends Container implements IHandleGuiEvent
         switch (id) {
             case 0: {
                 this.tileDisplay.cursX = value;
-                return;
             }
             case 1: {
                 this.tileDisplay.cursY = value;
-                return;
             }
             case 2: {
                 this.tileDisplay.cursMode = value;
-                return;
+                break;
             }
-            default:
         }
     }
     

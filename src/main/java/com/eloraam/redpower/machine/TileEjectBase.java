@@ -7,20 +7,23 @@ import com.eloraam.redpower.*;
 import com.eloraam.redpower.core.*;
 import net.minecraft.tileentity.*;
 import net.minecraft.nbt.*;
+
 import java.util.stream.*;
 
 public class TileEjectBase extends TileMachine implements ISidedInventory, ITubeConnectable
 {
     TubeBuffer buffer;
     protected ItemStack[] contents;
+    public int ConMask;
     
     public TileEjectBase() {
         this.buffer = new TubeBuffer();
         this.contents = new ItemStack[9];
+        this.ConMask = -1;
     }
     
     public int getTubeConnectableSides() {
-        return 1 << this.Rotation;
+        return 0x3F;
     }
     
     public int getTubeConClass() {

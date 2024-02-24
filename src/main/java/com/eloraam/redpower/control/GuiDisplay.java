@@ -5,14 +5,13 @@ import net.minecraft.util.*;
 import net.minecraft.inventory.*;
 import com.eloraam.redpower.core.*;
 import com.eloraam.redpower.*;
-import cpw.mods.fml.common.network.simpleimpl.*;
 import org.lwjgl.opengl.*;
 import net.minecraft.client.renderer.*;
 
 public class GuiDisplay extends GuiContainer
 {
     private static ResourceLocation screenTextures;
-    final TileDisplay disp;
+    private final TileDisplay disp;
     
     public GuiDisplay(final IInventory inv, final TileDisplay td) {
         super(new ContainerDisplay(inv, td));
