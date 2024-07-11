@@ -34,11 +34,11 @@ public class ContainerCPU extends Container implements IHandleGuiEvent
         super.detectAndSendChanges();
         for (int i = 0; i < super.crafters.size(); ++i) {
             ICrafting ic = (ICrafting) super.crafters.get(i);
-            if (this.tileCPU.diskAddr != this.byte0) {
-                ic.sendProgressBarUpdate(this, 0, this.tileCPU.diskAddr);
+            if (this.tileCPU.byte0 != this.byte0) {
+                ic.sendProgressBarUpdate(this, 0, this.tileCPU.byte0);
             }
-            if (this.tileCPU.displayAddr != this.byte1) {
-                ic.sendProgressBarUpdate(this, 1, this.tileCPU.displayAddr);
+            if (this.tileCPU.byte1 != this.byte1) {
+                ic.sendProgressBarUpdate(this, 1, this.tileCPU.byte1);
             }
             if (this.tileCPU.rbaddr != this.rbaddr) {
                 ic.sendProgressBarUpdate(this, 2, this.tileCPU.rbaddr);
@@ -47,8 +47,8 @@ public class ContainerCPU extends Container implements IHandleGuiEvent
                 ic.sendProgressBarUpdate(this, 3, this.tileCPU.isRunning() ? 1 : 0);
             }
         }
-        this.byte0 = this.tileCPU.diskAddr;
-        this.byte1 = this.tileCPU.displayAddr;
+        this.byte0 = this.tileCPU.byte0;
+        this.byte1 = this.tileCPU.byte1;
         this.rbaddr = this.tileCPU.rbaddr;
         this.isrun = this.tileCPU.isRunning();
     }
@@ -56,11 +56,11 @@ public class ContainerCPU extends Container implements IHandleGuiEvent
     public void updateProgressBar(final int id, final int value) {
         switch (id) {
             case 0: {
-                this.tileCPU.diskAddr = value;
+                this.tileCPU.byte0 = value;
                 break;
             }
             case 1: {
-                this.tileCPU.displayAddr = value;
+                this.tileCPU.byte1 = value;
                 break;
             }
             case 2: {
@@ -78,11 +78,11 @@ public class ContainerCPU extends Container implements IHandleGuiEvent
         try {
             switch (message.eventId) {
                 case 1: {
-                    this.tileCPU.diskAddr = message.parameters[0];
+                    this.tileCPU.byte0 = message.parameters[0];
                     break;
                 }
                 case 2: {
-                    this.tileCPU.displayAddr = message.parameters[0];
+                    this.tileCPU.byte1 = message.parameters[0];
                     break;
                 }
                 case 3: {

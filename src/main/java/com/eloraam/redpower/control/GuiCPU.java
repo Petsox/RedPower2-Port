@@ -37,13 +37,13 @@ public class GuiCPU extends GuiContainer
         final int j = (super.width - super.xSize) / 2;
         final int k = (super.height - super.ySize) / 2;
         this.drawTexturedModalRect(j, k, 0, 0, super.xSize, super.ySize);
-        int bits = this.tileCPU.diskAddr;
+        int bits = this.tileCPU.byte0;
         for (int n = 0; n < 8; ++n) {
             if ((bits & 1 << n) != 0x0) {
                 this.drawTexturedModalRect(j + 14 + n * 12, k + 57, 227 + (n >> 2) * 12, 0, 12, 32);
             }
         }
-        bits = this.tileCPU.displayAddr;
+        bits = this.tileCPU.byte1;
         for (int n = 0; n < 8; ++n) {
             if ((bits & 1 << n) != 0x0) {
                 this.drawTexturedModalRect(j + 118 + n * 12, k + 57, 227 + (n >> 2) * 12, 0, 12, 32);
@@ -61,8 +61,8 @@ public class GuiCPU extends GuiContainer
         else {
             this.drawTexturedModalRect(j + 102, k + 112, 227, 32, 8, 8);
         }
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.diskid", this.tileCPU.diskAddr & 0xFF), j + 14, k + 47, -1);
-        super.fontRendererObj.drawString(I18n.format("gui.cpu.consoleid", this.tileCPU.displayAddr & 0xFF), j + 118, k + 47, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.diskid", this.tileCPU.byte0 & 0xFF), j + 14, k + 47, -1);
+        super.fontRendererObj.drawString(I18n.format("gui.cpu.consoleid", this.tileCPU.byte1 & 0xFF), j + 118, k + 47, -1);
         super.fontRendererObj.drawString(I18n.format("gui.cpu.selfid", this.tileCPU.rbaddr & 0xFF), j + 118, k + 91, -1);
         super.fontRendererObj.drawString(I18n.format("gui.cpu.start"), j + 50, k + 99, -1);
         super.fontRendererObj.drawString(I18n.format("gui.cpu.halt"), j + 50, k + 112, -1);
@@ -90,16 +90,16 @@ public class GuiCPU extends GuiContainer
             for (int n = 0; n < 8; ++n) {
                 if (x >= 14 + n * 12 && x <= 26 + n * 12) {
                     final TileCPU tileCPU = this.tileCPU;
-                    tileCPU.diskAddr ^= 1 << n;
-                    this.sendSimple(1, (byte)this.tileCPU.diskAddr);
+                    tileCPU.byte0 ^= 1 << n;
+                    this.sendSimple(1, (byte)this.tileCPU.byte0);
                     return;
                 }
             }
             for (int n = 0; n < 8; ++n) {
                 if (x >= 118 + n * 12 && x <= 130 + n * 12) {
                     final TileCPU tileCPU2 = this.tileCPU;
-                    tileCPU2.displayAddr ^= 1 << n;
-                    this.sendSimple(2, (byte)this.tileCPU.displayAddr);
+                    tileCPU2.byte1 ^= 1 << n;
+                    this.sendSimple(2, (byte)this.tileCPU.byte1);
                     return;
                 }
             }
