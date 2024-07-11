@@ -1,124 +1,140 @@
 package com.eloraam.redpower.control;
 
-import net.minecraft.client.gui.inventory.*;
-import net.minecraft.util.*;
-import net.minecraft.inventory.*;
-import com.eloraam.redpower.core.*;
-import com.eloraam.redpower.*;
-import org.lwjgl.opengl.*;
-import net.minecraft.client.renderer.*;
+import com.eloraam.redpower.RedPowerCore;
+import com.eloraam.redpower.core.PacketGuiEvent;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
-public class GuiDisplay extends GuiContainer
-{
+public class GuiDisplay extends GuiContainer {
+    TileDisplay disp;
     private static ResourceLocation screenTextures;
-    private final TileDisplay disp;
-    
-    public GuiDisplay(final IInventory inv, final TileDisplay td) {
-        super(new ContainerDisplay(inv, td));
-        super.xSize = 350;
-        super.ySize = 230;
-        this.disp = td;
+    public GuiDisplay(IInventory var1, TileDisplay var2) {
+        super(new ContainerDisplay(var1, var2));
+        this.xSize = 350;
+        this.ySize = 230;
+        this.disp = var2;
     }
-    
+
     private void sendKey(final int id) {
         RedPowerCore.sendPacketToServer(new PacketGuiEvent.GuiMessageEvent(1, super.inventorySlots.windowId, new byte[] { (byte)id }));
     }
-    
-    protected void keyTyped(char symbol, final int key) {
-        if (key == 1) {
-            super.mc.thePlayer.closeScreen();
-        }
-        else {
-            if (symbol == '\n') {
-                symbol = '\r';
+
+    /**
+     * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     */
+    protected void keyTyped(char var1, int var2) {
+        if (var2 == 1) {
+            this.mc.thePlayer.closeScreen();
+        } else {
+            if (var1 == 10) {
+                var1 = 13;
             }
-            byte id = 0;
+
+            int var3 = 0;
+
             if (isShiftKeyDown()) {
-                id |= 0x40;
+                var3 |= 64;
             }
+
             if (isCtrlKeyDown()) {
-                id |= 0x20;
+                var3 |= 32;
             }
-            switch (key) {
-                case 200: {
-                    this.sendKey(0x80 | id);
+
+            switch (var2) {
+                case 199:
+                    this.sendKey(132 | var3);
                     break;
-                }
-                case 208: {
-                    this.sendKey(0x81 | id);
+
+                case 200:
+                    this.sendKey(128 | var3);
                     break;
-                }
-                case 203: {
-                    this.sendKey(0x82 | id);
-                    break;
-                }
-                case 205: {
-                    this.sendKey(0x83 | id);
-                    break;
-                }
-                case 199: {
-                    this.sendKey(0x84 | id);
-                    break;
-                }
-                case 207: {
-                    this.sendKey(0x85 | id);
-                    break;
-                }
-                case 210: {
-                    this.sendKey(0x86 | id);
-                    break;
-                }
-                default: {
-                    if (symbol > '\0' && symbol <= '\u007f') {
-                        this.sendKey(symbol);
-                        break;
+
+                case 201:
+                case 202:
+                case 204:
+                case 206:
+                case 209:
+                default:
+                    if (var1 > 0 && var1 <= 127) {
+                        this.sendKey(var1);
                     }
+
                     break;
-                }
+
+                case 203:
+                    this.sendKey(130 | var3);
+                    break;
+
+                case 205:
+                    this.sendKey(131 | var3);
+                    break;
+
+                case 207:
+                    this.sendKey(133 | var3);
+                    break;
+
+                case 208:
+                    this.sendKey(129 | var3);
+                    break;
+
+                case 210:
+                    this.sendKey(134 | var3);
             }
         }
     }
-    
-    public void drawGuiContainerBackgroundLayer(final float f, final int i, final int j) {
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        super.mc.renderEngine.bindTexture(GuiDisplay.screenTextures);
-        final int l = (super.width - super.xSize) / 2;
-        final int m = (super.height - super.ySize) / 2;
-        this.drawDoubledRect(l, m, super.xSize, super.ySize, 0, 0, super.xSize, super.ySize);
-        GL11.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-        for (int y = 0; y < 50; ++y) {
-            for (int x = 0; x < 80; ++x) {
-                int b = this.disp.screen[y * 80 + x] & 0xFF;
-                if (x == this.disp.cursX && y == this.disp.cursY) {
+
+    /**
+     * Draw the background layer for the GuiContainer (everything behind the items)
+     */
+    public void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.renderEngine.bindTexture(GuiDisplay.screenTextures);
+        int var7 = (this.width - this.xSize) / 2;
+        int var8 = (this.height - this.ySize) / 2;
+        this.drawDoubledRect(var7, var8, this.xSize, this.ySize, 0, 0, this.xSize, this.ySize);
+        GL11.glColor4f(0.0F, 1.0F, 0.0F, 1.0F);
+
+        for (int var9 = 0; var9 < 50; ++var9) {
+            for (int var10 = 0; var10 < 80; ++var10) {
+                int var11 = this.disp.screen[var9 * 80 + var10] & 255;
+
+                if (var10 == this.disp.cursX && var9 == this.disp.cursY) {
                     if (this.disp.cursMode == 1) {
-                        b ^= 0x80;
+                        var11 ^= 128;
                     }
+
                     if (this.disp.cursMode == 2) {
-                        final long tm = super.mc.theWorld.getWorldTime();
-                        if ((tm >> 2 & 0x1L) > 0L) {
-                            b ^= 0x80;
+                        long var12 = this.mc.theWorld.getWorldTime();
+
+                        if ((var12 >> 2 & 1L) > 0L) {
+                            var11 ^= 128;
                         }
                     }
                 }
-                if (b != 32) {
-                    this.drawDoubledRect(l + 15 + x * 4, m + 15 + y * 4, 4, 4, 350 + (b & 0xF) * 8, (b >> 4) * 8, 8, 8);
+
+                if (var11 != 32) {
+                    this.drawDoubledRect(var7 + 15 + var10 * 4, var8 + 15 + var9 * 4, 4, 4, 350 + (var11 & 15) * 8, (var11 >> 4) * 8, 8, 8);
                 }
             }
         }
     }
-    
-    public void drawDoubledRect(final int xPos, final int yPos, final int width, final int heigth, final int uStart, final int vStart, final int uEnd, final int vEnd) {
-        final float xm = 0.001953125f;
-        final float ym = 0.00390625f;
-        final Tessellator tess = Tessellator.instance;
+
+    public void drawDoubledRect(int xPos, int yPos, int width, int height, int uStart, int vStart, int uEnd, int vEnd) {
+        float xm = 0.001953125F;
+        float ym = 0.00390625F;
+        Tessellator tess = Tessellator.instance;
         tess.startDrawingQuads();
-        tess.addVertexWithUV(xPos, yPos + heigth, super.zLevel, uStart * xm, (vStart + vEnd) * ym);
-        tess.addVertexWithUV(xPos + width, yPos + heigth, super.zLevel, (uStart + uEnd) * xm, (vStart + vEnd) * ym);
-        tess.addVertexWithUV(xPos + width, yPos, super.zLevel, (uStart + uEnd) * xm, vStart * ym);
-        tess.addVertexWithUV(xPos, yPos, super.zLevel, uStart * xm, vStart * ym);
+        tess.addVertexWithUV(xPos, (yPos + height), this.zLevel, ((float) uStart * xm), ((float) (vStart + vEnd) * ym));
+        tess.addVertexWithUV((xPos + width), (yPos + height), this.zLevel, ((float) (uStart + uEnd) * xm), ((float) (vStart + vEnd) * ym));
+        tess.addVertexWithUV((xPos + width), yPos, this.zLevel, ((float) (uStart + uEnd) * xm), ((float) vStart * ym));
+        tess.addVertexWithUV(xPos, yPos, this.zLevel, ((float) uStart * xm), ((float) vStart * ym));
         tess.draw();
     }
-    
+
     static {
         GuiDisplay.screenTextures = new ResourceLocation("rpcontrol", "textures/gui/displaygui.png");
     }
