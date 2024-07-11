@@ -31,7 +31,7 @@ public class GuiRegulator extends GuiContainer
     }
     
     protected void drawGuiContainerForegroundLayer(final int p1, final int p2) {
-        super.fontRendererObj.drawString(I18n.format("this.tileRegulator.getInventoryName()", new Object[0]), 79, 6, 4210752);
+        super.fontRendererObj.drawString(I18n.format(this.tileRegulator.getInventoryName(), new Object[0]), 79, 6, 4210752);
         super.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 25, super.ySize - 96 + 3, 4210752);
     }
     
