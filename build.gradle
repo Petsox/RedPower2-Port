@@ -69,10 +69,10 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    implementation "codechicken:CodeChickenCore-1.7.10-1.0.7.46-dev"
+    implementation "codechicken:CodeChickenCore-1.2.1-dev"
     implementation "ic2:industrialcraft-2-2.2.828-experimental-dev"
-    implementation "codechicken:CodeChickenLib-1.2.1"
-    implementation "codechicken:NotEnoughItems-1.7.10-1.0.5.111-dev"
+    implementation "codechicken:CodeChickenLib-1.2.1-dev"
+    implementation "codechicken:NotEnoughItems-2.5.18-GTNH-dev"
 }
 
 runClient {
